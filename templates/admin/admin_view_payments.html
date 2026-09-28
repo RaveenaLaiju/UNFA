@@ -1,0 +1,262 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+{% block title %}Payments - Football Arena Admin{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="row fb-13-fade d1">
+        <div class="col-12 fb-05-header">
+            <h1 class="fb-05-title text-center text-lg-start">&#128176; Payment Center</h1>
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start gap-2 mt-2">
+                <span class="fb-05-live">
+                    <span class="fb-05-live-dot"></span>
+                    Live Transactions
+                </span>
+                <span class="fb-05-subtitle">Track all payment transactions and revenue</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue Stats Row -->
+    <div class="row g-3 g-lg-4 mb-4 mt-2">
+        <!-- Successful Revenue -->
+        <div class="col-12 col-sm-6 col-lg-4 fb-13-fade d2">
+            <div class="fb-04-glass fb-06-stat success">
+                <div class="fb-06-icon success">&#128176;</div>
+                <div class="fb-06-value success" id="fbCountSuccess">&#8377;{{ total_success|default:0 }}</div>
+                <div class="fb-06-label">Successful Revenue</div>
+            </div>
+        </div>
+        <!-- Pending Amount -->
+        <div class="col-12 col-sm-6 col-lg-4 fb-13-fade d3">
+            <div class="fb-04-glass fb-06-stat pending">
+                <div class="fb-06-icon pending">&#9203;</div>
+                <div class="fb-06-value pending" id="fbCountPending">&#8377;{{ total_pending|default:0 }}</div>
+                <div class="fb-06-label">Pending Amount</div>
+            </div>
+        </div>
+        <!-- Failed Amount -->
+        <div class="col-12 col-sm-6 col-lg-4 fb-13-fade d4">
+            <div class="fb-04-glass fb-06-stat failure">
+                <div class="fb-06-icon failure">&#10060;</div>
+                <div class="fb-06-value failure" id="fbCountFailed">&#8377;{{ total_failed|default:0 }}</div>
+                <div class="fb-06-label">Failed Amount</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="row fb-13-fade d3">
+        <div class="col-12">
+            <form method="get" class="fb-04-glass fb-07-filter">
+                <div class="row g-2 align-items-center">
+                    <div class="col-12 col-lg-7 col-xl-8">
+                        <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-lg-start">
+                            <a href="?status=all" class="fb-07-btn all {% if status_filter == 'all' or not status_filter %}active{% endif %}">
+                                &#127937; All
+                            </a>
+                            <a href="?status=Success" class="fb-07-btn success {% if status_filter == 'Success' %}active{% endif %}">
+                                &#9989; Success
+                            </a>
+                            <a href="?status=Pending" class="fb-07-btn pending {% if status_filter == 'Pending' %}active{% endif %}">
+                                &#9203; Pending
+                            </a>
+                            <a href="?status=Failure" class="fb-07-btn failure {% if status_filter == 'Failure' %}active{% endif %}">
+                                &#10060; Failure
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-5 col-xl-4">
+                        <div class="d-flex gap-2 justify-content-center justify-content-lg-end mt-2 mt-lg-0">
+                            <button type="submit" class="fb-07-action primary">&#128269; Filter</button>
+                            <a href="{% url 'admin_view_payments' %}" class="fb-07-action danger">&#10005; Clear</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payments Table & Mobile Cards -->
+    <div class="row fb-13-fade d4 mt-4">
+        <div class="col-12">
+            <div class="fb-04-glass fb-08-wrap">
+
+                <!-- Table Header -->
+                <div class="fb-08-header">
+                    <h5 class="fb-08-title">&#128203; Transaction History</h5>
+                    <span class="fb-08-count">{{ payments|length }} Records</span>
+                </div>
+
+                <div class="d-none d-lg-block">
+                    <div class="table-responsive">
+                        <table class="fb-09-table table">
+                            <thead>
+                                <tr>
+                                    <th>Payment ID</th>
+                                    <th>Booking</th>
+                                    <th>Customer</th>
+                                    <th>Turf</th>
+                                    <th>Order ID</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in payments %}
+                                <tr class="fb-row-animate">
+                                    <td><span class="fb-10-badge">#{{ payment.payment_id }}</span></td>
+                                    <td><span class="fb-10-badge">#{{ payment.booking.booking_id }}</span></td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="fb-10-avatar">{{ payment.booking.customer.user_name|first|upper }}</div>
+                                            <span class="fb-10-name">{{ payment.booking.customer.user_name }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="fb-10-turf">
+                                            <span>&#127793;</span>
+                                            {{ payment.booking.turf.turf_name }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="fb-10-order" title="{{ payment.provider_order_id }}">
+                                            {{ payment.provider_order_id|truncatechars:18 }}
+                                        </span>
+                                    </td>
+                                    <td><span class="fb-10-amount">&#8377;{% widthratio payment.amount 100 1 %}</span></td>
+                                    <td>
+                                        {% if payment.payment_status == "Success" %}
+                                        <span class="fb-10-status success">&#9989; {{ payment.payment_status }}</span>
+                                        {% elif payment.payment_status == "Pending" %}
+                                        <span class="fb-10-status pending">&#9203; {{ payment.payment_status }}</span>
+                                        {% else %}
+                                        <span class="fb-10-status failure">&#10060; {{ payment.payment_status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><span class="fb-10-date">{{ payment.created_at|date:"M d, Y H:i" }}</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="border-0">
+                                        <div class="fb-12-empty">
+                                            <div class="fb-12-empty-icon">&#128176;</div>
+                                            <div class="fb-12-empty-title">No Transactions Found</div>
+                                            <p class="fb-12-empty-text">Payments will appear here once customers start booking.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Mobile Cards -->
+                <div class="d-lg-none p-3 p-sm-4">
+                    {% for payment in payments %}
+                    <div class="fb-04-glass-strong fb-11-card">
+                        <div class="fb-11-card-header">
+                            <span class="fb-10-badge">#{{ payment.payment_id }}</span>
+                            {% if payment.payment_status == "Success" %}
+                            <span class="fb-10-status success">&#9989; Success</span>
+                            {% elif payment.payment_status == "Pending" %}
+                            <span class="fb-10-status pending">&#9203; Pending</span>
+                            {% else %}
+                            <span class="fb-10-status failure">&#10060; Failure</span>
+                            {% endif %}
+                        </div>
+                        <div class="fb-11-row">
+                            <span class="fb-11-label">Booking</span>
+                            <span class="fb-11-value"><span class="fb-10-badge">#{{ payment.booking.booking_id }}</span></span>
+                        </div>
+                        <div class="fb-11-row">
+                            <span class="fb-11-label">Customer</span>
+                            <span class="fb-11-value fb-11-user">
+                                <div class="fb-10-avatar" style="width:28px;height:28px;font-size:0.75rem;">{{ payment.booking.customer.user_name|first|upper }}</div>
+                                {{ payment.booking.customer.user_name }}
+                            </span>
+                        </div>
+                        <div class="fb-11-row">
+                            <span class="fb-11-label">Turf</span>
+                            <span class="fb-11-value">&#127793; {{ payment.booking.turf.turf_name }}</span>
+                        </div>
+                        <div class="fb-11-row">
+                            <span class="fb-11-label">Order ID</span>
+                            <span class="fb-10-order" style="max-width:110px;">{{ payment.provider_order_id|truncatechars:14 }}</span>
+                        </div>
+                        <div class="fb-11-row">
+                            <span class="fb-11-label">Amount</span>
+                            <span class="fb-10-amount">&#8377;{% widthratio payment.amount 100 1 %}</span>
+                        </div>
+                        <div class="fb-11-row">
+                            <span class="fb-11-label">Date</span>
+                            <span class="fb-10-date">{{ payment.created_at|date:"M d, Y H:i" }}</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="fb-12-empty">
+                        <div class="fb-12-empty-icon">&#128176;</div>
+                        <div class="fb-12-empty-title">No Transactions Found</div>
+                        <p class="fb-12-empty-text">Payments will appear here once customers start booking.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+function ft16Counter(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const text = el.textContent;
+    const prefix = text.match(/^[^\d]*/)[0];
+    const target = parseInt(text.replace(/\D/g, '')) || 0;
+    const start = performance.now();
+    const duration = 2000;
+
+    function tick(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 4);
+        el.textContent = prefix + Math.floor(eased * target).toLocaleString('en-IN');
+        if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+}
+
+function ft17Stagger() {
+    // Desktop rows
+    document.querySelectorAll('.fb-row-animate').forEach((row, i) => {
+        row.style.opacity = '0';
+        row.style.transform = 'translateY(10px)';
+        row.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+        setTimeout(() => { row.style.opacity = '1'; row.style.transform = 'translateY(0)'; }, 80 + i * 50);
+    });
+    // Mobile cards
+    document.querySelectorAll('.fb-11-card').forEach((card, i) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateX(-12px)';
+        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        setTimeout(() => { card.style.opacity = '1'; card.style.transform = 'translateX(0)'; }, 100 + i * 70);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    ft16Counter('fbCountSuccess');
+    ft16Counter('fbCountPending');
+    ft16Counter('fbCountFailed');
+    setTimeout(ft17Stagger, 200);
+});
+</script>
+
+{% endblock %}

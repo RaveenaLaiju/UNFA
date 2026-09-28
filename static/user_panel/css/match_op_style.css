@@ -1,0 +1,1128 @@
+/* Go to match */
+.fm24-page {
+min-height: 100vh;
+position: relative;
+overflow: hidden;
+background:
+radial-gradient(
+circle at 15% 20%,
+rgba(0, 255, 170, 0.10),
+transparent 30%
+),
+radial-gradient(
+circle at 85% 80%,
+rgba(0, 140, 255, 0.12),
+transparent 35%
+),
+#050912;
+color: #ffffff;
+}
+
+
+
+.fm24-bg {
+position: fixed;
+inset: 0;
+z-index: 0;
+pointer-events: none;
+overflow: hidden;
+}
+
+.fm24-bg-gradient {
+position: absolute;
+inset: 0;
+background:
+linear-gradient(
+135deg,
+rgba(0, 255, 170, 0.04),
+transparent 40%,
+rgba(0, 140, 255, 0.05)
+);
+}
+
+.fm24-stadium-light {
+position: absolute;
+width: 450px;
+height: 450px;
+border-radius: 50%;
+filter: blur(100px);
+opacity: 0.12;
+}
+
+.fm24-light-one {
+top: -180px;
+left: -120px;
+background: #00ffae;
+}
+
+.fm24-light-two {
+top: 20%;
+right: -180px;
+background: #008cff;
+}
+
+.fm24-light-three {
+bottom: -200px;
+left: 40%;
+background: #00ffd0;
+}
+
+
+
+.fm24-particle {
+position: absolute;
+width: 4px;
+height: 4px;
+border-radius: 50%;
+background: rgba(255,255,255,0.7);
+box-shadow: 0 0 12px rgba(255,255,255,0.8);
+animation: fm24ParticleFloat 8s infinite ease-in-out;
+}
+
+.fm24-particle-01 {
+top: 15%;
+left: 10%;
+}
+
+.fm24-particle-02 {
+top: 35%;
+left: 25%;
+animation-delay: 1s;
+}
+
+.fm24-particle-03 {
+top: 70%;
+left: 15%;
+animation-delay: 2s;
+}
+
+.fm24-particle-04 {
+top: 20%;
+right: 20%;
+animation-delay: 3s;
+}
+
+.fm24-particle-05 {
+top: 60%;
+right: 12%;
+animation-delay: 4s;
+}
+
+.fm24-particle-06 {
+bottom: 15%;
+right: 30%;
+animation-delay: 5s;
+}
+
+.fm24-particle-07 {
+top: 45%;
+left: 50%;
+animation-delay: 2.5s;
+}
+
+.fm24-particle-08 {
+bottom: 30%;
+left: 45%;
+animation-delay: 6s;
+}
+
+@keyframes fm24ParticleFloat {
+
+0%,
+100% {
+transform: translateY(0);
+opacity: 0.25;
+}
+
+50% {
+transform: translateY(-25px);
+opacity: 1;
+}
+}
+
+.fm24-field-lines {
+position: absolute;
+inset: 0;
+opacity: 0.04;
+background-image:
+linear-gradient(
+rgba(255,255,255,0.4) 1px,
+transparent 1px
+),
+linear-gradient(
+90deg,
+rgba(255,255,255,0.4) 1px,
+transparent 1px
+);
+background-size: 70px 70px;
+}
+
+
+.fm24-arena {
+position: relative;
+z-index: 2;
+padding: 35px 0 80px;
+}
+
+.fm24-content {
+max-width: 1500px;
+}
+
+
+
+.glass-panel {
+background:
+linear-gradient(
+135deg,
+rgba(255,255,255,0.08),
+rgba(255,255,255,0.025)
+);
+border: 1px solid rgba(255,255,255,0.10);
+box-shadow:
+0 25px 80px rgba(0,0,0,0.35),
+inset 0 1px rgba(255,255,255,0.08);
+backdrop-filter: blur(18px);
+-webkit-backdrop-filter: blur(18px);
+}
+
+
+
+.fm24-command {
+padding: 28px;
+border-radius: 28px;
+margin-bottom: 25px;
+}
+
+.fm24-status-label {
+display: inline-flex;
+align-items: center;
+gap: 10px;
+padding: 8px 14px;
+border-radius: 999px;
+background: rgba(0,255,170,0.08);
+border: 1px solid rgba(0,255,170,0.18);
+color: #75ffd5;
+font-size: 11px;
+font-weight: 800;
+letter-spacing: 2px;
+}
+
+.fm24-status-icon {
+width: 26px;
+height: 26px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+border-radius: 50%;
+background: rgba(0,255,170,0.12);
+}
+
+.fm24-match-title {
+margin-top: 18px;
+display: flex;
+align-items: center;
+gap: 20px;
+flex-wrap: wrap;
+}
+
+.fm24-team-title {
+font-size: clamp(22px, 3vw, 42px);
+font-weight: 900;
+letter-spacing: -1px;
+}
+
+.fm24-home-title {
+color: #73ffd4;
+}
+
+.fm24-away-title {
+color: #70bfff;
+}
+
+.fm24-vs-box {
+width: 55px;
+height: 55px;
+flex: 0 0 55px;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 18px;
+background: rgba(255,255,255,0.06);
+border: 1px solid rgba(255,255,255,0.12);
+font-size: 13px;
+font-weight: 900;
+}
+
+.fm24-command-subtitle {
+margin-top: 10px;
+color: rgba(255,255,255,0.48);
+font-size: 11px;
+font-weight: 800;
+letter-spacing: 2px;
+}
+
+
+.fm24-control-zone {
+display: flex;
+gap: 10px;
+flex-wrap: wrap;
+justify-content: flex-end;
+}
+
+.fm24-control-btn {
+min-height: 48px;
+padding: 0 18px;
+border-radius: 15px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 9px;
+text-decoration: none;
+color: #ffffff;
+font-size: 12px;
+font-weight: 800;
+border: 1px solid rgba(255,255,255,0.12);
+transition: 0.25s ease;
+}
+
+.fm24-control-btn:hover {
+color: #ffffff;
+transform: translateY(-3px);
+}
+
+.fm24-control-icon {
+font-size: 13px;
+}
+
+.fm24-start-btn {
+background: rgba(0,255,170,0.13);
+border-color: rgba(0,255,170,0.35);
+}
+
+.fm24-start-btn:hover {
+background: rgba(0,255,170,0.22);
+}
+
+.fm24-pause-btn {
+background: rgba(255,190,0,0.12);
+border-color: rgba(255,190,0,0.35);
+}
+
+.fm24-pause-btn:hover {
+background: rgba(255,190,0,0.22);
+}
+
+.fm24-resume-btn {
+background: rgba(0,170,255,0.13);
+border-color: rgba(0,170,255,0.35);
+}
+
+.fm24-resume-btn:hover {
+background: rgba(0,170,255,0.22);
+}
+
+.fm24-stop-btn {
+background: rgba(255,70,90,0.13);
+border-color: rgba(255,70,90,0.35);
+}
+
+.fm24-stop-btn:hover {
+background: rgba(255,70,90,0.22);
+}
+
+.fm24-abort-btn {
+background: rgba(255,255,255,0.05);
+}
+
+
+.fm24-timer-panel {
+margin-top: 22px;
+padding: 24px;
+border-radius: 24px;
+text-align: center;
+}
+
+.fm24-timer-label {
+color: rgba(255,255,255,0.45);
+font-size: 10px;
+font-weight: 900;
+letter-spacing: 3px;
+margin-bottom: 10px;
+}
+
+.fm24-timer {
+font-family: monospace;
+font-size: clamp(42px, 8vw, 78px);
+line-height: 1;
+font-weight: 900;
+letter-spacing: 4px;
+}
+
+.fm24-timer-running {
+color: #6dffd2;
+text-shadow: 0 0 30px rgba(0,255,170,0.35);
+}
+
+.fm24-timer-paused {
+color: #ffd166;
+text-shadow: 0 0 30px rgba(255,209,102,0.25);
+}
+
+.fm24-timer-finished {
+color: #ff7584;
+}
+
+.fm24-timer-waiting {
+color: rgba(255,255,255,0.45);
+}
+
+.fm24-timer-status {
+margin-top: 12px;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 7px 14px;
+border-radius: 999px;
+background: rgba(255,255,255,0.05);
+font-size: 10px;
+font-weight: 900;
+letter-spacing: 1.5px;
+}
+
+.fm24-timer-dot {
+width: 7px;
+height: 7px;
+border-radius: 50%;
+background: currentColor;
+}
+
+.fm24-progress {
+margin-top: 18px;
+height: 5px;
+overflow: hidden;
+border-radius: 99px;
+background: rgba(255,255,255,0.07);
+}
+
+.fm24-progress-bar {
+height: 100%;
+width: 0%;
+border-radius: inherit;
+background: currentColor;
+transition: width 0.5s linear;
+}
+
+
+.fm24-score-section {
+margin-bottom: 25px;
+}
+
+.fm24-score-card {
+padding: 35px;
+border-radius: 30px;
+}
+
+.fm24-live-status {
+width: fit-content;
+margin: 0 auto 30px;
+padding: 8px 15px;
+border-radius: 999px;
+font-size: 11px;
+font-weight: 900;
+letter-spacing: 2px;
+}
+
+.fm24-status-live {
+color: #75ffd5;
+background: rgba(0,255,170,0.08);
+}
+
+.fm24-status-ended {
+color: #ff7584;
+background: rgba(255,70,90,0.08);
+}
+
+.fm24-status-waiting {
+color: rgba(255,255,255,0.55);
+background: rgba(255,255,255,0.05);
+}
+
+.fm24-live-dot {
+display: inline-block;
+width: 8px;
+height: 8px;
+margin-right: 7px;
+border-radius: 50%;
+background: #55ffbf;
+box-shadow: 0 0 15px #55ffbf;
+animation: fm24LivePulse 1.2s infinite;
+}
+
+@keyframes fm24LivePulse {
+
+0%,
+100% {
+opacity: 1;
+}
+
+50% {
+opacity: 0.25;
+}
+}
+
+
+.fm24-team-block {
+text-align: center;
+}
+
+.fm24-crest-wrap {
+position: relative;
+width: 145px;
+height: 145px;
+margin: 0 auto 18px;
+}
+
+.fm24-crest-glow {
+position: absolute;
+inset: 20px;
+border-radius: 50%;
+filter: blur(25px);
+}
+
+.fm24-home-glow {
+background: rgba(0,255,170,0.35);
+}
+
+.fm24-away-glow {
+background: rgba(0,150,255,0.35);
+}
+
+.fm24-crest-ring {
+position: relative;
+width: 100%;
+height: 100%;
+padding: 12px;
+border-radius: 50%;
+background: rgba(255,255,255,0.04);
+border: 1px solid rgba(255,255,255,0.12);
+}
+
+.fm24-crest {
+width: 100%;
+height: 100%;
+object-fit: contain;
+}
+
+.fm24-team-name {
+margin: 0;
+font-size: 22px;
+font-weight: 900;
+}
+
+.fm24-team-label {
+display: inline-block;
+margin-top: 7px;
+color: rgba(255,255,255,0.45);
+font-size: 10px;
+font-weight: 900;
+letter-spacing: 2px;
+}
+
+.fm24-score-core {
+text-align: center;
+}
+
+.fm24-score-numbers {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 12px;
+}
+
+.fm24-score-number {
+font-size: clamp(60px, 9vw, 105px);
+line-height: 1;
+font-weight: 950;
+}
+
+.fm24-home-score {
+color: #72ffd2;
+}
+
+.fm24-away-score {
+color: #72bfff;
+}
+
+.fm24-score-colon {
+font-size: 60px;
+color: rgba(255,255,255,0.3);
+}
+
+.fm24-score-caption {
+margin-top: 15px;
+color: rgba(255,255,255,0.38);
+font-size: 10px;
+font-weight: 900;
+letter-spacing: 3px;
+}
+
+.fm24-meta-area {
+margin-top: 30px;
+}
+
+.fm24-meta-chip {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 9px 13px;
+border-radius: 12px;
+background: rgba(255,255,255,0.045);
+border: 1px solid rgba(255,255,255,0.07);
+color: rgba(255,255,255,0.6);
+font-size: 10px;
+font-weight: 800;
+}
+
+.fm24-tournament-chip {
+color: #ffd166;
+}
+
+.fm24-host-panel {
+margin-bottom: 25px;
+padding: 24px;
+border-radius: 24px;
+border-color: rgba(255,209,102,0.18);
+}
+
+.fm24-host-title {
+display: flex;
+align-items: center;
+gap: 15px;
+}
+
+.fm24-crown-icon {
+width: 48px;
+height: 48px;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 15px;
+color: #ffd166;
+background: rgba(255,209,102,0.10);
+}
+
+.fm24-host-title h3 {
+margin: 0;
+font-size: 16px;
+font-weight: 900;
+}
+
+.fm24-host-title p {
+margin: 4px 0 0;
+color: rgba(255,255,255,0.4);
+font-size: 11px;
+}
+
+.fm24-host-score {
+font-size: 25px;
+font-weight: 900;
+}
+
+.fm24-host-score-home {
+color: #73ffd4;
+}
+
+.fm24-host-score-away {
+color: #70bfff;
+}
+
+.fm24-finish-btn {
+min-height: 48px;
+padding: 0 20px;
+border: 0;
+border-radius: 14px;
+background: linear-gradient(
+135deg,
+rgba(255,70,90,0.25),
+rgba(255,120,70,0.18)
+);
+color: #ffffff;
+font-weight: 900;
+font-size: 12px;
+border: 1px solid rgba(255,90,100,0.25);
+}
+
+.fm24-action-section {
+margin-bottom: 25px;
+}
+
+.fm24-section-heading {
+display: flex;
+justify-content: space-between;
+align-items: end;
+margin-bottom: 15px;
+}
+
+.fm24-section-kicker {
+color: rgba(255,255,255,0.35);
+font-size: 10px;
+font-weight: 900;
+letter-spacing: 2px;
+}
+
+.fm24-section-heading h2 {
+margin: 5px 0 0;
+font-size: 26px;
+font-weight: 950;
+}
+
+.fm24-section-live {
+color: #72ffd2;
+font-size: 10px;
+font-weight: 900;
+letter-spacing: 1.5px;
+}
+
+.fm24-section-live span {
+display: inline-block;
+width: 7px;
+height: 7px;
+margin-right: 5px;
+border-radius: 50%;
+background: #55ffbf;
+}
+
+.fm24-action-card {
+height: 100%;
+padding: 24px;
+border-radius: 24px;
+}
+
+.fm24-action-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 10px;
+margin-bottom: 20px;
+}
+
+.fm24-action-team {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.fm24-action-icon {
+width: 45px;
+height: 45px;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 14px;
+background: rgba(255,255,255,0.05);
+}
+
+.fm24-action-team span {
+color: rgba(255,255,255,0.35);
+font-size: 9px;
+font-weight: 900;
+letter-spacing: 1.5px;
+}
+
+.fm24-action-team h3 {
+margin: 3px 0 0;
+font-size: 17px;
+font-weight: 900;
+}
+
+.fm24-side-badge {
+padding: 7px 10px;
+border-radius: 8px;
+font-size: 9px;
+font-weight: 900;
+}
+
+.fm24-home-badge {
+color: #73ffd4;
+background: rgba(0,255,170,0.08);
+}
+
+.fm24-away-badge {
+color: #70bfff;
+background: rgba(0,150,255,0.08);
+}
+
+.fm24-player-selector label {
+display: block;
+margin-bottom: 8px;
+color: rgba(255,255,255,0.5);
+font-size: 10px;
+font-weight: 800;
+}
+
+.fm24-glass-select {
+min-height: 48px;
+color: #ffffff;
+background-color: rgba(255,255,255,0.05);
+border: 1px solid rgba(255,255,255,0.10);
+border-radius: 13px;
+}
+
+.fm24-glass-select option {
+color: #111111;
+}
+
+.fm24-action-buttons {
+display: grid;
+grid-template-columns: repeat(3,1fr);
+gap: 8px;
+margin-top: 12px;
+}
+
+.fm24-action-btn {
+min-height: 48px;
+border-radius: 13px;
+border: 1px solid rgba(255,255,255,0.08);
+color: #ffffff;
+font-size: 11px;
+font-weight: 900;
+transition: 0.2s ease;
+}
+
+.fm24-action-btn:hover {
+transform: translateY(-2px);
+}
+
+.fm24-goal-btn {
+background: rgba(0,255,170,0.10);
+}
+
+.fm24-assist-btn {
+background: rgba(0,150,255,0.10);
+}
+
+.fm24-save-btn {
+background: rgba(255,190,0,0.10);
+}
+
+.fm24-locked-box {
+min-height: 150px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+text-align: center;
+color: rgba(255,255,255,0.35);
+}
+
+.fm24-locked-box i {
+font-size: 24px;
+margin-bottom: 12px;
+}
+
+.fm24-locked-box p {
+max-width: 280px;
+margin: 0;
+font-size: 11px;
+}
+
+
+.fm24-bottom-section {
+margin-top: 25px;
+}
+
+.fm24-battle-log,
+.fm24-roster {
+height: 100%;
+padding: 24px;
+border-radius: 24px;
+}
+
+.fm24-panel-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+}
+
+.fm24-panel-title {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.fm24-panel-icon {
+width: 44px;
+height: 44px;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 13px;
+background: rgba(255,255,255,0.05);
+}
+
+.fm24-panel-title > div > span {
+color: rgba(255,255,255,0.35);
+font-size: 9px;
+font-weight: 900;
+letter-spacing: 1.5px;
+}
+
+.fm24-panel-title h2 {
+margin: 3px 0 0;
+font-size: 21px;
+font-weight: 950;
+}
+
+.fm24-event-count {
+color: rgba(255,255,255,0.35);
+font-size: 10px;
+font-weight: 800;
+}
+
+.fm24-event-stream {
+display: flex;
+flex-direction: column;
+gap: 9px;
+}
+
+.fm24-event {
+display: grid;
+grid-template-columns: 42px 1fr auto;
+align-items: center;
+gap: 12px;
+padding: 12px;
+border-radius: 15px;
+background: rgba(255,255,255,0.035);
+border: 1px solid rgba(255,255,255,0.05);
+}
+
+.fm24-event-marker {
+width: 38px;
+height: 38px;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 12px;
+}
+
+.fm24-event-goal {
+color: #73ffd4;
+background: rgba(0,255,170,0.08);
+}
+
+.fm24-event-assist {
+color: #70bfff;
+background: rgba(0,150,255,0.08);
+}
+
+.fm24-event-save {
+color: #ffd166;
+background: rgba(255,190,0,0.08);
+}
+
+.fm24-event-info strong {
+display: block;
+font-size: 12px;
+}
+
+.fm24-event-info span {
+display: block;
+margin-top: 3px;
+color: rgba(255,255,255,0.4);
+font-size: 9px;
+font-weight: 800;
+}
+
+.fm24-event-info small {
+margin-left: 4px;
+}
+
+.fm24-event-time {
+text-align: right;
+color: rgba(255,255,255,0.6);
+font-size: 12px;
+font-weight: 900;
+}
+
+.fm24-event-time small {
+display: block;
+color: rgba(255,255,255,0.25);
+font-size: 8px;
+}
+
+.fm24-empty-state {
+padding: 50px 20px;
+text-align: center;
+}
+
+.fm24-empty-icon {
+font-size: 32px;
+color: rgba(255,255,255,0.18);
+}
+
+.fm24-empty-state h4 {
+margin-top: 15px;
+font-size: 14px;
+}
+
+.fm24-empty-state p {
+color: rgba(255,255,255,0.35);
+font-size: 11px;
+}
+
+
+.fm24-roster-group + .fm24-roster-group {
+margin-top: 25px;
+}
+
+.fm24-roster-team-title {
+margin-bottom: 12px;
+font-size: 11px;
+font-weight: 900;
+}
+
+.fm24-roster-home {
+color: #73ffd4;
+}
+
+.fm24-roster-away {
+color: #70bfff;
+}
+
+.fm24-player-card {
+display: flex;
+align-items: center;
+gap: 8px;
+padding: 8px;
+border-radius: 12px;
+background: rgba(255,255,255,0.035);
+}
+
+.fm24-player-image {
+position: relative;
+width: 38px;
+height: 38px;
+flex: 0 0 38px;
+}
+
+.fm24-player-image img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+border-radius: 50%;
+}
+
+.fm24-player-ring {
+position: absolute;
+inset: -2px;
+border-radius: 50%;
+border: 1px solid;
+}
+
+.fm24-ring-home {
+border-color: rgba(0,255,170,0.4);
+}
+
+.fm24-ring-away {
+border-color: rgba(0,150,255,0.4);
+}
+
+.fm24-player-data {
+min-width: 0;
+}
+
+.fm24-player-data strong {
+display: block;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+font-size: 10px;
+}
+
+.fm24-player-data span {
+color: rgba(255,255,255,0.35);
+font-size: 8px;
+}
+
+.fm24-reveal-up,
+.fm24-reveal-left,
+.fm24-reveal-right,
+.fm24-reveal-scale {
+opacity: 0;
+transition: 0.7s ease;
+}
+
+.fm24-reveal-up {
+transform: translateY(25px);
+}
+
+.fm24-reveal-left {
+transform: translateX(-25px);
+}
+
+.fm24-reveal-right {
+transform: translateX(25px);
+}
+
+.fm24-reveal-scale {
+transform: scale(0.96);
+}
+
+.fm24-animated {
+opacity: 1;
+transform: none;
+}
+
+@media (max-width: 767px) {
+
+.fm24-arena {
+padding-top: 20px;
+}
+
+.fm24-command,
+.fm24-score-card,
+.fm24-action-card,
+.fm24-battle-log,
+.fm24-roster,
+.fm24-host-panel {
+padding: 18px;
+border-radius: 20px;
+}
+
+.fm24-match-title {
+gap: 10px;
+}
+
+.fm24-vs-box {
+width: 42px;
+height: 42px;
+flex-basis: 42px;
+}
+
+.fm24-control-zone {
+justify-content: stretch;
+}
+
+.fm24-control-btn {
+flex: 1 1 140px;
+}
+
+.fm24-action-buttons {
+grid-template-columns: 1fr;
+}
+
+.fm24-crest-wrap {
+width: 105px;
+height: 105px;
+}
+
+.fm24-event {
+grid-template-columns: 36px 1fr;
+}
+
+.fm24-event-time {
+display: none;
+}
+
+}

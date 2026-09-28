@@ -1,0 +1,655 @@
+/* ═══════════════════════════════════════
+   FOOTBALL ARENA ADMIN - GAMING THEME
+   Glassmorphism | Neon | Stadium Vibes
+═══════════════════════════════════════ */
+
+:root {
+    --pitch-black: #050a0f;
+    --deep-jersey: #0f172a;
+    --glass-bg: rgba(15, 23, 42, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-highlight: rgba(255, 255, 255, 0.03);
+    --neon-green: #00ff88;
+    --neon-green-dim: rgba(0, 255, 136, 0.15);
+    --pitch-green: #10b981;
+    --gold-trophy: #fbbf24;
+    --alert-red: #ef4444;
+    --alert-yellow: #f59e0b;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --font-gaming: 'Orbitron', sans-serif;
+    --font-body: 'Rajdhani', sans-serif;
+    --shadow-glow: 0 0 40px rgba(0, 255, 136, 0.15);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--pitch-black);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ─── Stadium Background (ONLINE IMAGE) ─── */
+.stadium-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    background: 
+        linear-gradient(135deg, rgba(5, 10, 15, 0) 0%, rgba(5,10,15,0.6) 100%),
+        url('https://plus.unsplash.com/premium_photo-1684713510655-e6e31536168d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Zm9vdGJhbGwlMjBzdGFkaXVtfGVufDB8fDB8fHww') center/cover no-repeat;
+    animation: stadiumZoom 20s ease-in-out infinite alternate;
+    filter: brightness(0.7) contrast(1.2);
+}
+
+/* Alternative high-res options you can swap in:
+   - Night stadium: https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=1920&q=80
+   - Dramatic lights: https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=1920&q=80
+   - Crowd view: https://images.unsplash.com/photo-1489944440615-453fc2b02096?w=1920&q=80
+*/
+
+@keyframes stadiumZoom {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
+}
+
+.pitch-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background: 
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 50px,
+            rgba(0, 255, 136, 0.03) 50px,
+            rgba(0, 255, 136, 0.03) 51px
+        );
+    pointer-events: none;
+}
+
+/* ─── Retro Scanlines ─── */
+.scanlines {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0),
+        rgba(255,255,255,0) 50%,
+        rgba(0,0,0,0.1) 50%,
+        rgba(0,0,0,0.1)
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+/* ─── Trophy Particles ─── */
+.trophy-particles {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    font-size: 1.2rem;
+    opacity: 0;
+    animation: floatUp linear infinite;
+    filter: drop-shadow(0 0 8px var(--neon-green-dim));
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(100vh) rotate(0deg) scale(0.5);
+        opacity: 0;
+    }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% {
+        transform: translateY(-10vh) rotate(360deg) scale(1);
+        opacity: 0;
+    }
+}
+
+/* ─── Locker Room (Main Container) ─── */
+.locker-room {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 480px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* ─── Player Card (Glassmorphism Login Card) ─── */
+.player-card {
+    width: 100%;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.6),
+        inset 0 1px 1px var(--glass-highlight),
+        0 0 0 1px rgba(0, 255, 136, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.player-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0,255,136,0.08) 0%, transparent 70%);
+    animation: cardPulse 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes cardPulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+/* ─── Team Badge ─── */
+.team-badge {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.badge-icon {
+    font-size: 3rem;
+    z-index: 2;
+    position: relative;
+    animation: ballBounce 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 15px rgba(255,255,255,0.3));
+}
+
+@keyframes ballBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(10deg); }
+}
+
+.badge-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--neon-green-dim) 0%, transparent 70%);
+    animation: glowPulse 2s ease-in-out infinite;
+}
+
+.badge-ring {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: var(--neon-green);
+    border-bottom-color: var(--neon-green);
+    animation: ringSpin 3s linear infinite;
+}
+
+@keyframes ringSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes glowPulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.2); }
+}
+
+/* ─── Typography ─── */
+.match-title {
+    font-family: var(--font-gaming);
+    font-size: 1.75rem;
+    font-weight: 900;
+    text-align: center;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 0.25rem;
+    text-shadow: 0 0 20px var(--neon-green-dim);
+}
+
+.match-subtitle {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--neon-green);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+/* ─── Match Alerts ─── */
+.match-alerts {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.alert {
+    padding: 0.875rem 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    animation: slideInRight 0.4s ease-out;
+}
+
+.flag-error {
+    background: rgba(239, 68, 68, 0.15);
+    border-left: 4px solid var(--alert-red);
+    color: #fca5a5;
+}
+
+.flag-success {
+    background: rgba(16, 185, 129, 0.15);
+    border-left: 4px solid var(--pitch-green);
+    color: #6ee7b7;
+}
+
+.flag-warning {
+    background: rgba(245, 158, 11, 0.15);
+    border-left: 4px solid var(--alert-yellow);
+    color: #fcd34d;
+}
+
+.flag-info {
+    background: rgba(59, 130, 246, 0.15);
+    border-left: 4px solid #3b82f6;
+    color: #93c5fd;
+}
+
+.flag-icon {
+    font-size: 1.1rem;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ─── Tactical Form ─── */
+.tactical-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.squad-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.field-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+}
+
+.label-icon {
+    font-size: 1rem;
+}
+
+/* ─── Glass Inputs ─── */
+.input-wrapper {
+    position: relative;
+}
+
+.squad-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.squad-input::placeholder {
+    color: rgba(148, 163, 184, 0.5);
+}
+
+.squad-input:focus {
+    border-color: var(--neon-green);
+    background: rgba(15, 23, 42, 0.8);
+    box-shadow: 0 0 0 4px var(--neon-green-dim), 0 0 20px rgba(0, 255, 136, 0.1);
+}
+
+.input-line {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+    transition: all 0.4s ease;
+    transform: translateX(-50%);
+}
+
+.squad-input:focus ~ .input-line {
+    width: 100%;
+}
+
+.input-glow {
+    position: absolute;
+    inset: -1px;
+    border-radius: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    box-shadow: 0 0 20px var(--neon-green-dim);
+}
+
+.squad-input:focus ~ .input-glow {
+    opacity: 1;
+}
+
+/* ─── Kickoff Button ─── */
+.kickoff-btn {
+    position: relative;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    margin-top: 0.5rem;
+    background: linear-gradient(135deg, var(--pitch-green) 0%, #059669 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-family: var(--font-gaming);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px -5px rgba(16, 185, 129, 0.4);
+}
+
+.kickoff-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -5px rgba(16, 185, 129, 0.6), 0 0 0 4px var(--neon-green-dim);
+}
+
+.kickoff-btn:active {
+    transform: translateY(0);
+}
+
+.btn-icon {
+    font-size: 1.25rem;
+    transition: transform 0.3s ease;
+}
+
+.kickoff-btn:hover .btn-icon {
+    transform: scale(1.2) rotate(-10deg);
+}
+
+.btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.kickoff-btn:hover .btn-shine {
+    left: 100%;
+}
+
+.btn-ripple {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    opacity: 0;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    animation: ripple 2s infinite;
+}
+
+@keyframes ripple {
+    0% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+    100% {
+        opacity: 0;
+        box-shadow: 0 0 0 20px rgba(16, 185, 129, 0);
+    }
+}
+
+/* ─── Security Note ─── */
+.security-note {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    opacity: 0.7;
+}
+
+.lock-icon {
+    font-size: 0.9rem;
+}
+
+/* ─── Stadium Floodlights ─── */
+.floodlights {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    pointer-events: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 5%;
+}
+
+.light-beam {
+    width: 300px;
+    height: 600px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 80%);
+    filter: blur(40px);
+    transform-origin: top center;
+    animation: flicker 5s ease-in-out infinite;
+}
+
+.light-beam.left {
+    transform: rotate(15deg);
+    animation-delay: 0s;
+}
+
+.light-beam.right {
+    transform: rotate(-15deg);
+    animation-delay: 2.5s;
+}
+
+@keyframes flicker {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+    52% { opacity: 0.8; }
+    54% { opacity: 1; }
+}
+
+/* ─── Scoreboard Decor ─── */
+.scoreboard-decor {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 10;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.score-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+}
+
+.score-dot.live {
+    background: var(--neon-green);
+    box-shadow: 0 0 10px var(--neon-green);
+    animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE DESIGN
+═══════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    .locker-room {
+        padding: 1rem;
+        align-items: flex-start;
+        padding-top: 3rem;
+    }
+    
+    .player-card {
+        padding: 2rem 1.5rem;
+        border-radius: 20px;
+    }
+    
+    .match-title {
+        font-size: 1.5rem;
+    }
+    
+    .match-subtitle {
+        font-size: 0.875rem;
+        letter-spacing: 2px;
+    }
+    
+    .badge-icon {
+        font-size: 2.5rem;
+    }
+    
+    .team-badge {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .floodlights {
+        display: none;
+    }
+    
+    .scoreboard-decor {
+        top: 1rem;
+        right: 1rem;
+    }
+    
+    .stadium-bg {
+        background-position: center;
+    }
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 14px;
+    }
+    
+    .player-card {
+        padding: 1.75rem 1.25rem;
+        border-radius: 16px;
+    }
+    
+    .squad-input {
+        padding: 0.875rem 1rem;
+        font-size: 16px; /* Prevents iOS zoom */
+    }
+    
+    .kickoff-btn {
+        padding: 0.875rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .match-alerts {
+        font-size: 0.9rem;
+    }
+    
+    .security-note {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+}
+
+/* ─── Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .stadium-bg {
+        animation: none;
+    }
+}

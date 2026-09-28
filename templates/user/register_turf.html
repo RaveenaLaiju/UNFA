@@ -1,0 +1,471 @@
+{% extends 'user/user_head.html' %} 
+{% block content %} 
+{% load static %}
+
+
+<div class="ftreg24-page">
+  <div class="ftreg24-bg"></div>
+
+  <div class="ftreg24-light ftreg24-light-one"></div>
+  <div class="ftreg24-light ftreg24-light-two"></div>
+  <div class="ftreg24-light ftreg24-light-three"></div>
+
+  <div class="ftreg24-pitch-lines"></div>
+  <div class="ftreg24-particles" id="ftreg24ParticleField"></div>
+
+
+  <main class="ftreg24-content">
+    <div class="container-fluid px-3 px-md-4 px-xl-5">
+      <section class="ftreg24-hero ftreg24-animate ftreg24-delay-1">
+        <div class="ftreg24-hero-orb"></div>
+
+        <div class="ftreg24-kicker">
+          <i class="fas fa-futbol"></i>
+          Football Arena Network
+        </div>
+
+        <h1 class="ftreg24-title">
+          Register New
+          <span>Turf</span>
+        </h1>
+
+        <div class="ftreg24-title-line"></div>
+
+        <p class="ftreg24-subtitle">
+          Add your football ground to the platform and let players discover,
+          book and experience your arena.
+        </p>
+      </section>
+
+      <div class="row g-4 g-xl-5 justify-content-center">
+
+        <div class="col-12 col-lg-7 col-xl-7">
+          <section
+            class="ftreg24-glass ftreg24-form-card ftreg24-animate ftreg24-delay-2"
+          >
+            <!-- Corner Decorations -->
+            <div class="ftreg24-corner ftreg24-corner-tl"></div>
+            <div class="ftreg24-corner ftreg24-corner-tr"></div>
+            <div class="ftreg24-corner ftreg24-corner-bl"></div>
+            <div class="ftreg24-corner ftreg24-corner-br"></div>
+
+            <!-- Card Heading -->
+            <div class="ftreg24-card-heading">
+              <div class="ftreg24-card-icon">
+                <i class="fas fa-map-marked-alt"></i>
+              </div>
+
+              <div>
+                <h2>Turf Registration</h2>
+                <p>Enter your football arena details</p>
+              </div>
+            </div>
+
+
+            <form
+              method="POST"
+              action="{% url 'register_turf' %}"
+              enctype="multipart/form-data"
+              id="ftreg24Form"
+            >
+              {% csrf_token %}
+
+              <!-- Turf Name -->
+              <div class="ftreg24-field">
+                <label class="ftreg24-label" for="ftreg24TurfName">
+                  <i class="fas fa-signature"></i>
+                  Turf Name
+                </label>
+
+                <input
+                  type="text"
+                  name="turf_name"
+                  id="ftreg24TurfName"
+                  class="ftreg24-input"
+                  placeholder="e.g. Greenfield Arena"
+                  required
+                  autocomplete="off"
+                />
+              </div>
+
+              <!-- District + Location -->
+              <div class="row g-3">
+                <!-- District -->
+                <div class="col-12 col-md-6">
+                  <div class="ftreg24-field">
+                    <label class="ftreg24-label" for="ftreg24District">
+                      <i class="fas fa-map-marked-alt"></i>
+                      District
+                    </label>
+
+                    <select
+                      name="turf_district"
+                      id="ftreg24District"
+                      class="ftreg24-input ftreg24-select"
+                      required
+                    >
+                      <option value="">Select District</option>
+
+                      <option value="Thiruvananthapuram">
+                        Thiruvananthapuram
+                      </option>
+
+                      <option value="Kollam">Kollam</option>
+
+                      <option value="Pathanamthitta">Pathanamthitta</option>
+
+                      <option value="Alappuzha">Alappuzha</option>
+
+                      <option value="Kottayam">Kottayam</option>
+
+                      <option value="Idukki">Idukki</option>
+
+                      <option value="Ernakulam">Ernakulam</option>
+
+                      <option value="Thrissur">Thrissur</option>
+
+                      <option value="Palakkad">Palakkad</option>
+
+                      <option value="Malappuram">Malappuram</option>
+
+                      <option value="Kozhikode">Kozhikode</option>
+
+                      <option value="Wayanad">Wayanad</option>
+
+                      <option value="Kannur">Kannur</option>
+
+                      <option value="Kasaragod">Kasaragod</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Location -->
+                <div class="col-12 col-md-6">
+                  <div class="ftreg24-field">
+                    <label class="ftreg24-label" for="ftreg24Location">
+                      <i class="fas fa-city"></i>
+                      Location
+                    </label>
+
+                    <input
+                      type="text"
+                      name="turf_location"
+                      id="ftreg24Location"
+                      class="ftreg24-input"
+                      placeholder="City / Town"
+                      required
+                      autocomplete="off"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hourly Rate -->
+              <div class="ftreg24-field">
+                <label class="ftreg24-label" for="ftreg24Rate">
+                  <i class="fas fa-rupee-sign"></i>
+                  Hourly Rate
+                </label>
+
+                <div class="ftreg24-rate-wrapper">
+                  <span class="ftreg24-rate-symbol"> ₹ </span>
+
+                  <input
+                    type="number"
+                    name="turf_rate"
+                    id="ftreg24Rate"
+                    class="ftreg24-input ftreg24-rate-input"
+                    placeholder="e.g. 1000"
+                    required
+                    min="100"
+                  />
+                </div>
+              </div>
+
+              <!-- Turf Image -->
+              <div class="ftreg24-field">
+                <label class="ftreg24-label" for="ftreg24Image">
+                  <i class="fas fa-image"></i>
+                  Turf Image
+                </label>
+
+                <input
+                  type="file"
+                  name="turf_image"
+                  id="ftreg24Image"
+                  class="ftreg24-input ftreg24-file"
+                  accept="image/*"
+                  required
+                />
+              </div>
+
+              <!-- Submit Button -->
+              <button type="submit" class="ftreg24-submit" id="ftreg24Submit">
+                <i class="fas fa-plus-circle"></i>
+
+                <span> Register Turf </span>
+              </button>
+            </form>
+          </section>
+        </div>
+
+        <div class="col-12 col-lg-5 col-xl-5">
+          <aside
+            class="ftreg24-glass ftreg24-preview-card ftreg24-animate ftreg24-delay-3"
+          >
+            <!-- Corner Decorations -->
+            <div class="ftreg24-corner ftreg24-corner-tl"></div>
+            <div class="ftreg24-corner ftreg24-corner-tr"></div>
+            <div class="ftreg24-corner ftreg24-corner-bl"></div>
+            <div class="ftreg24-corner ftreg24-corner-br"></div>
+
+            <!-- Preview Heading -->
+            <div class="ftreg24-preview-heading">
+              <i class="fas fa-eye ftreg24-preview-heading-icon"></i>
+
+              <span> Live Preview </span>
+
+              <div class="ftreg24-live">
+                <span class="ftreg24-live-dot"></span>
+
+                LIVE
+              </div>
+            </div>
+
+            <!-- Preview Container -->
+            <div id="ftreg24PreviewContainer">
+              <!-- Empty State -->
+              <div class="ftreg24-empty" id="ftreg24PreviewEmpty">
+                <div class="ftreg24-empty-ball">
+                  <i class="fas fa-futbol"></i>
+                </div>
+
+                <h3>Your Turf Awaits</h3>
+
+                <p>
+                  Start entering your turf information to see your live arena
+                  preview here.
+                </p>
+              </div>
+
+              <!-- Turf Preview Card -->
+              <div
+                class="ftreg24-turf-preview"
+                id="ftreg24PreviewCard"
+                style="display: none"
+              >
+                <!-- Preview Image -->
+                <div class="ftreg24-preview-image">
+                  <img
+                    src=""
+                    alt="Turf Preview"
+                    id="ftreg24PreviewImage"
+                    style="display: none"
+                  />
+
+                  <div
+                    class="ftreg24-image-placeholder"
+                    id="ftreg24ImagePlaceholder"
+                  >
+                    <i class="fas fa-image"></i>
+
+                    <span> No image selected </span>
+                  </div>
+                </div>
+
+                <!-- Preview Information -->
+                <div class="ftreg24-preview-info">
+                  <h3 class="ftreg24-preview-name" id="ftreg24PreviewName">
+                    Turf Name
+                  </h3>
+
+                  <!-- Meta -->
+                  <div class="ftreg24-meta">
+                    <span class="ftreg24-meta-tag">
+                      <i class="fas fa-map-marker-alt"></i>
+
+                      <span id="ftreg24PreviewDistrict"> District </span>
+                    </span>
+
+                    <span class="ftreg24-meta-tag">
+                      <i class="fas fa-city"></i>
+
+                      <span id="ftreg24PreviewLocation"> Location </span>
+                    </span>
+                  </div>
+
+                  <!-- Rate -->
+                  <div class="ftreg24-rate">
+                    <span class="ftreg24-rate-currency"> ₹ </span>
+
+                    <span class="ftreg24-rate-value" id="ftreg24PreviewRate">
+                      0
+                    </span>
+
+                    <span class="ftreg24-rate-unit"> / hour </span>
+                  </div>
+
+                  <!-- Status -->
+                  <div class="ftreg24-status">
+                    <span class="ftreg24-status-dot"></span>
+
+                    <span> Arena information updating live </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  (function () {
+    "use strict";
+    const ftreg24Form = document.getElementById("ftreg24Form");
+
+    const ftreg24Inputs = {
+      name: document.getElementById("ftreg24TurfName"),
+      district: document.getElementById("ftreg24District"),
+      location: document.getElementById("ftreg24Location"),
+      rate: document.getElementById("ftreg24Rate"),
+      image: document.getElementById("ftreg24Image"),
+    };
+
+    const ftreg24Preview = {
+      empty: document.getElementById("ftreg24PreviewEmpty"),
+      card: document.getElementById("ftreg24PreviewCard"),
+      name: document.getElementById("ftreg24PreviewName"),
+      district: document.getElementById("ftreg24PreviewDistrict"),
+      location: document.getElementById("ftreg24PreviewLocation"),
+      rate: document.getElementById("ftreg24PreviewRate"),
+      image: document.getElementById("ftreg24PreviewImage"),
+      placeholder: document.getElementById("ftreg24ImagePlaceholder"),
+    };
+
+    const ftreg24Submit = document.getElementById("ftreg24Submit");
+
+    function ftreg24HasValue() {
+      return (
+        ftreg24Inputs.name.value.trim() ||
+        ftreg24Inputs.district.value ||
+        ftreg24Inputs.location.value.trim() ||
+        ftreg24Inputs.rate.value
+      );
+    }
+
+    function ftreg24UpdateVisibility() {
+      const ftreg24HasImage =
+        ftreg24Inputs.image.files && ftreg24Inputs.image.files.length > 0;
+
+      if (ftreg24HasValue() || ftreg24HasImage) {
+        ftreg24Preview.empty.style.display = "none";
+
+        ftreg24Preview.card.style.display = "block";
+      } else {
+        ftreg24Preview.empty.style.display = "flex";
+
+        ftreg24Preview.card.style.display = "none";
+      }
+    }
+
+    function ftreg24UpdateText() {
+      ftreg24Preview.name.textContent =
+        ftreg24Inputs.name.value.trim() || "Turf Name";
+
+      ftreg24Preview.district.textContent =
+        ftreg24Inputs.district.value || "District";
+
+      ftreg24Preview.location.textContent =
+        ftreg24Inputs.location.value.trim() || "Location";
+
+      ftreg24Preview.rate.textContent = ftreg24Inputs.rate.value || "0";
+
+      ftreg24UpdateVisibility();
+    }
+
+    function ftreg24UpdateImage() {
+      const ftreg24File = ftreg24Inputs.image.files[0];
+
+      if (!ftreg24File) {
+        ftreg24Preview.image.src = "";
+        ftreg24Preview.image.style.display = "none";
+        ftreg24Preview.placeholder.style.display = "flex";
+        ftreg24UpdateVisibility();
+        return;
+      }
+
+      if (!ftreg24File.type.startsWith("image/")) {
+        ftreg24Inputs.image.value = "";
+        ftreg24Preview.image.src = "";
+        ftreg24Preview.image.style.display = "none";
+        ftreg24Preview.placeholder.style.display = "flex";
+        ftreg24UpdateVisibility();
+        return;
+      }
+
+      const ftreg24Reader = new FileReader();
+
+      ftreg24Reader.onload = function (ftreg24Event) {
+        ftreg24Preview.image.src = ftreg24Event.target.result;
+        ftreg24Preview.image.style.display = "block";
+        ftreg24Preview.placeholder.style.display = "none";
+      };
+
+      ftreg24Reader.readAsDataURL(ftreg24File);
+
+      ftreg24UpdateVisibility();
+    }
+
+    function ftreg24CreateParticles() {
+      const ftreg24Field = document.getElementById("ftreg24ParticleField");
+
+      if (!ftreg24Field) {
+        return;
+      }
+
+      const ftreg24ParticleCount = 30;
+
+      for (
+        let ftreg24Index = 0;
+        ftreg24Index < ftreg24ParticleCount;
+        ftreg24Index++
+      ) {
+        const ftreg24Particle = document.createElement("span");
+        ftreg24Particle.className = "ftreg24-particle";
+        ftreg24Particle.style.left = Math.random() * 100 + "%";
+        ftreg24Particle.style.animationDelay = Math.random() * 10 + "s";
+        ftreg24Particle.style.animationDuration = 8 + Math.random() * 7 + "s";
+        const ftreg24Size = 2 + Math.random() * 4;
+        ftreg24Particle.style.width = ftreg24Size + "px";
+        ftreg24Particle.style.height = ftreg24Size + "px";
+        ftreg24Field.appendChild(ftreg24Particle);
+      }
+    }
+
+    ftreg24Inputs.name.addEventListener("input", ftreg24UpdateText);
+    ftreg24Inputs.district.addEventListener("change", ftreg24UpdateText);
+    ftreg24Inputs.location.addEventListener("input", ftreg24UpdateText);
+    ftreg24Inputs.rate.addEventListener("input", ftreg24UpdateText);
+    ftreg24Inputs.image.addEventListener("change", ftreg24UpdateImage);
+
+    ftreg24Form.addEventListener("submit", function () {
+      ftreg24Submit.disabled = true;
+
+      ftreg24Submit.innerHTML =
+        '<i class="fas fa-circle-notch fa-spin"></i>' +
+        "<span>Processing...</span>";
+
+      ftreg24Submit.style.opacity = "0.78";
+    });
+
+
+    ftreg24CreateParticles();
+    ftreg24UpdateText();
+    ftreg24UpdateImage();
+  })();
+</script>
+
+{% endblock %}

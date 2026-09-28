@@ -1,0 +1,323 @@
+{% extends 'user/user_head.html' %} 
+{% load static %} 
+{% block content %}
+
+
+<div class="trp-payment-arena">
+  <div class="trp-pitch-grid"></div>
+
+  <div class="trp-center-field"></div>
+
+  <div class="trp-scanlines"></div>
+
+  <div
+    class="trp-floating-ball"
+    style="left: 8%; animation-duration: 15s; animation-delay: 0s"
+  >
+    ⚽
+  </div>
+
+  <div
+    class="trp-floating-ball"
+    style="left: 27%; animation-duration: 18s; animation-delay: 3s"
+  >
+    🏆
+  </div>
+
+  <div
+    class="trp-floating-ball"
+    style="left: 68%; animation-duration: 14s; animation-delay: 1s"
+  >
+    ⚽
+  </div>
+
+  <div
+    class="trp-floating-ball"
+    style="left: 85%; animation-duration: 20s; animation-delay: 5s"
+  >
+    🥅
+  </div>
+
+  <div
+    class="trp-floating-ball"
+    style="left: 50%; animation-duration: 16s; animation-delay: 7s"
+  >
+    🏟️
+  </div>
+
+  <div
+    class="trp-particle"
+    style="
+      width: 4px;
+      height: 4px;
+      left: 15%;
+      animation-duration: 12s;
+      animation-delay: 0s;
+    "
+  ></div>
+
+  <div
+    class="trp-particle"
+    style="
+      width: 6px;
+      height: 6px;
+      left: 35%;
+      animation-duration: 15s;
+      animation-delay: 2s;
+    "
+  ></div>
+
+  <div
+    class="trp-particle"
+    style="
+      width: 3px;
+      height: 3px;
+      left: 55%;
+      animation-duration: 10s;
+      animation-delay: 4s;
+    "
+  ></div>
+
+  <div
+    class="trp-particle"
+    style="
+      width: 5px;
+      height: 5px;
+      left: 75%;
+      animation-duration: 14s;
+      animation-delay: 1s;
+    "
+  ></div>
+
+  <div
+    class="trp-particle"
+    style="
+      width: 4px;
+      height: 4px;
+      left: 90%;
+      animation-duration: 18s;
+      animation-delay: 6s;
+    "
+  ></div>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-11 col-md-8 col-lg-6 col-xl-5">
+        <div class="trp-payment-card trp-fade-up">
+          <div class="trp-card-header">
+            <div class="trp-header-content text-center">
+              <div class="d-flex align-items-center justify-content-center">
+                <span class="trp-header-icon">
+                  <i class="fas fa-credit-card"></i>
+                </span>
+
+                <h3 class="trp-header-title">Tournament Registration</h3>
+              </div>
+
+              <p class="trp-header-subtitle">
+                Secure your place in the competition
+              </p>
+            </div>
+          </div>
+
+          <div class="card-body p-3 p-sm-4 p-md-5">
+            <div
+              class="trp-club-section text-center mb-4 trp-fade-up trp-delay-1"
+            >
+              <div class="trp-avatar-wrapper">
+                <div class="trp-avatar-ring"></div>
+
+                <img
+                  src="
+                                        {% if club.club_logo %}
+                                            {{ club.club_logo.url }}
+                                        {% else %}
+                                            {% static 'images/default_club.png' %}
+                                        {% endif %}
+                                    "
+                  class="trp-club-avatar"
+                  alt="{{ club.club_name }}"
+                />
+              </div>
+
+              <div class="trp-club-label">Registering Club</div>
+
+              <h4 class="trp-club-name">{{ club.club_name }}</h4>
+
+              <div class="trp-club-label">Tournament</div>
+
+              <div class="trp-tournament-badge">
+                <i class="fas fa-trophy"></i>
+
+                <span> {{ tournament.t_name }} </span>
+              </div>
+            </div>
+
+            <div class="trp-breakdown mb-4 trp-fade-up trp-delay-2">
+              <div class="trp-breakdown-heading">
+                <i class="fas fa-receipt"></i>
+
+                Payment Summary
+              </div>
+
+              <!-- Registration Fee -->
+
+              <div class="trp-breakdown-row">
+                <div class="trp-breakdown-label">
+                  <div class="trp-breakdown-icon">
+                    <i class="fas fa-ticket-alt"></i>
+                  </div>
+
+                  <span class="trp-breakdown-text"> Registration Fee </span>
+                </div>
+
+                <div class="trp-breakdown-value">
+                  ₹{{ tournament.registration_fee }}
+                </div>
+              </div>
+
+              <!-- Platform Fee -->
+
+              <div class="trp-breakdown-row">
+                <div class="trp-breakdown-label">
+                  <div class="trp-breakdown-icon">
+                    <i class="fas fa-server"></i>
+                  </div>
+
+                  <span class="trp-breakdown-text"> Platform Fee </span>
+                </div>
+
+                <div class="trp-breakdown-value">₹0.00</div>
+              </div>
+
+              <!-- Total -->
+
+              <div class="trp-breakdown-row trp-total-row">
+                <div class="trp-breakdown-label">
+                  <div class="trp-breakdown-icon">
+                    <i class="fas fa-wallet"></i>
+                  </div>
+
+                  <span class="trp-breakdown-text"> Total Amount </span>
+                </div>
+
+                <div class="trp-breakdown-value">
+                  ₹{{ tournament.registration_fee }}
+                </div>
+              </div>
+            </div>
+
+            <div class="trp-fade-up trp-delay-3">
+              <button id="pay-btn" type="button" class="trp-pay-button">
+                <i class="fas fa-shield-alt"></i>
+
+                Pay Securely ₹{{ tournament.registration_fee }}
+              </button>
+            </div>
+
+            <div class="trp-secure-footer trp-fade-up trp-delay-4">
+              <img
+                src="{% static 'images/razorpay-logo.png' %}"
+                alt="Razorpay"
+              />
+
+              <small class="trp-secure-text">
+                <i class="fas fa-lock"></i>
+
+                Secure payment powered by Razorpay
+              </small>
+            </div>
+
+            {% if debug %}
+
+            <div class="text-center mt-3 trp-fade-up trp-delay-4">
+              <a
+                href="
+                                        {% url 'simulate_tournament_payment' tournament.t_id %}
+                                    "
+                class="trp-dev-button"
+              >
+                <i class="fas fa-bug me-1"></i>
+
+                Simulate Payment (Dev Only)
+              </a>
+            </div>
+
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="text-center mt-4 trp-fade-up trp-delay-4">
+          <small class="trp-tagline">
+            <i class="fas fa-futbol"></i>
+
+            Game On. Pay Secure.
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+  var options = {
+    key: "{{ razorpay_key }}",
+    amount: "{{ amount }}",
+    currency: "INR",
+    name: "{{ tournament.t_name }}",
+    description: "Tournament Registration Fee",
+    order_id: "{{ payment.provider_order_id }}",
+
+    handler: function (response) {
+      var form = document.createElement("form");
+
+      form.method = "POST";
+      form.action = "{{ callback_url }}";
+
+      var fields = {
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_signature: response.razorpay_signature,
+        csrfmiddlewaretoken: "{{ csrf_token }}",
+      };
+
+      for (var key in fields) {
+        var input = document.createElement("input");
+
+        input.type = "hidden";
+        input.name = key;
+        input.value = fields[key];
+
+        form.appendChild(input);
+      }
+
+      document.body.appendChild(form);
+
+      form.submit();
+    },
+
+    prefill: {
+      name: "{{ user.user_name }}",
+      email: "{{ user.user_email|default:'user@example.com' }}",
+      contact: "{{ user.user_phone|default:'' }}",
+    },
+
+    theme: {
+      color: "#00c853",
+    },
+  };
+
+  document
+    .getElementById("pay-btn")
+    .addEventListener("click", function (event) {
+      event.preventDefault();
+
+      var razorpayCheckout = new Razorpay(options);
+
+      razorpayCheckout.open();
+    });
+</script>
+
+{% endblock %}

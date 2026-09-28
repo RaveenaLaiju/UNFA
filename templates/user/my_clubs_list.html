@@ -1,0 +1,722 @@
+{% extends 'user/user_head.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+  :root {
+    --pitch-black: #070b14;
+    --hud-panel: rgba(12, 20, 40, 0.75);
+    --neon-edge: rgba(0, 255, 136, 0.2);
+    --neon-edge-active: rgba(0, 255, 136, 0.6);
+    --acid-green: #00ff88;
+    --electric-blue: #00ccff;
+    --alert-orange: #ff4757;
+    --gold-rush: #ffa502;
+    --hud-white: #ffffff;
+    --hud-dim: #ffffff;
+    --glow-soft: 0 0 20px rgba(0, 255, 136, 0.1);
+    --glow-hard: 0 0 40px rgba(0, 255, 136, 0.3);
+    --corner-sm: 6px;
+    --corner-md: 14px;
+    --corner-lg: 22px;
+    --gap-xs: 0.5rem;
+    --gap-sm: 0.75rem;
+    --gap-md: 1rem;
+    --gap-lg: 1.5rem;
+    --gap-xl: 2rem;
+  }
+
+  /* Stadium Environment - NEW BACKGROUND IMAGE */
+  .stadium-bg {
+    position: relative;
+    min-height: 100vh;
+    background: 
+      linear-gradient(160deg, rgba(7, 11, 20, 0) 0%, rgb(18, 12, 40) 100%),
+      url('https://images.unsplash.com/photo-1601370690183-1c7796ecec61?w=600&auto=format&fit=crop&w=2000&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    overflow-x: hidden;
+  }
+
+  .stadium-bg::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: 
+      radial-gradient(ellipse at 30% 40%, rgba(0,255,136,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 70%, rgba(0,204,255,0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    animation: fogDrift 20s ease-in-out infinite;
+  }
+
+  @keyframes fogDrift {
+    0%, 100% { transform: translateX(0) translateY(0) scale(1); opacity: 0.4; }
+    33% { transform: translateX(15px) translateY(-10px) scale(1.05); opacity: 0.7; }
+    66% { transform: translateX(-10px) translateY(-20px) scale(1.02); opacity: 0.5; }
+  }
+
+  /* Match Container */
+  .match-container {
+    position: relative;
+    z-index: 1;
+    padding: 1rem 0;
+  }
+
+  /* HUD Glass Base */
+  .hud-glass {
+    background: var(--hud-panel);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    border: 1px solid var(--neon-edge);
+    border-radius: var(--corner-lg);
+    box-shadow: var(--glow-soft), inset 0 1px 0 rgba(255,255,255,0.06);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .hud-glass:hover {
+    border-color: var(--neon-edge-active);
+    box-shadow: var(--glow-hard), inset 0 1px 0 rgba(255,255,255,0.12);
+  }
+
+  /* Main Panel Glow */
+  .main-panel {
+    box-shadow: 0 0 40px rgba(0, 255, 136, 0.08), 0 8px 32px rgba(0,0,0,0.4), inset 0 0 30px rgba(0, 255, 136, 0.03);
+    border: 1px solid rgba(0, 255, 136, 0.18);
+  }
+
+  /* Command HUD Header */
+  .command-hud {
+    text-align: center;
+    padding: 1.5rem var(--gap-lg);
+    margin-bottom: 1rem;
+  }
+
+  .command-hud .match-title {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 900;
+    color: var(--hud-white);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 30px rgba(0,255,136,0.25);
+    position: relative;
+    display: inline-block;
+  }
+
+  .command-hud .match-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--acid-green), var(--electric-blue), transparent);
+    border-radius: 2px;
+    animation: hudPulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes hudPulse {
+    0%, 100% { opacity: 0.4; width: 60px; filter: blur(0px); }
+    50% { opacity: 1; width: 100px; filter: blur(1px); }
+  }
+
+  .command-hud .match-subtitle {
+    font-size: 1rem;
+    color: var(--hud-dim);
+    margin-top: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+
+  /* Empty Pitch State */
+  .empty-pitch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem var(--gap-lg);
+    text-align: center;
+    min-height: 300px;
+  }
+
+  .empty-pitch .cup-icon {
+    font-size: 4rem;
+    color: var(--acid-green);
+    margin-bottom: 1rem;
+    animation: cupFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(0,255,136,0.5));
+  }
+
+  @keyframes cupFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+    25% { transform: translateY(-15px) rotate(8deg) scale(1.05); }
+    50% { transform: translateY(-8px) rotate(0deg) scale(1); }
+    75% { transform: translateY(-12px) rotate(-8deg) scale(1.03); }
+  }
+
+  .empty-pitch .pitch-headline {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    color: var(--hud-white);
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .empty-pitch .pitch-desc {
+    color: var(--hud-dim);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    max-width: 480px;
+    line-height: 1.5;
+  }
+
+  /* Neon Boot Button */
+  .neon-boot {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 2.2rem;
+    background: linear-gradient(135deg, rgba(0,255,136,0.12), rgba(0,204,255,0.12));
+    border: 2px solid var(--acid-green);
+    border-radius: 60px;
+    color: var(--acid-green);
+    font-weight: 800;
+    font-size: 1rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 20px rgba(0,255,136,0.1);
+  }
+
+  .neon-boot::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,255,136,0.25), transparent);
+    transition: left 0.6s ease;
+  }
+
+  .neon-boot:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(0,255,136,0.35), 0 0 60px rgba(0,255,136,0.15);
+    color: #fff;
+    border-color: #fff;
+    letter-spacing: 2px;
+  }
+
+  .neon-boot:hover::before {
+    left: 100%;
+  }
+
+  .neon-boot:active {
+    transform: translateY(-1px) scale(0.98);
+  }
+
+  /* Lineup Grid */
+  .lineup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+    padding: 0 var(--gap-lg);
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .lineup-grid {
+      grid-template-columns: 1fr;
+      padding: 0 var(--gap-sm);
+      gap: 1rem;
+    }
+    .match-container {
+      padding: 0.5rem 0;
+    }
+    .command-hud {
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .lineup-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* ============================================
+     PLAYER CARD - GLASSMORPHISM GLOW
+     ============================================ */
+  .player-card {
+    position: relative;
+    border-radius: var(--corner-md);
+    overflow: hidden;
+    text-decoration: none;
+    display: block;
+    transform-style: preserve-3d;
+    transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+    /* Strong glassmorphism glow */
+    background: rgba(16, 24, 48, 0.6);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(0, 255, 136, 0.25);
+    box-shadow: 
+      0 0 20px rgba(0, 255, 136, 0.1),
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+
+  .player-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(7,11,20,0.9) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* Animated border glow on hover */
+  .player-card::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: var(--corner-md);
+    padding: 1.5px;
+    background: linear-gradient(135deg, var(--acid-green), var(--electric-blue), var(--acid-green));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .player-card:hover {
+    transform: translateY(-10px) scale(1.03);
+    z-index: 10;
+    border-color: rgba(0, 255, 136, 0.6);
+    box-shadow: 
+      0 0 40px rgba(0, 255, 136, 0.25),
+      0 0 80px rgba(0, 255, 136, 0.1),
+      0 12px 40px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+  .player-card:hover::after {
+    opacity: 0.7;
+    animation: borderRotate 3s linear infinite;
+  }
+
+  @keyframes borderRotate {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+
+  /* Team Banner - LOGO FIX */
+  .team-banner {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(7,11,20,0.98), rgba(16,24,48,0.98));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    z-index: 1;
+  }
+
+  /* LOGO FIX: object-fit contain so full logo shows */
+  .team-banner .turf-img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 0 15px rgba(0,255,136,0.15));
+    z-index: 1;
+  }
+
+  .player-card:hover .turf-img {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 25px rgba(0,255,136,0.35));
+  }
+
+  .team-banner .turf-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(7,11,20,0.95) 0%, rgba(7,11,20,0.1) 60%, transparent 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* Club Data */
+  .club-data {
+    position: relative;
+    z-index: 3;
+    padding: 1rem;
+    margin-top: -50px;
+  }
+
+  .club-data .team-name {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--hud-white);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-shadow: 0 3px 15px rgba(0,0,0,0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .club-data .team-name .kit-icon {
+    color: var(--acid-green);
+    font-size: 1.1rem;
+    filter: drop-shadow(0 0 8px rgba(0,255,136,0.4));
+  }
+
+  /* Stats Formation */
+  .stats-formation {
+    display: grid;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--hud-dim);
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.3s ease;
+  }
+
+  .stat-row:hover {
+    color: var(--hud-white);
+    padding-left: 6px;
+    border-bottom-color: rgba(0,255,136,0.2);
+  }
+
+  .stat-row:last-child {
+    border-bottom: none;
+  }
+
+  .stat-row .row-icon {
+    width: 24px;
+    text-align: center;
+    color: var(--electric-blue);
+    font-size: 0.85rem;
+    transition: transform 0.3s ease;
+  }
+
+  .stat-row:hover .row-icon {
+    transform: scale(1.2);
+    color: var(--acid-green);
+  }
+
+  .stat-row .row-label {
+    font-weight: 700;
+    color: var(--hud-white);
+    margin-right: 4px;
+  }
+
+  /* Arena Badge */
+  .arena-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: 0.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .arena-badge::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    padding: 1.5px;
+    background: linear-gradient(135deg, var(--acid-green), var(--electric-blue));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.6;
+  }
+
+  .arena-badge.approved {
+    background: rgba(0, 255, 136, 0.15);
+    border: 1px solid rgba(0, 255, 136, 0.4);
+    color: var(--acid-green);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.15), inset 0 0 8px rgba(0,255,136,0.05);
+  }
+
+  .arena-badge.waiting {
+    background: rgba(255, 71, 87, 0.15);
+    border: 1px solid rgba(255, 71, 87, 0.4);
+    color: var(--alert-orange);
+    box-shadow: 0 0 15px rgba(255, 71, 87, 0.15), inset 0 0 8px rgba(255,71,87,0.05);
+  }
+
+  .arena-badge i {
+    font-size: 0.75rem;
+  }
+
+  /* Disabled Kit Variant */
+  .player-card.disabled-kit {
+    opacity: 0.85;
+    filter: grayscale(0.5) contrast(0.9);
+    cursor: default;
+    pointer-events: none;
+    border-color: rgba(255, 71, 87, 0.2);
+    box-shadow: 0 0 20px rgba(255, 71, 87, 0.08), 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .player-card.disabled-kit:hover {
+    transform: translateY(-4px) scale(1.01);
+    border-color: rgba(255, 71, 87, 0.4);
+    box-shadow: 0 0 30px rgba(255, 71, 87, 0.15), 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  /* Scroll Reveal */
+  .hud-animate {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hud-animate.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .hud-animate[data-delay="1"] { transition-delay: 0.08s; }
+  .hud-animate[data-delay="2"] { transition-delay: 0.16s; }
+  .hud-animate[data-delay="3"] { transition-delay: 0.24s; }
+  .hud-animate[data-delay="4"] { transition-delay: 0.32s; }
+  .hud-animate[data-delay="5"] { transition-delay: 0.40s; }
+  .hud-animate[data-delay="6"] { transition-delay: 0.48s; }
+
+  /* Pitch Scanlines */
+  .pitch-scanlines {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.04) 50%, transparent 50%);
+    background-size: 100% 5px;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.25;
+    animation: scanMove 8s linear infinite;
+  }
+
+  @keyframes scanMove {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100px; }
+  }
+
+  /* Responsive Typography */
+  @media (max-width: 480px) {
+    .command-hud .match-title {
+      font-size: 1.6rem;
+      letter-spacing: 1px;
+    }
+    .team-banner {
+      height: 160px;
+      padding: 1rem;
+    }
+    .club-data .team-name {
+      font-size: 1.1rem;
+    }
+    .stat-row {
+      font-size: 0.82rem;
+    }
+    .neon-boot {
+      padding: 0.75rem 1.8rem;
+      font-size: 0.9rem;
+    }
+    .empty-pitch {
+      min-height: 250px;
+    }
+    .empty-pitch .cup-icon {
+      font-size: 3rem;
+    }
+  }
+
+  /* Floating corner dots */
+  .player-card .corner-dot {
+    position: absolute;
+    width: 6px; height: 6px;
+    background: var(--acid-green);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0,255,136,0.6);
+    z-index: 5;
+    opacity: 0;
+    transition: all 0.4s ease;
+  }
+
+  .player-card:hover .corner-dot {
+    opacity: 1;
+  }
+
+  .player-card .corner-dot.tl { top: 10px; left: 10px; }
+  .player-card .corner-dot.tr { top: 10px; right: 10px; }
+  .player-card .corner-dot.bl { bottom: 10px; left: 10px; }
+  .player-card .corner-dot.br { bottom: 10px; right: 10px; }
+</style>
+
+
+
+<div class="stadium-bg">
+  <div class="match-container">
+    
+    <!-- Main HUD Panel -->
+    <div class="container">
+      
+      <section class="pitch-headquarters">
+        <div class="command-hud hud-animate">
+          {% if clubs %}
+            <h1 class="match-title">
+              <i class="fas fa-shield-alt" style="color: var(--acid-green); margin-right: 10px; filter: drop-shadow(0 0 10px rgba(0,255,136,0.5));"></i>
+              My Squads
+            </h1>
+            <p class="match-subtitle">Manage your registered football clubs and dominate the league</p>
+          {% else %}
+            <div class="empty-pitch hud-animate">
+              <i class="fas fa-trophy cup-icon"></i>
+              <h1 class="pitch-headline">No Active Squads</h1>
+              <p class="pitch-desc">Your football empire awaits. Register your first club and step onto the pitch.</p>
+              <a href="{% url 'register_club' %}" class="neon-boot">
+                <i class="fas fa-plus-circle"></i> Register Club
+              </a>
+            </div>
+          {% endif %}
+        </div>
+
+        {% if clubs %}
+        <div class="lineup-grid">
+          {% for club in clubs %}
+            {% if club.is_validated %}
+              <a href="{% url 'club_interface' club.club_id %}" class="player-card animate-on-scroll hud-animate" data-delay="{{ forloop.counter }}">
+                <div class="corner-dot tl"></div>
+                <div class="corner-dot tr"></div>
+                <div class="corner-dot bl"></div>
+                <div class="corner-dot br"></div>
+                
+                <div class="team-banner">
+                  <img src="{{ club.club_logo.url }}" alt="{{ club.club_name }}" class="turf-img" onerror="this.src='https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'">
+                  <div class="turf-overlay"></div>
+                </div>
+                
+                <div class="club-data">
+                  <h2 class="team-name">
+                    <i class="fas fa-shield-alt kit-icon"></i>
+                    {{ club.club_name }}
+                  </h2>
+                  
+                  <div class="stats-formation">
+                    <div class="stat-row">
+                      <span class="row-icon"><i class="fas fa-user-tie"></i></span>
+                      <span><span class="row-label">Manager:</span> {{ club.club_manager.user_name }}</span>
+                    </div>
+                    <div class="stat-row">
+                      <span class="row-icon"><i class="fas fa-map-marked-alt"></i></span>
+                      <span><span class="row-label">Location:</span> {{ club.club_location }}, {{ club.club_district }}</span>
+                    </div>
+                    <div class="stat-row">
+                      <span class="row-icon"><i class="fas fa-futbol"></i></span>
+                      <span><span class="row-label">Home Ground:</span> {{ club.club_home_ground.turf_name }}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="arena-badge approved">
+                    <i class="fas fa-check-circle"></i> Validated
+                  </div>
+                </div>
+              </a>
+            {% else %}
+              <div class="player-card disabled-kit animate-on-scroll hud-animate" data-delay="{{ forloop.counter }}">
+                <div class="team-banner">
+                  <img src="{{ club.club_logo.url }}" alt="{{ club.club_name }}" class="turf-img" style="filter: grayscale(0.7) brightness(0.7);" onerror="this.src='https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'">
+                  <div class="turf-overlay"></div>
+                </div>
+                
+                <div class="club-data">
+                  <h2 class="team-name">
+                    <i class="fas fa-shield-alt kit-icon" style="color: var(--alert-orange); filter: drop-shadow(0 0 8px rgba(255,71,87,0.4));"></i>
+                    {{ club.club_name }}
+                  </h2>
+                  
+                  <div class="stats-formation">
+                    <div class="stat-row">
+                      <span class="row-icon"><i class="fas fa-user-tie"></i></span>
+                      <span><span class="row-label">Manager:</span> {{ club.club_manager.user_name }}</span>
+                    </div>
+                    <div class="stat-row">
+                      <span class="row-icon"><i class="fas fa-map-marked-alt"></i></span>
+                      <span><span class="row-label">Location:</span> {{ club.club_location }}, {{ club.club_district }}</span>
+                    </div>
+                    <div class="stat-row">
+                      <span class="row-icon"><i class="fas fa-futbol"></i></span>
+                      <span><span class="row-label">Home Ground:</span> {{ club.club_home_ground.turf_name }}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="arena-badge waiting">
+                    <i class="fas fa-clock"></i> Pending Validation
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+      </section>
+      
+    </div>
+  </div>
+</div>
+
+<!-- Scroll Reveal Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.08
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.hud-animate').forEach(el => {
+      observer.observe(el);
+    });
+  });
+</script>
+
+{% endblock %}

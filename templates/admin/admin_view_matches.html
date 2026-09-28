@@ -1,0 +1,346 @@
+{% extends 'admin/admin_base.html' %}
+{% block title %}Matches - Football Arena Admin{% endblock %}
+
+{% block content %}
+
+<div class="fb-page-wrapper container-fluid">
+    <div class="fb-header-section fb-glass">
+        <div class="fb-header-glow"></div>
+        <div class="row align-items-center g-3">
+            <div class="col-12 col-md-8 text-center text-md-start">
+                <h1 class="fb-title-animated mb-2">⚽ Match Center</h1>
+                <p class="text-white-50 mb-0">Manage scheduled, live, and completed football matches.</p>
+            </div>
+          
+        </div>
+    </div>
+
+    <div class="fb-filter-bar fb-glass">
+        <form method="get">
+            <div class="row g-3 align-items-end">
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <label class="fb-filter-label">🔍 Team Name</label>
+                    <input type="text" name="team" class="form-control fb-filter-input" 
+                           placeholder="Search team..." value="{{ request.GET.team }}">
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <label class="fb-filter-label">🏟️ Turf</label>
+                    <input type="text" name="turf" class="form-control fb-filter-input" 
+                           placeholder="Search turf..." value="{{ request.GET.turf }}">
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <label class="fb-filter-label">📊 Status</label>
+                    <select name="status" class="form-select fb-filter-select">
+                        <option value="">All Statuses</option>
+                        <option value="scheduled" {% if request.GET.status == 'scheduled' %}selected{% endif %}>⏳ Scheduled</option>
+                        <option value="live" {% if request.GET.status == 'live' %}selected{% endif %}>🔴 Live</option>
+                        <option value="completed" {% if request.GET.status == 'completed' %}selected{% endif %}>✅ Completed</option>
+                    </select>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        <button type="submit" class="fb-btn fb-btn-primary flex-fill">
+                            <span>🔍</span> Scout
+                        </button>
+                        <a href="{% url 'admin_view_matches' %}" class="fb-btn fb-btn-danger flex-fill text-center text-decoration-none">
+                            <span>✕</span> Reset
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if live_matches %}
+    <div class="mb-5">
+        <div class="fb-section-header">
+            <div class="fb-section-icon">🔴</div>
+            <h2 class="fb-section-title">Live Matches</h2>
+            <div class="fb-section-line"></div>
+        </div>
+        <div class="row g-4">
+            {% for match in live_matches %}
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="fb-match-card fb-glass" data-aos="fade-up">
+                    <div class="fb-card-pulse"></div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="fb-badge fb-badge-live">
+                            <span class="fb-live-dot" style="width:8px;height:8px;"></span>
+                            LIVE
+                        </div>
+                        <div class="fb-datetime">
+                            📅 {{ match.match_date|date:"M d, Y" }} • {{ match.match_time }}
+                        </div>
+                    </div>
+                    <div class="fb-scoreboard">
+                        <div class="fb-team-side">
+                            <div class="fb-team-avatar">
+                                {% if match.match_home_team.club_logo %}
+                                <img src="{{ match.match_home_team.club_logo.url }}" alt="{{ match.match_home_team.club_name }}">
+                                {% else %}
+                                <div class="fb-team-placeholder">🏠</div>
+                                {% endif %}
+                            </div>
+                            <div class="fb-team-name text-truncate">{{ match.match_home_team.club_name }}</div>
+                        </div>
+                        <div class="fb-score-display">
+                            {% if match.result %}
+                                <span class="fb-score-home">{{ match.result.result_home_team|default:"0" }}</span>
+                                <span class="fb-score-divider">:</span>
+                                <span class="fb-score-away">{{ match.result.result_away_team|default:"0" }}</span>
+                            {% else %}
+                                <span class="fb-score-home">0</span>
+                                <span class="fb-score-divider">:</span>
+                                <span class="fb-score-away">0</span>
+                            {% endif %}
+                        </div>
+                        <div class="fb-team-side">
+                            <div class="fb-team-avatar">
+                                {% if match.match_away_team.club_logo %}
+                                <img src="{{ match.match_away_team.club_logo.url }}" alt="{{ match.match_away_team.club_name }}">
+                                {% else %}
+                                <div class="fb-team-placeholder">✈️</div>
+                                {% endif %}
+                            </div>
+                            <div class="fb-team-name text-truncate">{{ match.match_away_team.club_name }}</div>
+                        </div>
+                    </div>
+                    <div class="fb-info-list">
+                        <div class="fb-info-row">
+                            <span class="fb-info-icon">🏟️</span>
+                            <span class="fb-info-label">Venue</span>
+                            <span class="fb-info-value text-truncate">{{ match.match_turf.turf_name }}</span>
+                        </div>
+                        <div class="fb-info-row">
+                            <span class="fb-info-icon">📍</span>
+                            <span class="fb-info-label">Location</span>
+                            <span class="fb-info-value text-truncate">{{ match.match_turf.turf_location }}</span>
+                        </div>
+                    </div>
+                    <div class="fb-card-actions">
+                        <a href="{% url 'update_match_score' match.match_id %}" class="fb-btn-action fb-btn-action-primary">
+                            <span>⚽</span> Update Score
+                        </a>
+                        <form method="post" action="{% url 'finish_match' match.match_id %}" class="flex-fill">
+                            {% csrf_token %}
+                            <button type="submit" class="fb-btn-action fb-btn-action-success w-100">
+                                <span>🏁</span> Finish
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if scheduled_matches %}
+    <div class="mb-5">
+        <div class="fb-section-header">
+            <div class="fb-section-icon">⏳</div>
+            <h2 class="fb-section-title">Scheduled Matches</h2>
+            <div class="fb-section-line"></div>
+        </div>
+        <div class="row g-4">
+            {% for match in scheduled_matches %}
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="fb-match-card fb-glass" data-aos="fade-up">
+                    <div class="fb-card-shine"></div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="fb-badge fb-badge-scheduled">
+                            <span>📅</span> Upcoming
+                        </div>
+                        <div class="fb-datetime">
+                            {{ match.match_date|date:"M d, Y" }} • {{ match.match_time }}
+                        </div>
+                    </div>
+                    <div class="fb-scoreboard">
+                        <div class="fb-team-side">
+                            <div class="fb-team-avatar">
+                                {% if match.match_home_team.club_logo %}
+                                <img src="{{ match.match_home_team.club_logo.url }}" alt="{{ match.match_home_team.club_name }}">
+                                {% else %}
+                                <div class="fb-team-placeholder">🏠</div>
+                                {% endif %}
+                            </div>
+                            <div class="fb-team-name text-truncate">{{ match.match_home_team.club_name }}</div>
+                            <div class="fb-team-label">Home</div>
+                        </div>
+                        <div class="fb-vs-block">
+                            <div class="fb-vs-line"></div>
+                            <div class="fb-vs-text">VS</div>
+                            <div class="fb-vs-line"></div>
+                        </div>
+                        <div class="fb-team-side">
+                            <div class="fb-team-avatar">
+                                {% if match.match_away_team.club_logo %}
+                                <img src="{{ match.match_away_team.club_logo.url }}" alt="{{ match.match_away_team.club_name }}">
+                                {% else %}
+                                <div class="fb-team-placeholder">✈️</div>
+                                {% endif %}
+                            </div>
+                            <div class="fb-team-name text-truncate">{{ match.match_away_team.club_name }}</div>
+                            <div class="fb-team-label">Away</div>
+                        </div>
+                    </div>
+                    <div class="fb-info-list">
+                        <div class="fb-info-row">
+                            <span class="fb-info-icon">🏟️</span>
+                            <span class="fb-info-label">Turf</span>
+                            <span class="fb-info-value text-truncate">{{ match.match_turf.turf_name }}</span>
+                        </div>
+                        <div class="fb-info-row">
+                            <span class="fb-info-icon">📍</span>
+                            <span class="fb-info-label">Location</span>
+                            <span class="fb-info-value text-truncate">{{ match.match_turf.turf_location }}</span>
+                        </div>
+                        <div class="fb-info-row">
+                            <span class="fb-info-icon">⏰</span>
+                            <span class="fb-info-label">Kickoff</span>
+                            <span class="fb-info-value">{{ match.match_time }}</span>
+                        </div>
+                    </div>
+                    <div class="fb-card-actions">
+                        <form method="post" action="{% url 'start_match' match.match_id %}" class="flex-fill">
+                            {% csrf_token %}
+                            <button type="submit" class="fb-btn-action fb-btn-action-success w-100">
+                                <span>▶️</span> Start Match
+                            </button>
+                        </form>
+                        <form method="post" action="{% url 'admin_delete_match' match.match_id %}" 
+                              data-confirm="Delete match {{ match.match_home_team.club_name }} vs {{ match.match_away_team.club_name }}?"
+                              class="flex-fill">
+                            {% csrf_token %}
+                            <button type="submit" class="fb-btn-action fb-btn-action-danger w-100">
+                                <span>🗑️</span> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if completed_matches %}
+    <div class="mb-5">
+        <div class="fb-section-header">
+            <div class="fb-section-icon">🏆</div>
+            <h2 class="fb-section-title">Completed Matches</h2>
+            <div class="fb-section-line"></div>
+        </div>
+        <div class="row g-4">
+            {% for match in completed_matches %}
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="fb-match-card fb-glass" data-aos="fade-up">
+                    <div class="fb-card-finish"></div>
+                    <div class="d-flex justify-content-between align-items-center mb-3 pt-1">
+                        <div class="fb-badge fb-badge-completed">
+                            <span>✅</span> Finished
+                        </div>
+                        <div class="fb-datetime">
+                            {{ match.match_date|date:"M d, Y" }}
+                        </div>
+                    </div>
+
+                    <!-- 6.1 FINAL SCORE -->
+                    <div class="fb-final-score">
+                        <div class="fb-final-team">
+                            <div class="fb-final-avatar">
+                                {% if match.match_home_team.club_logo %}
+                                <img src="{{ match.match_home_team.club_logo.url }}" alt="{{ match.match_home_team.club_name }}">
+                                {% else %}
+                                <div class="fb-team-placeholder">🏠</div>
+                                {% endif %}
+                            </div>
+                            <div class="fb-final-name text-truncate">{{ match.match_home_team.club_name }}</div>
+                        </div>
+
+                        <div class="fb-final-result">
+                            {% if match.result %}
+                                <span class="fb-final-home-score {% if match.result.result_home_team > match.result.result_away_team %}fb-winner{% endif %}">
+                                    {{ match.result.result_home_team|default:"0" }}
+                                </span>
+                                <span class="fb-final-separator">-</span>
+                                <span class="fb-final-away-score {% if match.result.result_away_team > match.result.result_home_team %}fb-winner{% endif %}">
+                                    {{ match.result.result_away_team|default:"0" }}
+                                </span>
+                            {% else %}
+                                <span class="fb-final-home-score">0</span>
+                                <span class="fb-final-separator">-</span>
+                                <span class="fb-final-away-score">0</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="fb-final-team">
+                            <div class="fb-final-avatar">
+                                {% if match.match_away_team.club_logo %}
+                                <img src="{{ match.match_away_team.club_logo.url }}" alt="{{ match.match_away_team.club_name }}">
+                                {% else %}
+                                <div class="fb-team-placeholder">✈️</div>
+                                {% endif %}
+                            </div>
+                            <div class="fb-final-name text-truncate">{{ match.match_away_team.club_name }}</div>
+                        </div>
+                    </div>
+
+                    <div class="fb-info-list">
+                        <div class="fb-info-row">
+                            <span class="fb-info-icon">🏟️</span>
+                            <span class="fb-info-label">Turf</span>
+                            <span class="fb-info-value text-truncate">{{ match.match_turf.turf_name }}</span>
+                        </div>
+                        <div class="fb-info-row">
+                            <span class="fb-info-icon">🎯</span>
+                            <span class="fb-info-label">Result</span>
+                            <span class="fb-info-value">
+                                {% if match.result %}
+                                    {% if match.result.result_home_team > match.result.result_away_team %}
+                                        <span class="fb-result-text fb-result-win">Home Win</span>
+                                    {% elif match.result.result_away_team > match.result.result_home_team %}
+                                        <span class="fb-result-text fb-result-win">Away Win</span>
+                                    {% else %}
+                                        <span class="fb-result-text fb-result-draw">Draw</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="fb-result-text fb-result-draw">No Result</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="fb-card-actions">
+                        <a href="{% url 'admin_match_detail' match.match_id %}" class="fb-btn-action fb-btn-action-info">
+                            <span>📊</span> Details
+                        </a>
+                        <form method="post" action="{% url 'admin_delete_match' match.match_id %}" 
+                              data-confirm="Delete completed match?" class="flex-fill">
+                            {% csrf_token %}
+                            <button type="submit" class="fb-btn-action fb-btn-action-danger w-100">
+                                <span>🗑️</span> Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not live_matches and not scheduled_matches and not completed_matches %}
+    <div class="fb-empty-state fb-glass">
+        <div class="fb-empty-icon">⚽</div>
+        <div class="fb-empty-title">No Matches Found</div>
+        <p class="fb-empty-text">Try adjusting your filters or schedule a new match.</p>
+        <a href="{% url 'create_match' %}" class="fb-btn fb-btn-primary">
+            <span>➕</span> Create Match
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

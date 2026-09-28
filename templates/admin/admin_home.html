@@ -1,0 +1,246 @@
+{% extends 'admin/admin_base.html' %}
+{% block title %}Dashboard - Football Arena Admin{% endblock %}
+
+
+
+{% block content %}
+
+<!-- Match Header -->
+<div class="match-header">
+    <div>
+        <h1 class="arena-title">🏟️ Admin Dashboard</h1>
+        <p class="arena-subtitle">Welcome back, {{ request.user.username }}!</p>
+    </div>
+    <div class="d-flex align-items-center gap-3 flex-wrap justify-content-center">
+        <span class="live-pulse">Online</span>
+        <div class="match-timer-display" id="matchTimer">00:00</div>
+    </div>
+</div>
+
+<!-- Scoreboard Grid - Bootstrap Row/Col -->
+<div class="row g-4 mb-4">
+    <div class="col-6 col-md-4 col-lg-3 col-xl-3">
+        <div class="trophy-card neon-green">
+            <div class="stat-shine"></div>
+            <div class="stat-badge-icon">🏃</div>
+            <div class="stat-score" data-target="{{ total_players }}">{{ total_players|default:"0" }}</div>
+            <div class="stat-name">Total Players</div>
+            <div class="stat-form up">⚡ Active roster</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3 col-xl-3">
+        <div class="trophy-card neon-blue">
+            <div class="stat-shine"></div>
+            <div class="stat-badge-icon">🏟️</div>
+            <div class="stat-score" data-target="{{ total_clubs }}">{{ total_clubs|default:"0" }}</div>
+            <div class="stat-name">Total Clubs</div>
+            <div class="stat-form up">🏆 Competing</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3 col-xl-3">
+        <div class="trophy-card neon-red">
+            <div class="stat-shine"></div>
+            <div class="stat-badge-icon">🌱</div>
+            <div class="stat-score" data-target="{{ total_turfs }}">{{ total_turfs|default:"0" }}</div>
+            <div class="stat-name">Total Turfs</div>
+            <div class="stat-form up">🎯 Available</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3 col-xl-3">
+        <div class="trophy-card neon-gold">
+            <div class="stat-shine"></div>
+            <div class="stat-badge-icon">⚔️</div>
+            <div class="stat-score" data-target="{{ total_matches }}">{{ total_matches|default:"0" }}</div>
+            <div class="stat-name">Total Matches</div>
+            <div class="stat-form up">🔥 Played</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3 col-xl-3">
+        <div class="trophy-card neon-purple">
+            <div class="stat-shine"></div>
+            <div class="stat-badge-icon">🏆</div>
+            <div class="stat-score" data-target="{{ total_tournaments }}">{{ total_tournaments|default:"0" }}</div>
+            <div class="stat-name">Tournaments</div>
+            <div class="stat-form up">🌟 Hosted</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3 col-xl-3">
+        <div class="trophy-card neon-orange">
+            <div class="stat-shine"></div>
+            <div class="stat-badge-icon">👥</div>
+            <div class="stat-score" data-target="{{ total_users }}">{{ total_users|default:"0" }}</div>
+            <div class="stat-name">Total Users</div>
+            <div class="stat-form up">📈 Growing</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3 col-xl-3">
+        <div class="trophy-card neon-teal">
+            <div class="stat-shine"></div>
+            <div class="stat-badge-icon">🚶</div>
+            <div class="stat-score" data-target="{{ total_visitors }}">{{ total_visitors|default:"0" }}</div>
+            <div class="stat-name">Visitors</div>
+            <div class="stat-form up">👀 Browsing</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3 col-xl-3">
+        <div class="trophy-card neon-emerald">
+            <div class="stat-shine"></div>
+            <div class="stat-badge-icon">💰</div>
+            <div class="stat-score" data-target="{{ total_revenue }}">₹{{ total_revenue|default:"0" }}</div>
+            <div class="stat-name">Total Revenue</div>
+            <div class="stat-form up">💎 Earnings</div>
+        </div>
+    </div>
+</div>
+
+<!-- Second Row - Bootstrap Grid -->
+<div class="row g-4 mb-4">
+    <!-- Squad Breakdown -->
+    <div class="col-md-6 col-lg-4">
+        <div class="trophy-card h-100">
+            <h3 class="card-title-custom">
+                <i class="bi bi-pie-chart"></i> Squad Breakdown
+            </h3>
+            <div class="breakdown-item">
+                <div class="breakdown-icon" style="background: rgba(0,255,136,0.15); color: var(--neon-green);">🏃</div>
+                <span class="breakdown-label">Players</span>
+                <span class="breakdown-value" style="color: var(--neon-green);">{{ total_players|default:"0" }}</span>
+            </div>
+            <div class="breakdown-item">
+                <div class="breakdown-icon" style="background: rgba(0,212,255,0.15); color: var(--neon-blue);">🏟️</div>
+                <span class="breakdown-label">Club Managers</span>
+                <span class="breakdown-value" style="color: var(--neon-blue);">{{ total_club_managers|default:"0" }}</span>
+            </div>
+            <div class="breakdown-item">
+                <div class="breakdown-icon" style="background: rgba(255,51,102,0.15); color: var(--neon-red);">🌱</div>
+                <span class="breakdown-label">Turf Owners</span>
+                <span class="breakdown-value" style="color: var(--neon-red);">{{ total_turf_owners|default:"0" }}</span>
+            </div>
+            <div class="breakdown-item">
+                <div class="breakdown-icon" style="background: rgba(255,149,0,0.15); color: var(--neon-orange);">🚶</div>
+                <span class="breakdown-label">Visitors</span>
+                <span class="breakdown-value" style="color: var(--neon-orange);">{{ total_visitors|default:"0" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Tactics -->
+    <div class="col-md-6 col-lg-4">
+        <div class="trophy-card h-100">
+            <h3 class="card-title-custom">
+                <i class="bi bi-calendar-check"></i> Booking Tactics
+            </h3>
+            <div class="breakdown-item">
+                <span class="breakdown-label">⏳ Pending</span>
+                <span class="badge-custom badge-warning-custom">{{ booking_stats.pending|default:"0" }}</span>
+            </div>
+            <div class="breakdown-item">
+                <span class="breakdown-label">✅ Accepted</span>
+                <span class="badge-custom badge-success-custom">{{ booking_stats.accepted|default:"0" }}</span>
+            </div>
+            <div class="breakdown-item">
+                <span class="breakdown-label">❌ Rejected</span>
+                <span class="badge-custom badge-danger-custom">{{ booking_stats.rejected|default:"0" }}</span>
+            </div>
+            <div class="breakdown-item">
+                <span class="breakdown-label">💳 Paid</span>
+                <span class="badge-custom badge-primary-custom">{{ booking_stats.paid|default:"0" }}</span>
+            </div>
+            <a href="{% url 'admin_view_bookings' %}" class="kickoff-btn btn-primary-custom w-100 mt-3">
+                View All Bookings <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Match Feed (Notifications) -->
+    <div class="col-md-12 col-lg-4">
+        <div class="trophy-card h-100">
+            <h3 class="card-title-custom">
+                <i class="bi bi-bell"></i> Match Feed
+                {% if unread_notifications > 0 %}
+                <span class="tactic-badge ms-auto">{{ unread_notifications }}</span>
+                {% endif %}
+            </h3>
+            <div style="max-height: 300px; overflow-y: auto; padding-right: 0.5rem;">
+                {% for notif in recent_notifications %}
+                <div class="feed-item" style="border-left-color: {% if notif.notification_type == 'success' %}var(--neon-green){% elif notif.notification_type == 'error' %}var(--neon-red){% else %}var(--neon-blue){% endif %}; {% if not notif.is_read %}opacity: 1;{% else %}opacity: 0.6;{% endif %}">
+                    <div class="feed-author">{{ notif.user.username|default:notif.user.user_name }}</div>
+                    <div class="feed-msg">{{ notif.message|truncatechars:60 }}</div>
+                    <div class="feed-time">{{ notif.created_at|timesince }} ago</div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <div class="empty-text">No match updates</div>
+                </div>
+                {% endfor %}
+            </div>
+            <a href="{% url 'admin_view_notifications' %}" class="kickoff-btn btn-info-custom w-100 mt-3">
+                View All <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Tactics -->
+<div class="trophy-card">
+    <h3 class="card-title-custom">
+        <i class="bi bi-lightning-charge"></i> Quick Tactics
+    </h3>
+    <div class="tactics-grid">
+        <a href="{% url 'admin_view_normal_users' %}" class="tactic-btn tactic-btn-primary">
+            <span>👥</span> Manage Users
+        </a>
+        <a href="{% url 'admin_view_clubs' %}" class="tactic-btn tactic-btn-success">
+            <span>🏟️</span> Validate Clubs
+        </a>
+        <a href="{% url 'admin_view_turfs' %}" class="tactic-btn tactic-btn-info">
+            <span>🌱</span> Validate Turfs
+        </a>
+        <a href="{% url 'admin_view_matches' %}" class="tactic-btn tactic-btn-warning">
+            <span>⚔️</span> View Matches
+        </a>
+        <a href="{% url 'admin_view_bookings' %}" class="tactic-btn tactic-btn-danger">
+            <span>📅</span> Manage Bookings
+        </a>
+        <a href="{% url 'admin_view_payments' %}" class="tactic-btn tactic-btn-primary">
+            <span>💰</span> View Payments
+        </a>
+    </div>
+</div>
+
+
+<script>
+    // Match Timer
+    let minutes = 0, seconds = 0;
+    const timerDisplay = document.getElementById('matchTimer');
+    setInterval(() => {
+        seconds++;
+        if (seconds >= 60) { seconds = 0; minutes++; }
+        const mm = minutes.toString().padStart(2, '0');
+        const ss = seconds.toString().padStart(2, '0');
+        if (timerDisplay) timerDisplay.textContent = `${mm}:${ss}`;
+    }, 1000);
+
+    // Animate stat numbers on load
+    document.querySelectorAll('.stat-score[data-target]').forEach(el => {
+        const target = parseInt(el.getAttribute('data-target')) || 0;
+        if (target === 0) return;
+        let current = 0;
+        const increment = Math.ceil(target / 50);
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            // Preserve ₹ prefix if present
+            const prefix = el.textContent.startsWith('₹') ? '₹' : '';
+            el.textContent = prefix + current.toLocaleString();
+        }, 30);
+    });
+</script>
+
+
+{% endblock %}
+

@@ -1,0 +1,395 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+{% block title %}Bookings - Football Arena Admin{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid position-relative" id="div-01-main-wrapper">
+
+    <div class="row mb-3 mb-md-4" id="div-02-page-header">
+        <div class="col-12">
+            <div class="glass-card arena-header p-3 p-md-4 reveal-up">
+                <div class="row align-items-center g-3">
+                    <div class="col-12 col-md-8">
+                        <div class="d-flex align-items-center gap-2 gap-md-3 mb-2">
+                            <span class="football-spin d-inline-block" aria-hidden="true">&#9917;</span>
+                            <h1 class="page-title mb-0">Match Bookings</h1>
+                        </div>
+                        <p class="page-subtitle mb-0">
+                            <span class="live-pulse">
+                                <span class="live-dot"></span>
+                                Live Arena
+                            </span>
+                            <span class="d-none d-sm-inline"> — Manage turf bookings and payment status</span>
+                        </p>
+                    </div>
+                    <div class="col-12 col-md-4 text-md-end">
+                        <span class="badge bg-dark bg-opacity-50 border border-success border-opacity-25 text-success px-3 py-2 fs-6">
+                            <i class="bi bi-calendar-check me-1"></i>
+                            <span class="d-none d-sm-inline">Total: </span>{{ bookings|length }} Bookings
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-2 g-md-3 mb-3 mb-md-4" id="div-03-stats-dashboard">
+        <!-- Total Matches -->
+        <div class="col-6 col-lg-3">
+            <div class="glass-card stat-card p-3 text-center h-100 reveal-up delay-1" data-stat="total">
+                <div class="stat-icon mb-2">&#127937;</div>
+                <div class="stat-label small text-uppercase tracking-wide">Total Matches</div>
+                <div class="stat-value text-white fs-3 fw-bold mt-1" id="stat-01-total">0</div>
+            </div>
+        </div>
+        <!--  Pending -->
+        <div class="col-6 col-lg-3">
+            <div class="glass-card stat-card p-3 text-center h-100 reveal-up delay-2" data-stat="pending">
+                <div class="stat-icon mb-2">&#9203;</div>
+                <div class="stat-label small text-uppercase tracking-wide">Pending</div>
+                <div class="stat-value text-warning fs-3 fw-bold mt-1" id="stat-02-pending">0</div>
+            </div>
+        </div>
+        <!--  Confirmed -->
+        <div class="col-6 col-lg-3">
+            <div class="glass-card stat-card p-3 text-center h-100 reveal-up delay-3" data-stat="accepted">
+                <div class="stat-icon mb-2">&#9989;</div>
+                <div class="stat-label small text-uppercase tracking-wide">Confirmed</div>
+                <div class="stat-value text-success fs-3 fw-bold mt-1" id="stat-03-accepted">0</div>
+            </div>
+        </div>
+        <!--  Revenue -->
+        <div class="col-6 col-lg-3">
+            <div class="glass-card stat-card p-3 text-center h-100 reveal-up delay-4" data-stat="revenue">
+                <div class="stat-icon mb-2">&#128176;</div>
+                <div class="stat-label small text-uppercase tracking-wide">Revenue</div>
+                <div class="stat-value text-info fs-3 fw-bold mt-1" id="stat-04-revenue">₹0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3 mb-md-4" id="div-04-filter-panel">
+        <div class="col-12">
+            <div class="glass-card p-3 p-md-4 reveal-up">
+                <form method="get" id="filterForm">
+
+                    <!-- Status Filter Buttons -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-12">
+                            <label class="filter-label d-block mb-2 fw-semibold">
+                                <i class="bi bi-funnel-fill me-1"></i> Filter by Status
+                            </label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="?status=all" class="glass-btn btn-sm {% if status_filter == 'all' or not status_filter %}active-all{% endif %}">
+                                    &#127937; All
+                                </a>
+                                <a href="?status=Pending" class="glass-btn btn-sm {% if status_filter == 'Pending' %}active-pending{% endif %}">
+                                    &#9203; Pending
+                                </a>
+                                <a href="?status=Accepted" class="glass-btn btn-sm {% if status_filter == 'Accepted' %}active-accepted{% endif %}">
+                                    &#9989; Accepted
+                                </a>
+                                <a href="?status=Rejected" class="glass-btn btn-sm {% if status_filter == 'Rejected' %}active-rejected{% endif %}">
+                                    &#10060; Rejected
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search Inputs -->
+                    <div class="row g-2 g-md-3 align-items-end">
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <label class="filter-label d-block mb-1 small fw-medium">
+                                <i class="bi bi-geo-alt-fill me-1"></i> Turf
+                            </label>
+                            <input type="text" name="turf" class="form-control arena-input" placeholder="Search turf name..." value="{{ request.GET.turf }}">
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <label class="filter-label d-block mb-1 small fw-medium">
+                                <i class="bi bi-person-fill me-1"></i> Player
+                            </label>
+                            <input type="text" name="customer" class="form-control arena-input" placeholder="Search player name..." value="{{ request.GET.customer }}">
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-success flex-fill">
+                                    <i class="bi bi-search me-1"></i> <span class="d-none d-sm-inline">Filter</span>
+                                    <span class="d-sm-none">Go</span>
+                                </button>
+                                <a href="{% url 'admin_view_bookings' %}" class="btn btn-outline-danger">
+                                    <i class="bi bi-x-lg"></i>
+                                    <span class="d-none d-sm-inline ms-1">Clear</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row d-none d-lg-flex" id="div-05-desktop-table">
+        <div class="col-12">
+            <div class="glass-card p-0 overflow-hidden reveal-up">
+                <div class="table-responsive">
+                    <table class="arena-table table table-hover mb-0" id="bookingsTable">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 45px;">#</th>
+                                <th style="width: 90px;">Match ID</th>
+                                <th style="width: 160px;">Turf</th>
+                                <th style="width: 170px;">Customer</th>
+                                <th style="width: 140px;">Club</th>
+                                <th style="width: 120px;">Match Day</th>
+                                <th style="width: 130px;">Kickoff</th>
+                                <th style="width: 115px;">Status</th>
+                                <th style="width: 100px;">Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in bookings %}
+                            <tr class="booking-row" data-status="{{ booking.status }}" data-paid="{{ booking.is_paid|yesno:'true,false' }}">
+                                <td class="text-center small" style="color: rgba(255,255,255,0.4) !important;">{{ forloop.counter }}</td>
+                                <td>
+                                    <span class="id-badge">#{{ booking.booking_id }}</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="turf-icon" aria-hidden="true">&#127793;</span>
+                                        <span class="fw-bold text-truncate d-inline-block" style="max-width: 110px; color: #ffffff !important;" title="{{ booking.turf.turf_name }}">{{ booking.turf.turf_name }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="player-avatar">
+                                            {{ booking.customer.user_name|first|upper }}
+                                        </div>
+                                        <span class="fw-semibold text-truncate d-inline-block" style="max-width: 110px; color: #ffffff !important;" title="{{ booking.customer.user_name }}">{{ booking.customer.user_name }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if booking.club %}
+                                        <span class="club-badge text-truncate d-inline-block" style="max-width: 120px;" title="{{ booking.club.club_name }}">{{ booking.club.club_name }}</span>
+                                    {% elif booking.manager_club_name %}
+                                        <span class="club-badge text-truncate d-inline-block" style="max-width: 120px;" title="{{ booking.manager_club_name }}">{{ booking.manager_club_name }}</span>
+                                    {% else %}
+                                        <span style="color: rgba(255,255,255,0.4) !important;" class="small fst-italic">— Independent —</span>
+                                    {% endif %}
+                                </td>
+                                <td class="fw-semibold text-nowrap" style="color: #ffffff !important;">{{ booking.booking_date }}</td>
+                                <td>
+                                    <span class="time-slot-badge text-truncate d-inline-block" style="max-width: 115px;" title="{{ booking.time_slot.tt_time.time_range }}">
+                                        &#9889; {{ booking.time_slot.tt_time.time_range }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if booking.status == "Pending" %}
+                                        <span class="status-badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25">
+                                            &#9203; {{ booking.status }}
+                                        </span>
+                                    {% elif booking.status == "Accepted" %}
+                                        <span class="status-badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">
+                                            &#9989; {{ booking.status }}
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25">
+                                            &#10060; {{ booking.status }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if booking.is_paid %}
+                                        <span class="status-badge bg-info bg-opacity-25 text-info border border-info border-opacity-25">
+                                            &#128179; Paid
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge bg-secondary bg-opacity-25 text-white-50 border border-secondary border-opacity-25">
+                                            &#128179; Unpaid
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="9">
+                                    <div class="empty-state py-5">
+                                        <div class="empty-state-icon fs-1 mb-3">&#127937;</div>
+                                        <div class="empty-state-title h4">No Matches Scheduled</div>
+                                        <p class="empty-state-text mb-0">The pitch is empty. Try adjusting your filters.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row d-lg-none" id="div-06-mobile-cards">
+        <div class="col-12">
+            <div class="glass-card p-0 overflow-hidden reveal-up">
+                {% for booking in bookings %}
+                <div class="mobile-booking-item" data-status="{{ booking.status }}" data-paid="{{ booking.is_paid|yesno:'true,false' }}">
+
+                    <!-- ID, Turf, Status -->
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="id-badge">#{{ booking.booking_id }}</span>
+                            <span class="fw-bold" style="color: #ffffff !important;">{{ booking.turf.turf_name }}</span>
+                        </div>
+                        <div>
+                            {% if booking.status == "Pending" %}
+                                <span class="status-badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25 small">&#9203; {{ booking.status }}</span>
+                            {% elif booking.status == "Accepted" %}
+                                <span class="status-badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 small">&#9989; {{ booking.status }}</span>
+                            {% else %}
+                                <span class="status-badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25 small">&#10060; {{ booking.status }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!--  Player & Payment -->
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="player-avatar-sm">{{ booking.customer.user_name|first|upper }}</div>
+                            <span class="small fw-medium" style="color: #ffffff !important;">{{ booking.customer.user_name }}</span>
+                        </div>
+                        <div>
+                            {% if booking.is_paid %}
+                                <span class="status-badge bg-info bg-opacity-25 text-info border border-info border-opacity-25 small">&#128179; Paid</span>
+                            {% else %}
+                                <span class="status-badge bg-secondary bg-opacity-25 text-white-50 border border-secondary border-opacity-25 small">&#128179; Unpaid</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Date & Time -->
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="small" style="color: rgba(255,255,255,0.5) !important;">
+                            <i class="bi bi-calendar3 me-1"></i> {{ booking.booking_date }}
+                        </div>
+                        <span class="time-slot-badge small">
+                            &#9889; {{ booking.time_slot.tt_time.time_range }}
+                        </span>
+                    </div>
+
+                    <!-- Club -->
+                    <div>
+                        {% if booking.club %}
+                            <span class="club-badge small">{{ booking.club.club_name }}</span>
+                        {% elif booking.manager_club_name %}
+                            <span class="club-badge small">{{ booking.manager_club_name }}</span>
+                        {% else %}
+                            <span class="small fst-italic" style="color: rgba(255,255,255,0.4) !important;">— Independent —</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state py-5">
+                    <div class="empty-state-icon fs-1 mb-3">&#127937;</div>
+                    <div class="empty-state-title h4">No Matches Scheduled</div>
+                    <p class="empty-state-text mb-0">The pitch is empty. Try adjusting your filters.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function animateCounter(id, start, end, duration, prefix = '') {
+    const element = document.getElementById(id);
+    if (!element) return;
+
+    const startTime = performance.now();
+
+    function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
+        const value = Math.floor(easeProgress * (end - start) + start);
+
+        element.textContent = prefix + value.toLocaleString();
+
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        }
+    }
+
+    requestAnimationFrame(update);
+}
+
+function calculateStats() {
+    const items = document.querySelectorAll('.booking-row, .mobile-booking-item');
+    let pending = 0, accepted = 0, paid = 0;
+
+    items.forEach(item => {
+        const status = item.getAttribute('data-status');
+        const isPaid = item.getAttribute('data-paid') === 'true';
+
+        if (status === 'Pending') pending++;
+        if (status === 'Accepted') accepted++;
+        if (isPaid) paid++;
+    });
+
+    animateCounter('stat-01-total', 0, items.length, 1000);
+    animateCounter('stat-02-pending', 0, pending, 1000);
+    animateCounter('stat-03-accepted', 0, accepted, 1000);
+    animateCounter('stat-04-revenue', 0, paid * 500, 1500, '₹');
+}
+
+function initScrollReveal() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -20px 0px'
+    });
+
+    document.querySelectorAll('.reveal-up').forEach(el => {
+        observer.observe(el);
+    });
+}
+
+function staggerRows() {
+    const rows = document.querySelectorAll('.booking-row');
+
+    rows.forEach((row, index) => {
+        row.style.opacity = '0';
+        row.style.transform = 'translateY(15px)';
+        row.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+
+        setTimeout(() => {
+            row.style.opacity = '1';
+            row.style.transform = 'translateY(0)';
+        }, 100 + index * 50);
+    });
+
+    const cards = document.querySelectorAll('.mobile-booking-item');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateX(-12px)';
+        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateX(0)';
+        }, 100 + index * 70);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    calculateStats();
+    initScrollReveal();
+    staggerRows();
+});
+</script>
+
+{% endblock %}

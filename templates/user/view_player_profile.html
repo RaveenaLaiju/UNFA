@@ -1,0 +1,578 @@
+{% extends 'user/user_head.html' %}
+{% block content %}
+{% load static %}
+
+<div class="arena-bg">
+  <div class="light-beam beam-1"></div>
+  <div class="light-beam beam-2"></div>
+  <div class="light-beam beam-3"></div>
+  <div class="pitch-texture"></div>
+  <div class="particles" id="particles"></div>
+</div>
+
+<main class="player-dashboard">
+
+  <header class="dashboard-hero" data-animate="zoom-in">
+    <div class="hero-aura"></div>
+
+    <figure class="player-portrait">
+      <div class="portrait-halo"></div>
+      <img src="{{ player.player_image.url }}" alt="{{ player.player_card_name }}" class="portrait-img" id="hero-img">
+      <div class="rating-gem">
+        <span class="gem-label">OVR</span>
+        <span class="gem-score" id="hero-rating">{{ player.player_rating }}</span>
+      </div>
+      <div class="power-ring" style="--power: {{ player.player_power }};">
+        <svg viewBox="0 0 100 100">
+          <circle class="track" cx="50" cy="50" r="45"/>
+          <circle class="fill" cx="50" cy="50" r="45"/>
+        </svg>
+        <span class="ring-text">{{ player.player_power }}</span>
+      </div>
+    </figure>
+
+    <div class="hero-meta">
+      <div class="meta-tag"><i class="fas fa-gamepad"></i> Player Dashboard</div>
+      <h1 class="player-name" id="hero-name">{{ player.player_card_name }}</h1>
+      <div class="meta-badges">
+        <span class="badge position">
+          <i class="fas fa-crosshairs"></i> <span id="hero-position">{{ player.player_position.position_name }}</span>
+        </span>
+        <span class="badge foot">
+          <i class="fas fa-shoe-prints"></i> <span id="hero-foot">{{ player.player_strong_foot }}</span> Foot
+        </span>
+        <span class="badge age">
+          <i class="fas fa-birthday-cake"></i> <span id="hero-age">{{ player.player_user.user_age }}</span> yrs
+        </span>
+      </div>
+      {% if player.player_club %}
+      <div class="club-banner">
+        <img src="{{ player.player_club.club_logo.url }}" alt="" class="club-icon">
+        <span class="club-name">{{ player.player_club.club_name }}</span>
+        <a href="{% url 'club_details' player.player_club.club_id %}" class="club-link">
+          <i class="fas fa-external-link-alt"></i> View Club
+        </a>
+      </div>
+      {% endif %}
+
+      <button type="button" class="edit-toggle-btn" id="edit-toggle-btn" onclick="toggleEditMode()">
+        <i class="fas fa-pen"></i> Edit Profile
+      </button>
+    </div>
+  </header>
+
+  <div id="dashboard-view">
+    <section class="stats-grid">
+      <article class="stat-card goals" data-animate="pop-up" data-delay="100">
+        <div class="card-glow"></div>
+        <div class="stat-icon-wrap"><i class="fas fa-futbol"></i></div>
+        <div class="stat-data">
+          <span class="stat-number count-up" data-target="{{ total_goals }}">0</span>
+          <span class="stat-label">Goals Scored</span>
+        </div>
+        <div class="stat-trend"><i class="fas fa-arrow-up"></i> +{{ total_goals }}</div>
+      </article>
+      <article class="stat-card assists" data-animate="pop-up" data-delay="200">
+        <div class="card-glow"></div>
+        <div class="stat-icon-wrap"><i class="fas fa-hands-helping"></i></div>
+        <div class="stat-data">
+          <span class="stat-number count-up" data-target="{{ total_assists }}">0</span>
+          <span class="stat-label">Assists</span>
+        </div>
+        <div class="stat-trend"><i class="fas fa-arrow-up"></i> +{{ total_assists }}</div>
+      </article>
+      <article class="stat-card saves" data-animate="pop-up" data-delay="300">
+        <div class="card-glow"></div>
+        <div class="stat-icon-wrap"><i class="fas fa-hand-paper"></i></div>
+        <div class="stat-data">
+          <span class="stat-number count-up" data-target="{{ total_saves }}">0</span>
+          <span class="stat-label">Saves</span>
+        </div>
+        <div class="stat-trend"><i class="fas fa-arrow-up"></i> +{{ total_saves }}</div>
+      </article>
+      <article class="stat-card matches" data-animate="pop-up" data-delay="400">
+        <div class="card-glow"></div>
+        <div class="stat-icon-wrap"><i class="fas fa-calendar-check"></i></div>
+        <div class="stat-data">
+          <span class="stat-number count-up" data-target="{{ matches|length }}">0</span>
+          <span class="stat-label">Matches Played</span>
+        </div>
+        <div class="stat-trend"><i class="fas fa-fire"></i> Active</div>
+      </article>
+      <article class="stat-card rating" data-animate="pop-up" data-delay="500">
+        <div class="card-glow"></div>
+        <div class="stat-icon-wrap"><i class="fas fa-star"></i></div>
+        <div class="stat-data">
+          <span class="stat-number count-up" data-target="{{ player.player_rating }}">0</span>
+          <span class="stat-label">Player Rating</span>
+        </div>
+        <div class="stat-trend">
+          {% if player.player_rating >= 80 %}<i class="fas fa-crown"></i> Elite
+          {% elif player.player_rating >= 60 %}<i class="fas fa-medal"></i> Pro
+          {% else %}<i class="fas fa-seedling"></i> Rising{% endif %}
+        </div>
+      </article>
+      <article class="stat-card power" data-animate="pop-up" data-delay="600">
+        <div class="card-glow"></div>
+        <div class="stat-icon-wrap"><i class="fas fa-bolt"></i></div>
+        <div class="stat-data">
+          <span class="stat-number count-up" data-target="{{ player.player_power }}">0</span>
+          <span class="stat-label">Power Index</span>
+        </div>
+        <div class="stat-trend"><i class="fas fa-dumbbell"></i> {{ player.player_height }}cm / {{ player.player_weight }}kg</div>
+      </article>
+    </section>
+
+    <div class="dashboard-layout">
+      <div class="dash-col left">
+        <section class="glass-card info-card container-fluid" data-animate="fade-right">
+          <header class="card-header">
+            <i class="fas fa-id-card-alt"></i>
+            <h3>Player Info</h3>
+            <div class="header-line"></div>
+          </header>
+          <ul class="info-list">
+            <li><span class="info-key"><i class="fas fa-venus-mars"></i> Gender</span><span class="info-val">{{ player.player_user.user_gender }}</span></li>
+            <li><span class="info-key"><i class="fas fa-ruler-vertical"></i> Height</span><span class="info-val" id="info-height">{{ player.player_height }} <small>cm</small></span></li>
+            <li><span class="info-key"><i class="fas fa-weight"></i> Weight</span><span class="info-val" id="info-weight">{{ player.player_weight }} <small>kg</small></span></li>
+            <li><span class="info-key"><i class="fas fa-shoe-prints"></i> Strong Foot</span><span class="info-val" id="info-foot">{{ player.player_strong_foot }}</span></li>
+            <li><span class="info-key"><i class="fas fa-map-marked-alt"></i> District</span><span class="info-val" id="info-district">{{ player.player_district }}</span></li>
+            <li><span class="info-key"><i class="fas fa-city"></i> Location</span><span class="info-val" id="info-location">{{ player.player_location }}</span></li>
+          </ul>
+        </section>
+        <section class="glass-card radar-card container-fluid" data-animate="fade-right" data-delay="150">
+          <header class="card-header">
+            <i class="fas fa-chart-pie"></i>
+            <h3>Performance Radar</h3>
+            <div class="header-line"></div>
+          </header>
+          <div class="radar-container">
+            <div class="radar">
+              <div class="radar-axis axis-1"></div>
+              <div class="radar-axis axis-2"></div>
+              <div class="radar-axis axis-3"></div>
+              <div class="radar-axis axis-4"></div>
+              <div class="radar-axis axis-5"></div>
+              <div class="radar-axis axis-6"></div>
+              <div class="radar-web web-1"></div>
+              <div class="radar-web web-2"></div>
+              <div class="radar-web web-3"></div>
+              <div class="radar-web web-4"></div>
+              <div class="radar-shape" style="clip-path: polygon(50% calc(50% - {{ total_goals|default:0|add:10 }}% * 0.5), calc(50% + {{ total_assists|default:0|add:10 }}% * 0.43) calc(50% - {{ total_assists|default:0|add:10 }}% * 0.25), calc(50% + {{ total_saves|default:0|add:10 }}% * 0.43) calc(50% + {{ total_saves|default:0|add:10 }}% * 0.25), 50% calc(50% + {{ matches|length|default:0|add:5 }}% * 0.5), calc(50% - {{ player.player_power|default:50 }}% * 0.43) calc(50% + {{ player.player_power|default:50 }}% * 0.25), calc(50% - {{ player.player_rating|default:50 }}% * 0.43) calc(50% - {{ player.player_rating|default:50 }}% * 0.25));"></div>
+              <div class="radar-labels">
+                <span class="label" style="top:0;left:50%;transform:translateX(-50%);">Goals</span>
+                <span class="label" style="top:15%;right:5%;">Assists</span>
+                <span class="label" style="bottom:15%;right:5%;">Saves</span>
+                <span class="label" style="bottom:0;left:50%;transform:translateX(-50%);">Matches</span>
+                <span class="label" style="bottom:15%;left:5%;">Power</span>
+                <span class="label" style="top:15%;left:5%;">Rating</span>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="glass-card badges-card container-fluid" data-animate="fade-right" data-delay="200">
+          <header class="card-header">
+            <i class="fas fa-trophy"></i>
+            <h3>Achievement Badges</h3>
+            <div class="header-line"></div>
+          </header>
+          <div class="badges-grid">
+            <div class="badge-item {% if total_goals >= 10 %}unlocked{% else %}locked{% endif %}">
+              <div class="badge-icon"><i class="fas fa-futbol"></i></div>
+              <span class="badge-title">Goal Machine</span><span class="badge-desc">10+ Goals</span>
+            </div>
+            <div class="badge-item {% if total_assists >= 10 %}unlocked{% else %}locked{% endif %}">
+              <div class="badge-icon"><i class="fas fa-hands-helping"></i></div>
+              <span class="badge-title">Playmaker</span><span class="badge-desc">10+ Assists</span>
+            </div>
+            <div class="badge-item {% if total_saves >= 10 %}unlocked{% else %}locked{% endif %}">
+              <div class="badge-icon"><i class="fas fa-shield-alt"></i></div>
+              <span class="badge-title">Wall</span><span class="badge-desc">10+ Saves</span>
+            </div>
+            <div class="badge-item {% if matches|length >= 5 %}unlocked{% else %}locked{% endif %}">
+              <div class="badge-icon"><i class="fas fa-fire"></i></div>
+              <span class="badge-title">Veteran</span><span class="badge-desc">5+ Matches</span>
+            </div>
+            <div class="badge-item {% if player.player_rating >= 80 %}unlocked{% else %}locked{% endif %}">
+              <div class="badge-icon"><i class="fas fa-crown"></i></div>
+              <span class="badge-title">Elite</span><span class="badge-desc">80+ Rating</span>
+            </div>
+            <div class="badge-item {% if player.player_power >= 80 %}unlocked{% else %}locked{% endif %}">
+              <div class="badge-icon"><i class="fas fa-bolt"></i></div>
+              <span class="badge-title">Beast</span><span class="badge-desc">80+ Power</span>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="dash-col right">
+        <section class="glass-card timeline-card" data-animate="fade-left">
+          <header class="card-header">
+            <i class="fas fa-history"></i>
+            <h3>Match History</h3>
+            <div class="header-line"></div>
+          </header>
+          <div class="timeline">
+            {% for match in matches %}
+            <div class="timeline-item" data-animate="slide-left" data-delay="{{ forloop.counter|add:100 }}">
+              <div class="timeline-dot {% if match.match_finished %}finished{% elif match.match_started %}live{% else %}upcoming{% endif %}"></div>
+              <a href="{% url 'go_to_match' match.match_id %}" class="timeline-content">
+                <div class="match-date-box">
+                  <span class="match-day">{{ match.match_date|date:"d" }}</span>
+                  <span class="match-month">{{ match.match_date|date:"M" }}</span>
+                </div>
+                <div class="match-teams-row">
+                  <img src="{{ match.match_home_team.club_logo.url }}" class="team-logo-sm" alt="">
+                  <span class="vs-divider">VS</span>
+                  <span class="away-team">{{ match.match_away_team.club_name|default:"TBD" }}</span>
+                </div>
+                <div class="match-status-badge">
+                  {% if match.match_finished %}<span class="status finished"><i class="fas fa-flag-checkered"></i> FT</span>
+                  {% elif match.match_started %}<span class="status live pulse"><i class="fas fa-broadcast-tower"></i> LIVE</span>
+                  {% else %}<span class="status upcoming"><i class="fas fa-hourglass-half"></i> UP</span>{% endif %}
+                </div>
+              </a>
+            </div>
+            {% empty %}
+            <div class="empty-timeline">
+              <i class="fas fa-calendar-times"></i>
+              <p>No matches on record yet.</p>
+              <span>Time to hit the pitch!</span>
+            </div>
+            {% endfor %}
+          </div>
+        </section>
+        <section class="glass-card activity-card container-fluid" data-animate="fade-left" data-delay="150">
+          <header class="card-header">
+            <i class="fas fa-chart-bar"></i>
+            <h3>Stats Breakdown</h3>
+            <div class="header-line"></div>
+          </header>
+          <div class="breakdown-list">
+            <div class="breakdown-row">
+              <span class="breakdown-label"><i class="fas fa-futbol"></i> Goal Conversion</span>
+              <div class="breakdown-bar"><div class="bar-fill goal-bar" style="width: {{ total_goals|default:0|add:5 }}%"></div></div>
+              <span class="breakdown-value">{{ total_goals }}</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-label"><i class="fas fa-hands-helping"></i> Assist Rate</span>
+              <div class="breakdown-bar"><div class="bar-fill assist-bar" style="width: {{ total_assists|default:0|add:5 }}%"></div></div>
+              <span class="breakdown-value">{{ total_assists }}</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-label"><i class="fas fa-hand-paper"></i> Save Rate</span>
+              <div class="breakdown-bar"><div class="bar-fill save-bar" style="width: {{ total_saves|default:0|add:5 }}%"></div></div>
+              <span class="breakdown-value">{{ total_saves }}</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-label"><i class="fas fa-star"></i> Rating Progress</span>
+              <div class="breakdown-bar"><div class="bar-fill rating-bar" style="width: {{ player.player_rating }}%"></div></div>
+              <span class="breakdown-value">{{ player.player_rating }}/100</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-label"><i class="fas fa-bolt"></i> Power Level</span>
+              <div class="breakdown-bar"><div class="bar-fill power-bar" style="width: {{ player.player_power }}%"></div></div>
+              <span class="breakdown-value">{{ player.player_power }}/100</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+ 
+  <div id="edit-view" class="edit-view-hidden">
+    <div class="edit-header-bar">
+      <h2><i class="fas fa-user-edit"></i> Edit Profile</h2>
+      <button type="button" class="btn-close-edit" onclick="toggleEditMode()">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+    </div>
+    <div class="update-layout">
+      <div class="update-form-col">
+        <div class="glass-card form-card">
+          <header class="card-header">
+            <i class="fas fa-sliders-h"></i>
+            <h3>Player Details</h3>
+            <div class="header-line"></div>
+          </header>
+          <form method="POST" action="{% url 'register_player_card' %}" enctype="multipart/form-data" class="player-form" id="player-form">
+            {% csrf_token %}
+            <div class="form-grid">
+              <div class="form-group">
+                <label><i class="fas fa-id-badge"></i> Card Name</label>
+                <input type="text" name="card_name" id="card_name" value="{{ player.player_card_name }}" class="form-input" placeholder="Your display name">
+              </div>
+              <div class="form-group">
+                <label><i class="fas fa-crosshairs"></i> Position</label>
+                <select name="player_position" id="player_position" class="form-select">
+                  {% for pos in positions %}
+                  <option value="{{ pos.position_id }}" {% if player.player_position.position_id == pos.position_id %}selected{% endif %}>{{ pos.position_name }} ({{ pos.position_code }})</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label><i class="fas fa-ruler-vertical"></i> Height (cm)</label>
+                <input type="number" name="player_height" id="player_height" value="{{ player.player_height }}" class="form-input" min="100" max="250">
+              </div>
+              <div class="form-group">
+                <label><i class="fas fa-weight"></i> Weight (kg)</label>
+                <input type="number" name="player_weight" id="player_weight" value="{{ player.player_weight }}" class="form-input" min="30" max="150">
+              </div>
+              <div class="form-group">
+                <label><i class="fas fa-shoe-prints"></i> Strong Foot</label>
+                <select name="player_foot" id="player_foot" class="form-select">
+                  <option value="Right" {% if player.player_strong_foot == "Right" %}selected{% endif %}>Right</option>
+                  <option value="Left" {% if player.player_strong_foot == "Left" %}selected{% endif %}>Left</option>
+                  <option value="Both" {% if player.player_strong_foot == "Both" %}selected{% endif %}>Both</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label><i class="fas fa-birthday-cake"></i> Age</label>
+                <input type="number" name="user_age" id="user_age" value="{{ player.player_user.user_age }}" class="form-input" min="10" max="80">
+              </div>
+              <div class="form-group full-width">
+                <label><i class="fas fa-map-marked-alt"></i> District</label>
+                <input type="text" name="player_district" id="player_district" value="{{ player.player_district }}" class="form-input" placeholder="Your district">
+              </div>
+              <div class="form-group full-width">
+                <label><i class="fas fa-city"></i> Location</label>
+                <input type="text" name="player_location" id="player_location" value="{{ player.player_location }}" class="form-input" placeholder="Your city/area">
+              </div>
+              <div class="form-group full-width">
+                <label><i class="fas fa-camera"></i> Profile Image</label>
+                <div class="file-upload">
+                  <input type="file" name="player_image" id="player_image" accept="image/*" class="file-input">
+                  <div class="file-trigger">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span id="file-name">Choose new image...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+              <button type="button" class="btn-reset" onclick="toggleEditMode()"><i class="fas fa-times"></i> Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="update-preview-col">
+        <div class="glass-card preview-card">
+          <header class="card-header">
+            <i class="fas fa-eye"></i>
+            <h3>Live Preview</h3>
+            <div class="header-line"></div>
+          </header>
+          <div class="preview-wrapper">
+            <div class="player-card-preview" id="preview-card">
+              <div class="card-shine"></div>
+              <div class="card-bg-pattern"></div>
+              <div class="preview-top">
+                <span class="preview-position" id="preview-position">{{ player.player_position.position_code }}</span>
+                <div class="preview-rating-box">
+                  <span class="preview-rating-label">OVR</span>
+                  <span class="preview-rating-num" id="preview-rating">{{ player.player_rating }}</span>
+                </div>
+              </div>
+              <div class="preview-image-wrap">
+                <div class="preview-image-ring"></div>
+                <img src="{{ player.player_image.url }}" alt="" class="preview-image" id="preview-image">
+              </div>
+              <div class="preview-details">
+                <h2 class="preview-name" id="preview-name">{{ player.player_card_name }}</h2>
+                <div class="preview-meta-row">
+                  <span class="preview-meta" id="preview-foot"><i class="fas fa-shoe-prints"></i> {{ player.player_strong_foot }}</span>
+                  <span class="preview-meta" id="preview-age"><i class="fas fa-birthday-cake"></i> <span id="preview-age-val">{{ player.player_user.user_age }}</span></span>
+                </div>
+                <div class="preview-stats-row">
+                  <div class="preview-stat"><span class="ps-label">HT</span><span class="ps-value" id="preview-height">{{ player.player_height }}</span></div>
+                  <div class="preview-stat"><span class="ps-label">WT</span><span class="ps-value" id="preview-weight">{{ player.player_weight }}</span></div>
+                  <div class="preview-stat highlight"><span class="ps-label">PWR</span><span class="ps-value" id="preview-power">{{ player.player_power }}</span></div>
+                </div>
+                <div class="preview-location" id="preview-location-text">
+                  <i class="fas fa-map-marker-alt"></i> {{ player.player_district }}, {{ player.player_location }}
+                </div>
+              </div>
+              <div class="preview-club-strip">
+                {% if player.player_club %}
+                <img src="{{ player.player_club.club_logo.url }}" class="preview-club-logo" alt="">
+                <span>{{ player.player_club.club_name }}</span>
+                {% else %}<span class="no-club">Free Agent</span>{% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+
+<script>
+(function() {
+  const container = document.getElementById('particles');
+  if (!container) return;
+  const colors = ['#00ff88', '#00d4ff', '#b829dd', '#ff6b35', '#ffd700'];
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (Math.random() * 10 + 10) + 's';
+    p.style.animationDelay = Math.random() * 15 + 's';
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
+    container.appendChild(p);
+  }
+})();
+
+(function() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const delay = parseInt(el.dataset.delay || 0);
+        setTimeout(() => { el.style.opacity = '1'; el.style.animationPlayState = 'running'; }, delay);
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('[data-animate]').forEach(el => { el.style.animationPlayState = 'paused'; observer.observe(el); });
+})();
+
+(function() {
+  const counters = document.querySelectorAll('.count-up');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseInt(el.dataset.target) || 0;
+        const duration = 1500;
+        const start = performance.now();
+        const animate = (now) => {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const ease = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.floor(ease * target);
+          if (progress < 1) requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(c => observer.observe(c));
+})();
+
+let isEditMode = false;
+function toggleEditMode() {
+  isEditMode = !isEditMode;
+  const dashboard = document.getElementById('dashboard-view');
+  const editView = document.getElementById('edit-view');
+  const editBtn = document.getElementById('edit-toggle-btn');
+  if (isEditMode) {
+    dashboard.classList.add('dashboard-hidden');
+    dashboard.classList.remove('edit-view-visible');
+    editView.classList.remove('edit-view-hidden');
+    editView.classList.add('edit-view-visible');
+    editBtn.innerHTML = '<i class="fas fa-eye"></i> View Dashboard';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    dashboard.classList.remove('dashboard-hidden');
+    dashboard.classList.add('edit-view-visible');
+    editView.classList.remove('edit-view-visible');
+    editView.classList.add('edit-view-hidden');
+    editBtn.innerHTML = '<i class="fas fa-pen"></i> Edit Profile';
+  }
+}
+
+(function() {
+  const inputs = {
+    name: document.getElementById('card_name'),
+    position: document.getElementById('player_position'),
+    height: document.getElementById('player_height'),
+    weight: document.getElementById('player_weight'),
+    foot: document.getElementById('player_foot'),
+    age: document.getElementById('user_age'),
+    district: document.getElementById('player_district'),
+    location: document.getElementById('player_location'),
+    image: document.getElementById('player_image'),
+  };
+  const previews = {
+    name: document.getElementById('preview-name'),
+    position: document.getElementById('preview-position'),
+    height: document.getElementById('preview-height'),
+    weight: document.getElementById('preview-weight'),
+    foot: document.getElementById('preview-foot'),
+    age: document.getElementById('preview-age-val'),
+    location: document.getElementById('preview-location-text'),
+    image: document.getElementById('preview-image'),
+  };
+  const hero = {
+    name: document.getElementById('hero-name'),
+    position: document.getElementById('hero-position'),
+    foot: document.getElementById('hero-foot'),
+    age: document.getElementById('hero-age'),
+    img: document.getElementById('hero-img'),
+  };
+  const info = {
+    height: document.getElementById('info-height'),
+    weight: document.getElementById('info-weight'),
+    foot: document.getElementById('info-foot'),
+    district: document.getElementById('info-district'),
+    location: document.getElementById('info-location'),
+  };
+  function updatePreview() {
+    if (previews.name) previews.name.textContent = inputs.name.value || 'Player Name';
+    if (hero.name) hero.name.textContent = inputs.name.value || 'Player Name';
+    if (previews.position) {
+      const selected = inputs.position.options[inputs.position.selectedIndex];
+      const code = selected ? (selected.textContent.match(/\(([^)]+)\)/) || ['','UNK'])[1] : 'UNK';
+      previews.position.textContent = code;
+    }
+    if (hero.position) {
+      const selected = inputs.position.options[inputs.position.selectedIndex];
+      if (selected) hero.position.textContent = selected.textContent.split('(')[0].trim();
+    }
+    if (previews.height) previews.height.textContent = inputs.height.value || '0';
+    if (previews.weight) previews.weight.textContent = inputs.weight.value || '0';
+    if (previews.foot) previews.foot.textContent = inputs.foot.value || 'Right';
+    if (previews.age) previews.age.textContent = inputs.age.value || '0';
+    if (previews.location) {
+      const dist = inputs.district.value || 'District';
+      const loc = inputs.location.value || 'Location';
+      previews.location.innerHTML = '<i class="fas fa-map-marker-alt"></i> ' + dist + ', ' + loc;
+    }
+    if (info.height) info.height.innerHTML = (inputs.height.value || 0) + ' <small>cm</small>';
+    if (info.weight) info.weight.innerHTML = (inputs.weight.value || 0) + ' <small>kg</small>';
+    if (info.foot) info.foot.textContent = inputs.foot.value || 'Right';
+    if (info.district) info.district.textContent = inputs.district.value || '-';
+    if (info.location) info.location.textContent = inputs.location.value || '-';
+    if (hero.foot) hero.foot.textContent = inputs.foot.value || 'Right';
+    if (hero.age) hero.age.textContent = inputs.age.value || '0';
+  }
+  if (inputs.image) {
+    inputs.image.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById('file-name').textContent = file.name;
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          if (previews.image) previews.image.src = evt.target.result;
+          if (hero.img) hero.img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+  Object.values(inputs).forEach(input => {
+    if (input && input.id !== 'player_image') {
+      input.addEventListener('input', updatePreview);
+      input.addEventListener('change', updatePreview);
+    }
+  });
+})();
+</script>
+
+{% endblock %}
+

@@ -1,0 +1,118 @@
+{% extends 'visitor/visitor_head.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  
+</style>
+
+<div class="scanlines"></div>
+
+<div class="particles-container" id="particlesContainer"></div>
+
+<div class="auth-page-wrapper">
+  <div class="auth-container">
+    
+    <div class="auth-branding">
+      <div class="football-icon">⚽</div>
+      <h1>UNFA Football</h1>
+      <p>Join the ultimate football management platform. Create your player card, manage clubs, and compete in tournaments.</p>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-number">100+</div>
+          <div class="stat-label">Clubs</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">500+</div>
+          <div class="stat-label">Players</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">50+</div>
+          <div class="stat-label">Matches</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Side -->
+    <div class="auth-form-box">
+      <div class="glass-panel-auth">
+        <div class="auth-tabs">
+          <button class="auth-tab active" onclick="switchTab('login')" id="tabLogin">Sign In</button>
+          <button class="auth-tab" onclick="switchTab('register')" id="tabRegister">Sign Up</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form" method="POST" action="{% url 'user_login' %}">
+          {% csrf_token %}
+            {% if next %}
+              <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+
+          <div class="form-group">
+            <label><i class="fas fa-envelope"></i> Email</label>
+            <input type="email" name="email" class="glass-input" placeholder="your@email.com" required>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-lock"></i> Password</label>
+            <input type="password" name="password" class="glass-input" placeholder="••••••••" required>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+          </button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" class="auth-form" method="POST" action="{% url 'user_registration' %}" style="display: none;">
+          {% csrf_token %}
+
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> Full Name</label>
+            <input type="text" name="name" class="glass-input" placeholder="John Doe" required>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label><i class="fas fa-birthday-cake"></i> Age</label>
+              <input type="number" name="age" class="glass-input" placeholder="25" required min="16" max="60">
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-venus-mars"></i> Gender</label>
+              <select name="gender" class="glass-input" required>
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-envelope"></i> Email</label>
+            <input type="email" name="email" class="glass-input" placeholder="your@email.com" required>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-lock"></i> Password</label>
+            <input type="password" name="password" class="glass-input" placeholder="••••••••" required minlength="6">
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <i class="fas fa-user-plus"></i> Create Account
+          </button>
+        </form>
+
+        {% if message %}
+        <div class="message-box {% if 'success' in message|lower %}success{% else %}error{% endif %}">
+          <i class="fas {% if 'success' in message|lower %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+          {{ message }}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

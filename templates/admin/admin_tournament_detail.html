@@ -1,0 +1,435 @@
+{% extends 'admin/admin_base.html' %}
+{% block title %}{{ tournament.t_name }} - Tournament Detail{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="glass-card p-4">
+        <div class="row align-items-center">
+          <div class="col-12 col-md-8">
+            <nav class="breadcrumb-nav mb-2" aria-label="breadcrumb">
+              <ol>
+                <li><a href="{% url 'admin_view_tournaments' %}">Tournaments</a></li>
+                <li>/</li>
+                <li style="opacity: 0.7;">{{ tournament.t_name|default:"Detail" }}</li>
+              </ol>
+            </nav>
+            <h1 class="trophy-title fw-bold mb-2" style="font-size: 2rem; text-shadow: 0 0 20px rgba(0,255,136,0.3);">
+              🏆 {{ tournament.t_name|default:"Unnamed Tournament" }}
+            </h1>
+            <p class="subtitle mb-0 opacity-75">{{ tournament.description|default:"No description available" }}</p>
+          </div>
+          <div class="col-12 col-md-4 mt-3 mt-md-0">
+            <div class="d-flex flex-wrap gap-2 justify-content-start justify-content-md-end">
+              <a href="{% url 'admin_edit_tournament' tournament.t_id %}" class="btn-kickoff btn-warn">
+                <span>✏️</span> Edit
+              </a>
+              <a href="{% url 'admin_tournament_bracket' tournament.t_id %}" class="btn-kickoff btn-info">
+                <span>🌳</span> Bracket
+              </a>
+              <form method="post" action="{% url 'admin_delete_tournament' tournament.t_id %}" class="d-inline" onsubmit="return confirm('Delete this tournament?');">
+                {% csrf_token %}
+                <button type="submit" class="btn-kickoff btn-danger">
+                  <span>🗑️</span> Delete
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row g-3 mt-1">
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="glass-card stat-card glow-green h-100">
+        <div class="stat-icon">👥</div>
+        <div class="stat-number" data-target="{{ registrations|length }}">0</div>
+        <div class="stat-label">Teams</div>
+        <div class="stat-sublabel">Registered</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="glass-card stat-card glow-gold h-100">
+        <div class="stat-icon">💰</div>
+        <div class="stat-number" data-target="{{ total_revenue }}">0</div>
+        <div class="stat-label">Revenue</div>
+        <div class="stat-sublabel">₹ Collected</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="glass-card stat-card glow-blue h-100">
+        <div class="stat-icon">⚽</div>
+        <div class="stat-number" data-target="{{ group_matches|length }}">0</div>
+        <div class="stat-label">Group</div>
+        <div class="stat-sublabel">Matches</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="glass-card stat-card glow-red h-100">
+        <div class="stat-icon">⚔️</div>
+        <div class="stat-number" data-target="{{ knockout_matches|length }}">0</div>
+        <div class="stat-label">Knockout</div>
+        <div class="stat-sublabel">Matches</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="glass-card stat-card glow-purple h-100">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-number" data-target="{{ pending_squad_count }}">0</div>
+        <div class="stat-label">Pending</div>
+        <div class="stat-sublabel">Squads</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="glass-card stat-card glow-orange h-100">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-number" data-target="{{ tournament.squad_size }}">0</div>
+        <div class="stat-label">Squad</div>
+        <div class="stat-sublabel">Size</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mt-1">
+
+    <div class="col-12 col-lg-8">
+
+      <!-- Group Stage / League Standings -->
+      {% if tournament.format == 'hybrid' %}
+      <div class="glass-card p-4 mb-4">
+        <h3 class="section-title">
+          <span class="whistle-icon">📊</span>
+          Group Stage Standings
+        </h3>
+        {% for group_name, teams in group_standings.items %}
+        <div class="mb-4">
+          <h6 class="mb-3">
+            <span class="badge-pitch badge-group">Group {{ group_name }}</span>
+          </h6>
+          <div class="match-table-wrapper">
+            <table class="arena-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Club</th>
+                  <th class="cell-center">P</th>
+                  <th class="cell-center">W</th>
+                  <th class="cell-center">D</th>
+                  <th class="cell-center">L</th>
+                  <th class="cell-center">GF</th>
+                  <th class="cell-center">GA</th>
+                  <th class="cell-center">GD</th>
+                  <th class="cell-center">Pts</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for team in teams %}
+                <tr {% if forloop.counter <= tournament.teams_qualifying %}class="qualified"{% endif %}>
+                  <td>{{ forloop.counter }}</td>
+                  <td><strong>{{ team.t_c_club.club_name }}</strong></td>
+                  <td class="cell-center">{{ team.played }}</td>
+                  <td class="cell-center">{{ team.won }}</td>
+                  <td class="cell-center">{{ team.drawn }}</td>
+                  <td class="cell-center">{{ team.lost }}</td>
+                  <td class="cell-center">{{ team.goals_for }}</td>
+                  <td class="cell-center">{{ team.goals_against }}</td>
+                  <td class="cell-center">{{ team.goal_difference }}</td>
+                  <td class="cell-center cell-bold">{{ team.points }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {% empty %}
+        <div class="empty-arena">
+          <div class="empty-icon">📊</div>
+          <div class="empty-text">No group data available.</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      {% elif tournament.format == 'league' %}
+      <div class="glass-card p-4 mb-4">
+        <h3 class="section-title">
+          <span class="whistle-icon">📊</span>
+          League Standings
+        </h3>
+        <div class="match-table-wrapper">
+          <table class="arena-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Club</th>
+                <th class="cell-center">P</th>
+                <th class="cell-center">W</th>
+                <th class="cell-center">D</th>
+                <th class="cell-center">L</th>
+                <th class="cell-center">GF</th>
+                <th class="cell-center">GA</th>
+                <th class="cell-center">GD</th>
+                <th class="cell-center">Pts</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for team in registrations %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><strong>{{ team.t_c_club.club_name }}</strong></td>
+                <td class="cell-center">{{ team.played }}</td>
+                <td class="cell-center">{{ team.won }}</td>
+                <td class="cell-center">{{ team.drawn }}</td>
+                <td class="cell-center">{{ team.lost }}</td>
+                <td class="cell-center">{{ team.goals_for }}</td>
+                <td class="cell-center">{{ team.goals_against }}</td>
+                <td class="cell-center">{{ team.goal_difference }}</td>
+                <td class="cell-center cell-bold">{{ team.points }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="glass-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+          <h3 class="section-title mb-0">
+            <span class="whistle-icon">⚽</span>
+            Recent Matches
+          </h3>
+          <a href="{% url 'admin_tournament_matches' tournament.t_id %}" class="btn-kickoff btn-primary" style="font-size:0.75rem;">
+            View All →
+          </a>
+        </div>
+        <div class="match-table-wrapper">
+          <table class="arena-table">
+            <thead>
+              <tr>
+                <th>Round</th>
+                <th>Home</th>
+                <th>Score</th>
+                <th>Away</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for match in group_matches|slice:":5" %}
+              <tr>
+                <td><span class="badge-pitch badge-group">Group</span></td>
+                <td>
+                  <div class="club-name-cell" title="{{ match.match_home_team.club_name|default:'TBD' }}">
+                    {{ match.match_home_team.club_name|default:"TBD" }}
+                  </div>
+                </td>
+                <td>
+                  {% if match.result_obj %}
+                  <span class="score-badge">
+                    {{ match.result_obj.result_home_team }}
+                    <span class="score-separator">-</span>
+                    {{ match.result_obj.result_away_team }}
+                  </span>
+                  {% else %}
+                  <span class="cell-muted">vs</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="club-name-cell" title="{{ match.match_away_team.club_name|default:'TBD' }}">
+                    {{ match.match_away_team.club_name|default:"TBD" }}
+                  </div>
+                </td>
+                <td>{{ match.match_date|date:"M d" }}</td>
+                <td>
+                  {% if match.match_finished %}
+                    <span class="badge-pitch badge-finished">Finished</span>
+                  {% elif match.match_started %}
+                    <span class="badge-pitch badge-live">● Live</span>
+                  {% else %}
+                    <span class="badge-pitch badge-upcoming">Upcoming</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+              {% for match in knockout_matches|slice:":5" %}
+              <tr>
+                <td><span class="badge-pitch badge-ko">KO</span></td>
+                <td>
+                  <div class="club-name-cell" title="{{ match.match_home_team.club_name|default:'TBD' }}">
+                    {{ match.match_home_team.club_name|default:"TBD" }}
+                  </div>
+                </td>
+                <td>
+                  {% if match.result_obj %}
+                  <span class="score-badge">
+                    {{ match.result_obj.result_home_team }}
+                    <span class="score-separator">-</span>
+                    {{ match.result_obj.result_away_team }}
+                  </span>
+                  {% else %}
+                  <span class="cell-muted">vs</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="club-name-cell" title="{{ match.match_away_team.club_name|default:'TBD' }}">
+                    {{ match.match_away_team.club_name|default:"TBD" }}
+                  </div>
+                </td>
+                <td>{{ match.match_date|date:"M d" }}</td>
+                <td>
+                  {% if match.match_finished %}
+                    <span class="badge-pitch badge-finished">Finished</span>
+                  {% elif match.match_started %}
+                    <span class="badge-pitch badge-live">● Live</span>
+                  {% else %}
+                    <span class="badge-pitch badge-upcoming">Upcoming</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+
+      <div class="glass-card p-4 mb-4">
+        <h3 class="section-title">
+          <span class="whistle-icon">ℹ️</span>
+          Tournament Info
+        </h3>
+        <div class="info-grid">
+          <div class="info-row">
+            <span class="lineup-label">🏟️ Host</span>
+            <span class="lineup-value blue">{{ tournament.t_host.club_name }}</span>
+          </div>
+          <div class="info-row">
+            <span class="lineup-label">📅 Date</span>
+            <span class="lineup-value">{{ tournament.t_date|date:"F d, Y" }}</span>
+          </div>
+          <div class="info-row">
+            <span class="lineup-label">🎮 Format</span>
+            <span class="badge-pitch badge-format">{{ tournament.get_format_display }}</span>
+          </div>
+          <div class="info-row">
+            <span class="lineup-label">🎯 Squad</span>
+            <span class="badge-pitch badge-squad">{{ tournament.squad_size }}-a-side</span>
+          </div>
+          <div class="info-row">
+            <span class="lineup-label">👥 Max Teams</span>
+            <span class="lineup-value">{{ tournament.max_teams }}</span>
+          </div>
+          <div class="info-row">
+            <span class="lineup-label">💳 Fee</span>
+            <span class="lineup-value gold">₹{{ tournament.registration_fee }}</span>
+          </div>
+          <div class="info-row">
+            <span class="lineup-label">🏆 Prize</span>
+            <span class="lineup-value gold">₹{{ tournament.prize_pool|default:"0" }}</span>
+          </div>
+          <div class="info-row">
+            <span class="lineup-label">⏰ Deadline</span>
+            <span class="lineup-value">{{ tournament.registration_deadline|date:"M d, Y"|default:"None" }}</span>
+          </div>
+          <div class="info-row">
+            <span class="lineup-label">📊 Status</span>
+            <span>
+              {% if tournament.is_completed %}<span class="badge-pitch badge-finished">Completed</span>
+              {% elif tournament.is_active %}<span class="badge-pitch badge-success">Active</span>
+              {% else %}<span class="badge-pitch badge-dark">Inactive</span>{% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
+
+ 
+      <div class="glass-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="section-title mb-0">
+            <span class="whistle-icon">👥</span>
+            Registered Clubs
+          </h3>
+          <a href="{% url 'admin_tournament_registrations' tournament.t_id %}" class="badge-pitch badge-upcoming text-decoration-none">Manage</a>
+        </div>
+        <div class="squad-roster">
+          {% for reg in registrations|slice:":10" %}
+          <div class="squad-player">
+            <div class="club-info">
+              <strong>{{ reg.t_c_club.club_name }}</strong>
+              <div class="manager">{{ reg.t_c_club.club_manager.user_name }}</div>
+            </div>
+            {% if reg.is_paid %}<span class="badge-pitch badge-paid">Paid</span>{% else %}<span class="badge-pitch badge-unpaid">Unpaid</span>{% endif %}
+          </div>
+          {% empty %}
+          <div class="empty-arena">
+            <div class="empty-icon">👥</div>
+            <div class="empty-text">No clubs registered yet.</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="glass-card p-4">
+        <h3 class="section-title">
+          <span class="whistle-icon">⚡</span>
+          Quick Tactics
+        </h3>
+        <div class="row g-2">
+          <div class="col-6">
+            <a href="{% url 'admin_tournament_registrations' tournament.t_id %}" class="tactic-btn tactic-primary w-100 h-100">
+              <span class="tactic-icon">👥</span>
+              <span class="tactic-text">Registrations</span>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="{% url 'admin_tournament_matches' tournament.t_id %}" class="tactic-btn tactic-info w-100 h-100">
+              <span class="tactic-icon">⚽</span>
+              <span class="tactic-text">Matches</span>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="{% url 'admin_tournament_payments' tournament.t_id %}" class="tactic-btn tactic-success w-100 h-100">
+              <span class="tactic-icon">💰</span>
+              <span class="tactic-text">Payments</span>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="{% url 'admin_tournament_bracket' tournament.t_id %}" class="tactic-btn tactic-warn w-100 h-100">
+              <span class="tactic-icon">🌳</span>
+              <span class="tactic-text">Bracket</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Animated stat counters
+  document.addEventListener('DOMContentLoaded', function() {
+    const counters = document.querySelectorAll('.stat-number[data-target]');
+    counters.forEach(counter => {
+      const target = parseInt(counter.getAttribute('data-target')) || 0;
+      const duration = 1200;
+      const start = performance.now();
+      function update(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        counter.textContent = Math.floor(eased * target);
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    });
+  });
+</script>
+
+{% endblock %}

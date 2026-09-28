@@ -1,0 +1,557 @@
+{% extends 'user/user_head.html' %} 
+{% block content %} 
+{% load static %}
+
+<div class="mf27-arena">
+  <!-- Decorative football pitch -->
+  <div class="mf27-pitch-lines">
+    <div class="mf27-pitch-circle"></div>
+    <div class="mf27-pitch-line"></div>
+  </div>
+
+  <div class="container-fluid mf27-container py-4 py-md-5">
+    <header class="mf27-hero mb-4">
+      <div class="row align-items-center g-4">
+        <div class="col-lg">
+          <span class="mf27-kicker">
+            <i class="fas fa-futbol"></i>
+            Match Finder
+          </span>
+
+          <h1 class="mf27-title">Find Your <span>Next Match</span></h1>
+
+          <p class="mf27-subtitle">
+            Browse open match calls, discover upcoming fixtures, and challenge
+            clubs ready to step onto the pitch.
+          </p>
+        </div>
+
+        <div class="col-sm-auto">
+          <div class="mf27-counter">
+            <div class="mf27-counter-ring">
+              <i class="fas fa-bullhorn"></i>
+            </div>
+
+            <strong class="mf27-counter-value"> {{ open_calls_count }} </strong>
+
+            <span class="mf27-counter-label"> Open Calls </span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    {% if match_calls %}
+
+    <section class="mf27-section">
+      <div class="mf27-section-head">
+        <h2 class="mf27-section-title">
+          <i class="fas fa-bullhorn"></i>
+          Open Challenges
+        </h2>
+
+        <div class="mf27-section-line"></div>
+
+        <span class="mf27-section-note"> Ready for an opponent </span>
+      </div>
+
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 g-lg-4">
+        {% for match in match_calls %}
+
+        <div class="col">
+          <article
+            class="mf27-card mf27-reveal"
+            data-mf27-reveal
+            style="transition-delay: {{ forloop.counter }}00ms;"
+          >
+            <div class="mf27-card-glow"></div>
+
+            <span class="mf27-badge mf27-badge-open"> Open </span>
+
+            <div class="mf27-club-row">
+              <div class="mf27-club-logo">
+                <img
+                  src="{{ match.match_home_team.club_logo.url }}"
+                  alt="{{ match.match_home_team.club_name }}"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="flex-grow-1 min-w-0">
+                <h3 class="mf27-club-name">
+                  {{ match.match_home_team.club_name }}
+                </h3>
+
+                <div class="mf27-status">
+                  <span class="mf27-status-dot"></span>
+                  Looking for opponent
+                </div>
+              </div>
+            </div>
+
+            <div class="mf27-stats">
+              <div class="row g-2">
+                <div class="col-6">
+                  <div class="mf27-stat">
+                    <div class="mf27-stat-icon">
+                      <i class="fas fa-calendar-alt"></i>
+                    </div>
+
+                    <div class="mf27-stat-text">
+                      <span class="mf27-stat-label">Date</span>
+                      <span class="mf27-stat-value">
+                        {{ match.match_date|date:"d M Y" }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="mf27-stat">
+                    <div class="mf27-stat-icon">
+                      <i class="fas fa-clock"></i>
+                    </div>
+
+                    <div class="mf27-stat-text">
+                      <span class="mf27-stat-label">Kick-off</span>
+                      <span class="mf27-stat-value">
+                        {{ match.match_time }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="mf27-stat">
+                    <div class="mf27-stat-icon">
+                      <i class="fas fa-map-marker-alt"></i>
+                    </div>
+
+                    <div class="mf27-stat-text">
+                      <span class="mf27-stat-label">Venue</span>
+                      <span class="mf27-stat-value">
+                        {{ match.match_turf.turf_name|truncatechars:14 }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="mf27-stat">
+                    <div class="mf27-stat-icon">
+                      <i class="fas fa-dumbbell"></i>
+                    </div>
+
+                    <div class="mf27-stat-text">
+                      <span class="mf27-stat-label">OVR</span>
+                      <span class="mf27-stat-value">
+                        {{ match.match_home_team.club_weight|default:"--" }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mf27-footer">
+              <a
+                href="{% url 'fix_match' match.match_id %}"
+                class="mf27-action"
+                onclick="return confirm('Accept this match challenge?');"
+              >
+                <i class="fas fa-handshake"></i>
+                Accept Challenge
+              </a>
+            </div>
+          </article>
+        </div>
+
+        {% endfor %}
+      </div>
+    </section>
+
+    {% endif %} {% if upcoming_matches %}
+
+    <section class="mf27-section">
+      <div class="mf27-section-head">
+        <h2 class="mf27-section-title">
+          <i class="fas fa-calendar-check"></i>
+          Upcoming Fixtures
+        </h2>
+
+        <div class="mf27-section-line"></div>
+
+        <span class="mf27-section-note"> Confirmed matches </span>
+      </div>
+
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 g-lg-4">
+        {% for match in upcoming_matches %}
+
+        <div class="col">
+          <article
+            class="mf27-card mf27-reveal"
+            data-mf27-reveal
+            style="transition-delay: {{ forloop.counter }}00ms;"
+          >
+            <div class="mf27-card-glow"></div>
+
+            <span class="mf27-badge mf27-badge-confirmed"> Confirmed </span>
+
+            <div class="mf27-versus-row">
+              <div class="mf27-versus-team">
+                <img
+                  src="{{ match.match_home_team.club_logo.url }}"
+                  alt="{{ match.match_home_team.club_name }}"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="mf27-vs">VS</div>
+
+              <div class="mf27-versus-team">
+                <img
+                  src="{{ match.match_away_team.club_logo.url }}"
+                  alt="{{ match.match_away_team.club_name }}"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+
+            <div class="mf27-fixture-name">
+              <h3>
+                {{ match.match_home_team.club_name }}
+
+                <span>vs</span>
+
+                {{ match.match_away_team.club_name }}
+              </h3>
+
+              <div class="mf27-status justify-content-center mt-2 text-info">
+                <span
+                  class="mf27-status-dot"
+                  style="background: #22d3ee; box-shadow: 0 0 10px #22d3ee"
+                ></span>
+
+                Confirmed fixture
+              </div>
+            </div>
+
+            <div class="mf27-stats">
+              <div class="row g-2">
+                <div class="col-6">
+                  <div class="mf27-stat">
+                    <div class="mf27-stat-icon">
+                      <i class="fas fa-calendar-alt"></i>
+                    </div>
+
+                    <div class="mf27-stat-text">
+                      <span class="mf27-stat-label"> Date </span>
+
+                      <span class="mf27-stat-value">
+                        {{ match.match_date|date:"d M Y" }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="mf27-stat">
+                    <div class="mf27-stat-icon">
+                      <i class="fas fa-clock"></i>
+                    </div>
+
+                    <div class="mf27-stat-text">
+                      <span class="mf27-stat-label"> Kick-off </span>
+
+                      <span class="mf27-stat-value">
+                        {{ match.match_time }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="mf27-stat">
+                    <div class="mf27-stat-icon">
+                      <i class="fas fa-map-marker-alt"></i>
+                    </div>
+
+                    <div class="mf27-stat-text">
+                      <span class="mf27-stat-label"> Venue </span>
+
+                      <span class="mf27-stat-value">
+                        {{ match.match_turf.turf_name|truncatechars:14 }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="mf27-stat">
+                    <div class="mf27-stat-icon">
+                      <i class="fas fa-users"></i>
+                    </div>
+
+                    <div class="mf27-stat-text">
+                      <span class="mf27-stat-label"> Format </span>
+
+                      <span class="mf27-stat-value">
+                        {{ match.squad_size|default:"5" }}-a-side
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mf27-footer">
+              <a
+                href="{% url 'watch_matches' %}"
+                class="mf27-action mf27-action-info"
+              >
+                <i class="fas fa-eye"></i>
+                Watch Match
+              </a>
+            </div>
+          </article>
+        </div>
+
+        {% endfor %}
+      </div>
+    </section>
+
+    {% endif %} 
+    {% if not match_calls and not upcoming_matches and all_future_matches %}
+
+    <section class="mf27-section">
+      <div class="mf27-section-head">
+        <h2 class="mf27-section-title">
+          <i class="fas fa-list"></i>
+          All Upcoming Matches
+        </h2>
+
+        <div class="mf27-section-line"></div>
+
+        <span class="mf27-section-note"> Scheduled matches </span>
+      </div>
+
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 g-lg-4">
+        {% for match in all_future_matches %}
+
+        <div class="col">
+          <article
+            class="mf27-card mf27-reveal"
+            data-mf27-reveal
+            style="transition-delay: {{ forloop.counter }}00ms;"
+          >
+            <div class="mf27-card-glow"></div>
+
+            <span class="mf27-badge mf27-badge-scheduled"> Scheduled </span>
+
+            <div class="mf27-versus-row">
+              {% if match.match_home_team %}
+
+              <div class="mf27-versus-team">
+                <img
+                  src="{{ match.match_home_team.club_logo.url }}"
+                  alt="{{ match.match_home_team.club_name }}"
+                  loading="lazy"
+                />
+              </div>
+
+              {% else %}
+
+              <div class="mf27-versus-team">
+                <i class="fas fa-question text-secondary"></i>
+              </div>
+
+              {% endif %}
+
+              <div class="mf27-vs">VS</div>
+
+              {% if match.match_away_team %}
+
+              <div class="mf27-versus-team">
+                <img
+                  src="{{ match.match_away_team.club_logo.url }}"
+                  alt="{{ match.match_away_team.club_name }}"
+                  loading="lazy"
+                />
+              </div>
+
+              {% else %}
+
+              <div class="mf27-versus-team">
+                <i class="fas fa-question text-secondary"></i>
+              </div>
+
+              {% endif %}
+            </div>
+
+            <div class="mf27-fixture-name">
+              <h3>
+                {{ match.match_home_team.club_name|default:"TBD" }}
+
+                <span>vs</span>
+
+                {{ match.match_away_team.club_name|default:"TBD" }}
+              </h3>
+
+              <div
+                class="mf27-status justify-content-center mt-2"
+                style="color: #fde68a"
+              >
+                <span
+                  class="mf27-status-dot"
+                  style="background: #f59e0b; box-shadow: 0 0 10px #f59e0b"
+                ></span>
+
+                Scheduled
+              </div>
+            </div>
+
+            <div class="mf27-stats">
+              <div class="row g-2">
+                <div class="col-6">
+                  <div class="mf27-stat">
+                    <div class="mf27-stat-icon">
+                      <i class="fas fa-calendar-alt"></i>
+                    </div>
+
+                    <div class="mf27-stat-text">
+                      <span class="mf27-stat-label"> Date </span>
+
+                      <span class="mf27-stat-value">
+                        {{ match.match_date|date:"d M Y" }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="mf27-stat">
+                    <div class="mf27-stat-icon">
+                      <i class="fas fa-clock"></i>
+                    </div>
+
+                    <div class="mf27-stat-text">
+                      <span class="mf27-stat-label"> Kick-off </span>
+
+                      <span class="mf27-stat-value">
+                        {{ match.match_time }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="mf27-stat">
+                    <div class="mf27-stat-icon">
+                      <i class="fas fa-map-marker-alt"></i>
+                    </div>
+
+                    <div class="mf27-stat-text">
+                      <span class="mf27-stat-label"> Venue </span>
+
+                      <span class="mf27-stat-value">
+                        {{ match.match_turf.turf_name|truncatechars:14 }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="mf27-stat">
+                    <div class="mf27-stat-icon">
+                      <i class="fas fa-users"></i>
+                    </div>
+
+                    <div class="mf27-stat-text">
+                      <span class="mf27-stat-label"> Format </span>
+
+                      <span class="mf27-stat-value">
+                        {{ match.squad_size|default:"5" }}-a-side
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mf27-footer">
+              <a
+                href="{% url 'watch_matches' %}"
+                class="mf27-action mf27-action-warning"
+              >
+                <i class="fas fa-eye"></i>
+                View Details
+              </a>
+            </div>
+          </article>
+        </div>
+
+        {% endfor %}
+      </div>
+    </section>
+
+    {% endif %} 
+    {% if not match_calls and not upcoming_matches and not all_future_matches %}
+
+    <section class="mf27-empty mf27-reveal" data-mf27-reveal>
+      <div class="mf27-empty-ball">
+        <i class="fas fa-futbol"></i>
+      </div>
+
+      <h2 class="mf27-empty-title">No Matches on the Board</h2>
+
+      <p class="mf27-empty-text">
+        The pitch is quiet right now. Be the first club to call for a challenge.
+      </p>
+
+      <a
+        href="{% url 'check_match_requirement' request.session.current_club %}"
+        class="mf27-action d-inline-flex px-4"
+        style="width: auto"
+      >
+        <i class="fas fa-plus"></i>
+
+        Create Match Call
+      </a>
+    </section>
+
+    {% endif %}
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const mf27Elements = document.querySelectorAll("[data-mf27-reveal]");
+
+    if (!("IntersectionObserver" in window)) {
+      mf27Elements.forEach(function (element) {
+        element.classList.add("mf27-visible");
+      });
+
+      return;
+    }
+
+    const mf27Observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("mf27-visible");
+
+            mf27Observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.08,
+      },
+    );
+
+    mf27Elements.forEach(function (element) {
+      mf27Observer.observe(element);
+    });
+  });
+</script>
+
+{% endblock %}

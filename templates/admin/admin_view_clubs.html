@@ -1,0 +1,237 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+{% block title %}Clubs - Football Arena Admin{% endblock %}
+
+
+{% block content %}
+<!-- Animated Background Elements -->
+
+
+<div class="container-fluid">
+
+    <!-- Arena Header -->
+    <div class="arena-header-1 mb-4">
+        <div class="row align-items-center g-3">
+            <div class="col-12 col-md-8">
+                <h1 class="arena-title-2 mb-2">Club Roster</h1>
+                <p class="arena-subtitle-3 mb-0">Manage football clubs, validations, and squad rosters.</p>
+            </div>
+            <div class="col-12 col-md-4 text-md-end">
+                <span class="live-badge-4">
+                    <span class="live-pulse-5"></span>
+                    <i class="bi bi-stadium me-1"></i>
+                    {{ clubs|length }} Clubs
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scout Filters -->
+    <div class="scout-bar-6 mb-4">
+        <div>
+            <form method="get">
+                <div class="row g-3 align-items-end">
+                    <div class="col-12 col-sm-4 col-lg-3">
+                        <label class="filter-label-10">
+                            <i class="bi bi-search me-1"></i>Club Name
+                        </label>
+                        <input type="text" name="name" class="form-control scout-input-8" 
+                               placeholder="Search club..." value="{{ request.GET.name }}">
+                    </div>
+                    <div class="col-12 col-sm-4 col-lg-3">
+                        <label class="filter-label-10">
+                            <i class="bi bi-geo-alt me-1"></i>District
+                        </label>
+                        <input type="text" name="district" class="form-control scout-input-8" 
+                               placeholder="Search district..." value="{{ request.GET.district }}">
+                    </div>
+                    <div class="col-12 col-sm-4 col-lg-3">
+                        <label class="filter-label-10">
+                            <i class="bi bi-person me-1"></i>Manager
+                        </label>
+                        <input type="text" name="manager" class="form-control scout-input-8" 
+                               placeholder="Search manager..." value="{{ request.GET.manager }}">
+                    </div>
+                    <div class="col-12 col-sm-4 col-lg-2">
+                        <label class="filter-label-10">
+                            <i class="bi bi-sort-down me-1"></i>Sort By
+                        </label>
+                        <select name="sort" class="form-select scout-select-9">
+                            <option value="">Default</option>
+                            <option value="high" {% if request.GET.sort == 'high' %}selected{% endif %}>Weight: High &rarr; Low</option>
+                            <option value="low" {% if request.GET.sort == 'low' %}selected{% endif %}>Weight: Low &rarr; High</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-lg-auto">
+                        <button type="submit" class="kickoff-btn-11 btn-scout-12 flex-fill">
+                            <i class="bi bi-search"></i>
+                            {% comment %} <span class="d-none d-lg-inline">Scout</span> {% endcomment %}
+                        </button>
+                        <a href="{% url 'admin_view_clubs' %}" class="kickoff-btn-11 btn-reset-13 flex-fill text-center">
+                            <i class="bi bi-x-lg"></i>
+                            {% comment %} <span class="d-none d-lg-inline">Reset</span> {% endcomment %}
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Club Grid -->
+    <div class="club-grid-14">
+        <div class="row g-4">
+            {% for club in clubs %}
+            <div class="col-12 col-md-6 col-xl-4 animate-in-46 delay-47-{{ forloop.counter|add:0|divisibleby:5|yesno:'1,2,3,4,5' }}">
+                <div class="glass-card-15 h-100 p-4">
+                    <!-- Card Header -->
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        {% if club.club_logo %}
+                        <img src="{{ club.club_logo.url }}" alt="{{ club.club_name }}" class="club-crest-16 flex-shrink-0">
+                        {% else %}
+                        <div class="club-crest-placeholder-17 flex-shrink-0">{{ club.club_name|first|upper }}</div>
+                        {% endif %}
+                        <div class="flex-grow-1 min-w-0">
+                            <div class="club-name-18 text-truncate">{{ club.club_name }}</div>
+                            <div class="club-district-19">
+                                <i class="bi bi-geo-alt-fill" style="font-size: 0.7rem;"></i>
+                                {{ club.club_district }}
+                            </div>
+                            <div class="mt-2">
+                                {% if club.is_validated %}
+                                <span class="status-badge-20 status-validated-21">
+                                    <i class="bi bi-check-circle-fill" style="font-size: 0.65rem;"></i>
+                                    Validated
+                                </span>
+                                {% else %}
+                                <span class="status-badge-20 status-pending-22">
+                                    <i class="bi bi-hourglass-split" style="font-size: 0.65rem;"></i>
+                                    Pending
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Squad Stats -->
+                    <div class="squad-stats-23">
+                        <div class="stat-item-24">
+                            <div class="stat-left-25">
+                                <div class="stat-icon-wrap-26 stat-icon-manager-27">
+                                    <i class="bi bi-person-badge"></i>
+                                </div>
+                                <span class="stat-label-text-32">Manager</span>
+                            </div>
+                            <span class="stat-value-text-33">{{ club.club_manager.user_name }}</span>
+                        </div>
+                        <div class="stat-item-24">
+                            <div class="stat-left-25">
+                                <div class="stat-icon-wrap-26 stat-icon-location-28">
+                                    <i class="bi bi-geo"></i>
+                                </div>
+                                <span class="stat-label-text-32">Location</span>
+                            </div>
+                            <span class="stat-value-text-33">{{ club.club_location }}</span>
+                        </div>
+                        <div class="stat-item-24">
+                            <div class="stat-left-25">
+                                <div class="stat-icon-wrap-26 stat-icon-weight-29">
+                                    <i class="bi bi-speedometer2"></i>
+                                </div>
+                                <span class="stat-label-text-32">Weight</span>
+                            </div>
+                            <span class="stat-value-text-33 stat-value-gold-34">{{ club.club_weight|default:"10" }}</span>
+                        </div>
+                        <div class="stat-item-24">
+                            <div class="stat-left-25">
+                                <div class="stat-icon-wrap-26 stat-icon-players-30">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                                <span class="stat-label-text-32">Players</span>
+                            </div>
+                            <span class="stat-value-text-33 stat-value-green-35">{{ club.player_count }}</span>
+                        </div>
+                        {% if club.club_home_ground %}
+                        <div class="stat-item-24">
+                            <div class="stat-left-25">
+                                <div class="stat-icon-wrap-26 stat-icon-ground-31">
+                                    <i class="bi bi-tree"></i>
+                                </div>
+                                <span class="stat-label-text-32">Home Ground</span>
+                            </div>
+                            <span class="stat-value-text-33">{{ club.club_home_ground.turf_name }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Card Actions -->
+                    <div class="card-actions-36">
+                        {% if not club.is_validated %}
+                        <form method="post" action="{% url 'validate_club' club.club_id %}" class="flex-fill">
+                            {% csrf_token %}
+                            <button type="submit" class="kickoff-btn-11 btn-validate-37">
+                                <i class="bi bi-check-lg"></i>
+                                Validate
+                            </button>
+                        </form>
+                        {% endif %}
+                        <form method="post" action="{% url 'admin_delete_club' club.club_id %}" 
+                              data-confirm="Delete club '{{ club.club_name }}'?" class="flex-fill">
+                            {% csrf_token %}
+                            <button type="submit" class="kickoff-btn-11 btn-delete-38">
+                                <i class="bi bi-trash3"></i>
+                                <span class="d-none d-sm-inline">Delete</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="glass-panel-7">
+                    <div class="empty-state-39">
+                        <div class="empty-icon-40">🏟️</div>
+                        <div class="empty-title-41">No Clubs Found</div>
+                        <p class="empty-desc-42">Try adjusting your scouting filters to find what you're looking for.</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Confirm delete
+    document.querySelectorAll('form[data-confirm]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            if (!confirm(this.dataset.confirm)) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    // Staggered entrance animation using Intersection Observer
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.animate-in-46').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        observer.observe(el);
+    });
+</script>
+{% endblock %}

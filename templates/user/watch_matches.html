@@ -1,0 +1,1295 @@
+{% extends 'user/user_head.html' %}
+{% block content %}
+{% load static %}
+
+<div class="mc27-page">
+
+  <div class="mc27-stadium"></div>
+  <div class="mc27-pitch"></div>
+
+  <div class="mc27-particles">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <div class="mc27-scan"></div>
+
+  <main class="mc27-container container-fluid">
+
+    <div class="container-fluid px-2 px-md-4 px-xl-5">
+
+      <!-- =========================================================
+           HERO
+      ========================================================== -->
+
+      <header class="mc27-hero mc27-reveal">
+
+        <div class="row align-items-center g-4">
+
+          <div class="col-12 col-lg-9">
+
+            <div class="mc27-kicker">
+              <i class="fas fa-satellite-dish"></i>
+              MATCH CENTER
+            </div>
+
+            <h1 class="mc27-title">
+              Watch
+              <span>Matches</span>
+            </h1>
+
+            <p class="mc27-subtitle">
+              Follow live fixtures, monitor match status, check upcoming games
+              and review completed results from your football command center.
+            </p>
+
+          </div>
+
+          <div class="col-12 col-lg-3">
+
+            <div class="mc27-live-hud">
+
+              <span class="mc27-live-ring"></span>
+
+              <div class="mc27-live-core">
+
+                <span class="mc27-live-number">
+                  {{ live_matches|length }}
+                </span>
+
+                <span class="mc27-live-label">
+                  Live
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </header>
+
+
+      <!-- =========================================================
+           UPCOMING MATCHES
+      ========================================================== -->
+
+      <section class="mc27-section mc27-reveal">
+
+        <div class="mc27-section-head">
+
+          <div class="mc27-section-title">
+
+            <div class="mc27-section-icon">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+
+            <div>
+
+              <h2 class="mc27-heading">
+
+                Upcoming Matches
+
+                <small>
+                  Matches scheduled to start
+                </small>
+
+              </h2>
+
+            </div>
+
+          </div>
+
+          <span class="badge rounded-pill bg-primary">
+            {{ upcoming_matches|length }} upcoming
+          </span>
+
+        </div>
+
+
+        {% if upcoming_matches %}
+
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 g-lg-4">
+
+            {% for match in upcoming_matches %}
+
+              <div class="col">
+
+                <div
+                  class="mc27-card-link mc27-card-reveal mc27-upcoming-link"
+                  data-delay="{{ forloop.counter }}"
+                  data-paused="false"
+                  aria-label="Upcoming match"
+                >
+
+                  <article class="mc27-card mc27-upcoming-card">
+
+                    <!-- CARD TOP -->
+
+                    <div class="mc27-card-top">
+
+                      <span class="mc27-status mc27-upcoming">
+
+                        <i class="fas fa-clock"></i>
+
+                        UPCOMING
+
+                      </span>
+
+                      <span class="mc27-date">
+
+                        {{ match.match_date|date:"d M Y" }}
+
+                        •
+
+                        {{ match.match_time }}
+
+                      </span>
+
+                    </div>
+
+
+                    <!-- TOURNAMENT -->
+
+                    {% if match.tournament %}
+
+                      <div class="mc27-tournament">
+
+                        <i class="fas fa-trophy"></i>
+
+                        {{ match.tournament.t_name }}
+
+                      </div>
+
+                    {% endif %}
+
+
+                    <!-- TEAMS -->
+
+                    <div class="mc27-teams">
+
+
+                      <!-- HOME -->
+
+                      <div class="mc27-team">
+
+                        <div class="mc27-logo">
+
+                          {% if match.match_home_team.club_logo %}
+
+                            <img
+                              src="{{ match.match_home_team.club_logo.url }}"
+                              alt="{{ match.match_home_team.club_name }}"
+                            >
+
+                          {% else %}
+
+                            <img
+                              src="{% static 'images/default_club.png' %}"
+                              alt="Club"
+                            >
+
+                          {% endif %}
+
+                        </div>
+
+                        <span class="mc27-team-name">
+
+                          {{ match.match_home_team.club_name }}
+
+                        </span>
+
+                      </div>
+
+
+                      <!-- VS -->
+
+                      <div class="mc27-score">
+
+                        <span class="mc27-score-number">
+
+                          VS
+
+                        </span>
+
+                        <div class="mc27-score-line"></div>
+
+                      </div>
+
+
+                      <!-- AWAY -->
+
+                      <div class="mc27-team mc27-team-away">
+
+                        <span class="mc27-team-name">
+
+                          {{ match.match_away_team.club_name|default:"TBD" }}
+
+                        </span>
+
+                        <div class="mc27-logo">
+
+                          {% if match.match_away_team.club_logo %}
+
+                            <img
+                              src="{{ match.match_away_team.club_logo.url }}"
+                              alt="{{ match.match_away_team.club_name }}"
+                            >
+
+                          {% else %}
+
+                            <img
+                              src="{% static 'images/default_club.png' %}"
+                              alt="Club"
+                            >
+
+                          {% endif %}
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+
+                    <!-- VENUE -->
+
+                    {% if match.match_turf %}
+
+                      <div class="mc27-venue">
+
+                        <i class="fas fa-map-marker-alt"></i>
+
+                        {{ match.match_turf.turf_name }}
+
+                      </div>
+
+                    {% endif %}
+
+
+                    <!-- STATE -->
+
+                    <div class="mc27-state">
+
+                      <span>
+
+                        <i class="fas fa-hourglass-start"></i>
+
+                        Match not started
+
+                      </span>
+
+                    </div>
+
+
+                    <!-- FOOTER -->
+
+                    <div class="mc27-card-footer">
+
+                      <span class="mc27-watch">
+
+                        Scheduled Match
+
+                      </span>
+
+                      <span class="mc27-arrow">
+
+                        <i class="fas fa-calendar"></i>
+
+                      </span>
+
+                    </div>
+
+                  </article>
+
+                </div>
+
+              </div>
+
+            {% endfor %}
+
+          </div>
+
+
+        {% else %}
+
+          <div class="mc27-empty">
+
+            <i class="fas fa-calendar-alt"></i>
+
+            <h4>
+              No upcoming matches
+            </h4>
+
+            <p>
+              There are no upcoming matches scheduled at the moment.
+            </p>
+
+          </div>
+
+        {% endif %}
+
+      </section>
+
+
+
+      <!-- =========================================================
+           LIVE MATCHES
+      ========================================================== -->
+
+      <section class="mc27-section mc27-reveal">
+
+        <div class="mc27-section-head">
+
+          <div class="mc27-section-title">
+
+            <div class="mc27-section-icon">
+
+              <i class="fas fa-broadcast-tower"></i>
+
+            </div>
+
+            <div>
+
+              <h2 class="mc27-heading">
+
+                Live Matches
+
+                <small>
+                  Matches currently in progress
+                </small>
+
+              </h2>
+
+            </div>
+
+          </div>
+
+          <span class="badge rounded-pill bg-danger">
+
+            {{ live_matches|length }} active
+
+          </span>
+
+        </div>
+
+
+        {% if live_matches %}
+
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 g-lg-4">
+
+            {% for match in live_matches %}
+
+              <div class="col">
+
+
+                {% if match.match_paused %}
+
+                  <!-- =================================================
+                       PAUSED LIVE MATCH
+                  ================================================== -->
+
+                  <div
+                    class="mc27-card-link mc27-paused-link mc27-card-reveal"
+                    data-delay="{{ forloop.counter }}"
+                    data-paused="true"
+                    aria-disabled="true"
+                  >
+
+                    <article class="mc27-card mc27-paused-card">
+
+
+                      <div class="mc27-card-top">
+
+                        <span class="mc27-status mc27-paused">
+
+                          <i class="fas fa-pause"></i>
+
+                          PAUSED
+
+                        </span>
+
+                        <span class="mc27-date">
+
+                          {{ match.match_date|date:"d M Y" }}
+
+                          •
+
+                          {{ match.match_time }}
+
+                        </span>
+
+                      </div>
+
+
+                      {% if match.tournament %}
+
+                        <div class="mc27-tournament">
+
+                          <i class="fas fa-trophy"></i>
+
+                          {{ match.tournament.t_name }}
+
+                        </div>
+
+                      {% endif %}
+
+
+                      <div class="mc27-teams">
+
+
+                        <!-- HOME -->
+
+                        <div class="mc27-team">
+
+                          <div class="mc27-logo">
+
+                            {% if match.match_home_team.club_logo %}
+
+                              <img
+                                src="{{ match.match_home_team.club_logo.url }}"
+                                alt="{{ match.match_home_team.club_name }}"
+                              >
+
+                            {% else %}
+
+                              <img
+                                src="{% static 'images/default_club.png' %}"
+                                alt="Club"
+                              >
+
+                            {% endif %}
+
+                          </div>
+
+                          <span class="mc27-team-name">
+
+                            {{ match.match_home_team.club_name }}
+
+                          </span>
+
+                        </div>
+
+
+                        <!-- SCORE -->
+
+                        <div class="mc27-score">
+
+                          <span class="mc27-score-number mc27-live-score">
+
+                            {% if match.result %}
+
+                              {{ match.result.result_home_team }}
+
+                              —
+
+                              {{ match.result.result_away_team }}
+
+                            {% else %}
+
+                              0 — 0
+
+                            {% endif %}
+
+                          </span>
+
+                          <div class="mc27-score-line"></div>
+
+                        </div>
+
+
+                        <!-- AWAY -->
+
+                        <div class="mc27-team mc27-team-away">
+
+                          <span class="mc27-team-name">
+
+                            {{ match.match_away_team.club_name|default:"TBD" }}
+
+                          </span>
+
+                          <div class="mc27-logo">
+
+                            {% if match.match_away_team.club_logo %}
+
+                              <img
+                                src="{{ match.match_away_team.club_logo.url }}"
+                                alt="{{ match.match_away_team.club_name }}"
+                              >
+
+                            {% else %}
+
+                              <img
+                                src="{% static 'images/default_club.png' %}"
+                                alt="Club"
+                              >
+
+                            {% endif %}
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+
+                      {% if match.match_turf %}
+
+                        <div class="mc27-venue">
+
+                          <i class="fas fa-map-marker-alt"></i>
+
+                          {{ match.match_turf.turf_name }}
+
+                        </div>
+
+                      {% endif %}
+
+
+                      <div class="mc27-state">
+
+                        <span>
+
+                          <i class="fas fa-pause-circle"></i>
+
+                          Match paused
+
+                        </span>
+
+                      </div>
+
+
+                      <div class="mc27-card-footer">
+
+                        <span class="mc27-watch">
+
+                          Match Temporarily Unavailable
+
+                        </span>
+
+                        <span class="mc27-arrow">
+
+                          <i class="fas fa-pause"></i>
+
+                        </span>
+
+                      </div>
+
+                    </article>
+
+                  </div>
+
+
+                {% else %}
+
+                  <!-- =================================================
+                       ACTIVE LIVE MATCH
+                  ================================================== -->
+
+                  <a
+                    href="{% url 'watch_live_score' match.match_id %}"
+                    class="mc27-card-link mc27-card-reveal"
+                    data-delay="{{ forloop.counter }}"
+                    data-paused="false"
+                  >
+
+                    <article class="mc27-card">
+
+
+                      <div class="mc27-card-top">
+
+                        <span class="mc27-status mc27-live">
+
+                          <i class="fas fa-circle"></i>
+
+                          LIVE
+
+                        </span>
+
+                        <span class="mc27-date">
+
+                          {{ match.match_date|date:"d M Y" }}
+
+                          •
+
+                          {{ match.match_time }}
+
+                        </span>
+
+                      </div>
+
+
+                      {% if match.tournament %}
+
+                        <div class="mc27-tournament">
+
+                          <i class="fas fa-trophy"></i>
+
+                          {{ match.tournament.t_name }}
+
+                        </div>
+
+                      {% endif %}
+
+
+                      <div class="mc27-teams">
+
+
+                        <!-- HOME -->
+
+                        <div class="mc27-team">
+
+                          <div class="mc27-logo">
+
+                            {% if match.match_home_team.club_logo %}
+
+                              <img
+                                src="{{ match.match_home_team.club_logo.url }}"
+                                alt="{{ match.match_home_team.club_name }}"
+                              >
+
+                            {% else %}
+
+                              <img
+                                src="{% static 'images/default_club.png' %}"
+                                alt="Club"
+                              >
+
+                            {% endif %}
+
+                          </div>
+
+                          <span class="mc27-team-name">
+
+                            {{ match.match_home_team.club_name }}
+
+                          </span>
+
+                        </div>
+
+
+                        <!-- SCORE -->
+
+                        <div class="mc27-score">
+
+                          <span class="mc27-score-number mc27-live-score">
+
+                            {% if match.result %}
+
+                              {{ match.result.result_home_team }}
+
+                              —
+
+                              {{ match.result.result_away_team }}
+
+                            {% else %}
+
+                              0 — 0
+
+                            {% endif %}
+
+                          </span>
+
+                          <div class="mc27-score-line"></div>
+
+                        </div>
+
+
+                        <!-- AWAY -->
+
+                        <div class="mc27-team mc27-team-away">
+
+                          <span class="mc27-team-name">
+
+                            {{ match.match_away_team.club_name|default:"TBD" }}
+
+                          </span>
+
+                          <div class="mc27-logo">
+
+                            {% if match.match_away_team.club_logo %}
+
+                              <img
+                                src="{{ match.match_away_team.club_logo.url }}"
+                                alt="{{ match.match_away_team.club_name }}"
+                              >
+
+                            {% else %}
+
+                              <img
+                                src="{% static 'images/default_club.png' %}"
+                                alt="Club"
+                              >
+
+                            {% endif %}
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+
+                      {% if match.match_turf %}
+
+                        <div class="mc27-venue">
+
+                          <i class="fas fa-map-marker-alt"></i>
+
+                          {{ match.match_turf.turf_name }}
+
+                        </div>
+
+                      {% endif %}
+
+
+                      <div class="mc27-state">
+
+                        <span class="mc27-running">
+
+                          <span class="mc27-dot"></span>
+
+                          Match in progress
+
+                        </span>
+
+                      </div>
+
+
+                      <div class="mc27-card-footer">
+
+                        <span class="mc27-watch">
+
+                          Watch Live Score
+
+                        </span>
+
+                        <span class="mc27-arrow">
+
+                          <i class="fas fa-bolt"></i>
+
+                        </span>
+
+                      </div>
+
+                    </article>
+
+                  </a>
+
+                {% endif %}
+
+              </div>
+
+            {% endfor %}
+
+          </div>
+
+
+        {% else %}
+
+          <div class="mc27-empty">
+
+            <i class="fas fa-broadcast-tower"></i>
+
+            <h4>
+              No live matches
+            </h4>
+
+            <p>
+              There are no matches currently in progress.
+            </p>
+
+          </div>
+
+        {% endif %}
+
+      </section>
+
+
+
+      <!-- =========================================================
+           FINISHED MATCHES
+      ========================================================== -->
+
+      <section class="mc27-section mc27-reveal">
+
+        <div class="mc27-section-head">
+
+          <div class="mc27-section-title">
+
+            <div class="mc27-section-icon">
+
+              <i class="fas fa-flag-checkered"></i>
+
+            </div>
+
+            <div>
+
+              <h2 class="mc27-heading">
+
+                Finished Matches
+
+                <small>
+                  Completed match results
+                </small>
+
+              </h2>
+
+            </div>
+
+          </div>
+
+          <span class="badge rounded-pill bg-success">
+
+            {{ finished_matches|length }} completed
+
+          </span>
+
+        </div>
+
+
+        {% if finished_matches %}
+
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 g-lg-4">
+
+            {% for match in finished_matches %}
+
+              <div class="col">
+
+                <a
+                  href="{% url 'watch_live_score' match.match_id %}"
+                  class="mc27-card-link mc27-card-reveal"
+                  data-delay="{{ forloop.counter }}"
+                  data-paused="false"
+                >
+
+                  <article class="mc27-card mc27-finished-card">
+
+
+                    <!-- CARD TOP -->
+
+                    <div class="mc27-card-top">
+
+                      <span class="mc27-status mc27-finished">
+
+                        <i class="fas fa-check-circle"></i>
+
+                        FINISHED
+
+                      </span>
+
+                      <span class="mc27-date">
+
+                        {{ match.match_date|date:"d M Y" }}
+
+                        •
+
+                        {{ match.match_time }}
+
+                      </span>
+
+                    </div>
+
+
+                    <!-- TOURNAMENT -->
+
+                    {% if match.tournament %}
+
+                      <div class="mc27-tournament">
+
+                        <i class="fas fa-trophy"></i>
+
+                        {{ match.tournament.t_name }}
+
+                      </div>
+
+                    {% endif %}
+
+
+                    <!-- TEAMS + FINAL SCORE -->
+
+                    <div class="mc27-teams">
+
+
+                      <!-- HOME -->
+
+                      <div class="mc27-team">
+
+                        <div class="mc27-logo">
+
+                          {% if match.match_home_team.club_logo %}
+
+                            <img
+                              src="{{ match.match_home_team.club_logo.url }}"
+                              alt="{{ match.match_home_team.club_name }}"
+                            >
+
+                          {% else %}
+
+                            <img
+                              src="{% static 'images/default_club.png' %}"
+                              alt="Club"
+                            >
+
+                          {% endif %}
+
+                        </div>
+
+                        <span class="mc27-team-name">
+
+                          {{ match.match_home_team.club_name }}
+
+                        </span>
+
+                      </div>
+
+
+                      <!-- FINAL SCORE -->
+
+                      <div class="mc27-score">
+
+                        <span class="mc27-score-number">
+
+                          {% if match.result %}
+
+                            {{ match.result.result_home_team }}
+
+                            —
+
+                            {{ match.result.result_away_team }}
+
+                          {% else %}
+
+                            0 — 0
+
+                          {% endif %}
+
+                        </span>
+
+                        <div class="mc27-score-line"></div>
+
+                      </div>
+
+
+                      <!-- AWAY -->
+
+                      <div class="mc27-team mc27-team-away">
+
+                        <span class="mc27-team-name">
+
+                          {{ match.match_away_team.club_name|default:"TBD" }}
+
+                        </span>
+
+                        <div class="mc27-logo">
+
+                          {% if match.match_away_team.club_logo %}
+
+                            <img
+                              src="{{ match.match_away_team.club_logo.url }}"
+                              alt="{{ match.match_away_team.club_name }}"
+                            >
+
+                          {% else %}
+
+                            <img
+                              src="{% static 'images/default_club.png' %}"
+                              alt="Club"
+                            >
+
+                          {% endif %}
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+
+                    <!-- VENUE -->
+
+                    {% if match.match_turf %}
+
+                      <div class="mc27-venue">
+
+                        <i class="fas fa-map-marker-alt"></i>
+
+                        {{ match.match_turf.turf_name }}
+
+                      </div>
+
+                    {% endif %}
+
+
+                    <!-- STATE -->
+
+                    <div class="mc27-state">
+
+                      <span>
+
+                        <i class="fas fa-check-circle"></i>
+
+                        Match completed
+
+                      </span>
+
+                    </div>
+
+
+                    <!-- FOOTER -->
+
+                    <div class="mc27-card-footer">
+
+                      <span class="mc27-watch">
+
+                        View Match Result
+
+                      </span>
+
+                      <span class="mc27-arrow">
+
+                        <i class="fas fa-chevron-right"></i>
+
+                      </span>
+
+                    </div>
+
+                  </article>
+
+                </a>
+
+              </div>
+
+            {% endfor %}
+
+          </div>
+
+
+        {% else %}
+
+          <div class="mc27-empty">
+
+            <i class="fas fa-flag-checkered"></i>
+
+            <h4>
+              No finished matches
+            </h4>
+
+            <p>
+              Completed matches and their results will appear here.
+            </p>
+
+          </div>
+
+        {% endif %}
+
+      </section>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+
+<!-- =============================================================
+     ANIMATION SCRIPT
+============================================================== -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+
+  /* =========================================================
+     REVEAL ANIMATIONS
+  ========================================================== */
+
+  const mc27Elements = document.querySelectorAll(
+    ".mc27-reveal, .mc27-card-reveal"
+  );
+
+
+  const mc27Observer = new IntersectionObserver(
+    function (entries) {
+
+      entries.forEach(function (entry) {
+
+        if (!entry.isIntersecting) {
+          return;
+        }
+
+
+        const element = entry.target;
+
+        const delay = element.dataset.delay;
+
+
+        if (delay) {
+
+          setTimeout(
+            function () {
+
+              element.classList.add("mc27-visible");
+
+            },
+            Number(delay) * 90
+          );
+
+        } else {
+
+          element.classList.add("mc27-visible");
+
+        }
+
+
+        mc27Observer.unobserve(element);
+
+      });
+
+    },
+    {
+      threshold: 0.08,
+      rootMargin: "0px 0px -30px 0px"
+    }
+  );
+
+
+  mc27Elements.forEach(function (element) {
+
+    mc27Observer.observe(element);
+
+  });
+
+
+
+  /* =========================================================
+     LIVE CARD HOVER
+  ========================================================== */
+
+  const mc27LiveCards = document.querySelectorAll(".mc27-live");
+
+
+  mc27LiveCards.forEach(function (badge) {
+
+    const card = badge.closest(".mc27-card");
+
+
+    if (!card) {
+      return;
+    }
+
+
+    card.addEventListener("mouseenter", function () {
+
+      card.style.boxShadow =
+        "0 20px 50px rgba(0,0,0,.35), 0 0 35px rgba(24,229,140,.12)";
+
+    });
+
+
+    card.addEventListener("mouseleave", function () {
+
+      card.style.boxShadow = "";
+
+    });
+
+  });
+
+
+
+  /* =========================================================
+     CARD LINK HANDLING
+  ========================================================== */
+
+  const mc27Links = document.querySelectorAll(".mc27-card-link");
+
+
+  mc27Links.forEach(function (link) {
+
+    link.addEventListener("click", function (event) {
+
+      if (link.dataset.paused === "true") {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+        return false;
+
+      }
+
+
+      link.classList.add("mc27-opening");
+
+    });
+
+  });
+
+
+
+  /* =========================================================
+     UPCOMING MATCHES SHOULD NOT LOOK CLICKABLE
+  ========================================================== */
+
+  const mc27UpcomingLinks =
+    document.querySelectorAll(".mc27-upcoming-link");
+
+
+  mc27UpcomingLinks.forEach(function (element) {
+
+    element.setAttribute("aria-disabled", "true");
+
+  });
+
+
+
+  /* =========================================================
+     PARTICLES
+  ========================================================== */
+
+  document
+    .querySelectorAll(".mc27-particles span")
+    .forEach(function (particle, index) {
+
+      particle.style.animationDuration =
+        6 + Math.random() * 5 + "s";
+
+
+      particle.style.animationDelay =
+        index * 0.45 + "s";
+
+    });
+
+
+
+  /* =========================================================
+     PAUSED MATCH ACCESSIBILITY
+  ========================================================== */
+
+  document
+    .querySelectorAll(
+      '.mc27-paused-link[data-paused="true"]'
+    )
+    .forEach(function (element) {
+
+      element.setAttribute("aria-disabled", "true");
+
+      element.setAttribute("tabindex", "-1");
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

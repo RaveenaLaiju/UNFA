@@ -1,0 +1,178 @@
+{% extends 'user/user_head.html' %}
+{% block content %}
+<div class="py-5">
+  <div class="container glass-panel animate-on-scroll">
+{% load static %}
+
+<section class="bookings-page">
+  <div class="bookings-shell">
+
+    <header class="bookings-hero">
+      <span class="bookings-kicker">⚽ Turf HQ</span>
+      <h1 class="bookings-title">My turf bookings</h1>
+      <p class="bookings-sub">Manage your pitch reservations and payments</p>
+    </header>
+
+    <div class="bookings-panel glass-card">
+      <div class="bookings-header">
+        <div class="bookings-stats">
+          <div class="mini-stat">
+            <strong>{{ bookings|length }}</strong>
+            <span>Total</span>
+          </div>
+          <div class="mini-stat accepted">
+            <strong id="accepted-count">0</strong>
+            <span>Accepted</span>
+          </div>
+          <div class="mini-stat pending">
+            <strong id="pending-count">0</strong>
+            <span>Pending</span>
+          </div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="bookings-table">
+          <thead>
+            <tr>
+              <th><i class="fas fa-hashtag"></i> Match</th>
+              <th><i class="fas fa-map-marker-alt"></i> Turf</th>
+              <th><i class="fas fa-calendar"></i> Date</th>
+              <th><i class="fas fa-clock"></i> Slot</th>
+              <th><i class="fas fa-info-circle"></i> Status</th>
+              <th><i class="fas fa-credit-card"></i> Payment</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for booking in bookings %}
+            <tr class="booking-row" data-status="{{ booking.status }}" style="animation-delay: {{ forloop.counter0|add:0.05 }}s">
+              <td><span class="match-id">#{{ booking.match_id }}</span></td>
+              <td class="turf-name">{{ booking.turf.turf_name }}</td>
+              <td>{{ booking.booking_date }}</td>
+              <td><span class="slot-badge">{{ booking.time_slot.tt_time.time_range }}</span></td>
+              <td>
+                {% if booking.status == "Accepted" %}
+                <span class="badge badge-accepted">
+                  <i class="fas fa-check-circle"></i> Accepted
+                </span>
+                {% elif booking.status == "Pending" %}
+                <span class="badge badge-pending">
+                  <i class="fas fa-hourglass-half"></i> Pending
+                </span>
+                {% else %}
+                <span class="badge badge-rejected">
+                  <i class="fas fa-times-circle"></i> Rejected
+                </span>
+                {% endif %}
+              </td>
+              <td>
+                {% if booking.is_paid %}
+                <span class="badge badge-paid">
+                  <i class="fas fa-check-double"></i> Paid
+                </span>
+                {% elif booking.status == "Accepted" %}
+                <a href="{% url 'initiate_payment' booking.booking_id %}" class="pay-btn">
+                  <i class="fas fa-credit-card"></i> Pay now
+                </a>
+                {% else %}
+                <span class="payment-na">
+                  <i class="fas fa-minus-circle"></i> N/A
+                </span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr class="empty-row">
+              <td colspan="6" class="empty-cell">
+                <div class="empty-state">
+                  <i class="fas fa-calendar-times"></i>
+                  <p>No bookings yet.</p>
+                  <a href="{% url 'match_page' %}" class="btn-book-now">
+                    <i class="fas fa-plus"></i> Book a turf
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate booking rows
+    const bookingRows = document.querySelectorAll('.booking-row');
+    bookingRows.forEach((row, index) => {
+        row.style.animation = `slideInUp 0.4s ease-out ${index * 0.05}s both`;
+    });
+
+    // Count bookings by status
+    let accepted = 0, pending = 0, rejected = 0;
+    bookingRows.forEach(row => {
+        const status = row.dataset.status;
+        if (status === 'Accepted') accepted++;
+        else if (status === 'Pending') pending++;
+        else if (status === 'Rejected') rejected++;
+    });
+
+    // Animate counters
+    function animateCounter(element, target) {
+        let current = 0;
+        const increment = target / 20;
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            element.textContent = Math.floor(current);
+        }, 50);
+    }
+
+    animateCounter(document.getElementById('accepted-count'), accepted);
+    animateCounter(document.getElementById('pending-count'), pending);
+
+    // Hover effect on rows
+    bookingRows.forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(8px)';
+            this.style.borderLeft = '3px solid var(--neon-green)';
+        });
+        row.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+            this.style.borderLeft = 'none';
+        });
+    });
+
+    // Pay button pulse effect
+    const payButtons = document.querySelectorAll('.pay-btn');
+    payButtons.forEach(btn => {
+        btn.style.animation = 'pulse 2s ease-in-out infinite';
+    });
+
+    // Empty state animation
+    const emptyState = document.querySelector('.empty-state');
+    if (emptyState) {
+        emptyState.style.animation = 'scaleIn 0.5s ease-out';
+    }
+
+    // Table header glow effect on scroll
+    const tableWrap = document.querySelector('.table-wrap');
+    const tableHeader = document.querySelector('.bookings-table thead');
+    if (tableWrap && tableHeader) {
+        tableWrap.addEventListener('scroll', () => {
+            if (tableWrap.scrollTop > 10) {
+                tableHeader.style.boxShadow = '0 4px 20px rgba(57, 255, 20, 0.1)';
+            } else {
+                tableHeader.style.boxShadow = 'none';
+            }
+        });
+    }
+});
+</script>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,330 @@
+{% extends 'user/user_head.html' %} 
+{% block content %} 
+{% load static %}
+
+<div class="pitch-bg"></div>
+<div class="pitch-lines"></div>
+<div class="goal-net-pattern"></div>
+
+<div class="light-beam beam-1" style="--rot: 15deg"></div>
+<div class="light-beam beam-2" style="--rot: -15deg"></div>
+<div class="light-beam beam-3" style="--rot: -15deg"></div>
+<div class="light-beam beam-4" style="--rot: 15deg"></div>
+
+<div class="match-arena container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-11">
+      <header class="stadium-jumbotron glass-card animate-on-scroll">
+        <div class="hud-corner tl"></div>
+        <div class="hud-corner tr"></div>
+        <div class="hud-corner bl"></div>
+        <div class="hud-corner br"></div>
+
+        <div class="row align-items-center">
+          <div class="col-12 col-lg-8 mb-4 mb-lg-0">
+            <span class="brand-kicker"
+              ><i class="fas fa-futbol"></i> Match Center</span
+            >
+            <h1 class="brand-title">Club Matches</h1>
+            <p class="brand-tagline">
+              Follow live fixtures, check upcoming games, and review match
+              results — all in real-time from the stadium.
+            </p>
+          </div>
+          <div
+            class="col-12 col-lg-4 d-flex justify-content-lg-end justify-content-start"
+          >
+            <div
+              class="live-counter-box animate-on-scroll"
+              aria-label="Live matches"
+            >
+              <span class="live-pulse-ring" aria-hidden="true"></span>
+              <div class="live-stats">
+                <strong>{{ live_matches|length }}</strong>
+                <span>Live Now</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+    </div>
+  </div>
+
+  <!--  Upcoming Fixtures  -->
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-11">
+      <section class="fixture-section glass-card animate-on-scroll">
+        <div class="hud-corner tl"></div>
+        <div class="hud-corner tr"></div>
+        <div class="hud-corner bl"></div>
+        <div class="hud-corner br"></div>
+
+        <div class="section-header">
+          <i class="fas fa-calendar-alt" style="color: var(--neon-amber)"></i>
+          <h3 class="section-title upcoming">Upcoming Fixtures</h3>
+          <span
+            class="stats-pill"
+            style="background: var(--neon-amber); color: #000"
+            >{{ upcoming_matches|length }} scheduled</span
+          >
+        </div>
+
+        {% if upcoming_matches %}
+        <div class="row g-4">
+          {% for match in upcoming_matches %}
+          <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+            <a
+              href="{% url 'go_to_match' match.match_id %}"
+              class="match-card animate-on-scroll"
+              data-delay="{{ forloop.counter }}"
+            >
+              <div class="card-glow"></div>
+              <article class="match-squad">
+                <span class="status-chip upcoming">UP</span>
+                <div class="match-timer">
+                  <i class="fas fa-clock"></i> {{ match.match_date|date:"d M" }}
+                  &bull; {{ match.match_time }}
+                </div>
+                <div class="teams-row">
+                  <div class="team-node home">
+                    <div
+                      class="team-badge"
+                      style="background-image:url('{{ match.match_home_team.club_logo.url }}')"
+                    ></div>
+                    <span class="team-name"
+                      >{{ match.match_home_team.club_name }}</span
+                    >
+                  </div>
+                  <div class="scoreboard">
+                    <span class="vs-text">VS</span>
+                    <div class="score-divider"></div>
+                  </div>
+                  <div class="team-node away">
+                    <span class="team-name"
+                      >{{ match.match_away_team.club_name|default:"TBD" }}</span
+                    >
+                    <div
+                      class="team-badge"
+                      style="background-image:url('{{ match.match_away_team.club_logo.url }}')"
+                    ></div>
+                  </div>
+                </div>
+              </article>
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-pitch">
+          <div class="bounce-ball"></div>
+          <p>No upcoming matches scheduled.</p>
+        </div>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+
+  <!--  Live Matches  -->
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-11">
+      <section
+        class="fixture-section live-section glass-card animate-on-scroll"
+      >
+        <div class="hud-corner tl"></div>
+        <div class="hud-corner tr"></div>
+        <div class="hud-corner bl"></div>
+        <div class="hud-corner br"></div>
+
+        <div class="section-header">
+          <i class="fas fa-broadcast-tower" style="color: #ff1744"></i>
+          <h3 class="section-title live">Live Matches</h3>
+          <span class="stats-pill" style="background: #ff1744; color: #fff"
+            >{{ live_matches|length }} in progress</span
+          >
+        </div>
+
+        {% if live_matches %}
+        <div class="row g-4">
+          {% for match in live_matches %}
+          <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+            <a
+              href="{% url 'go_to_match' match.match_id %}"
+              class="match-card animate-on-scroll"
+              data-delay="{{ forloop.counter }}"
+              style="border-top: 3px solid #ff1744"
+            >
+              <div
+                class="card-glow"
+                style="box-shadow: 0 0 20px rgba(255, 23, 68, 0.3)"
+              ></div>
+              <article class="match-squad">
+                <span class="status-chip live">
+                  <i
+                    class="fas fa-circle"
+                    style="font-size: 0.5rem; margin-right: 4px"
+                  ></i
+                  >LIVE
+                </span>
+                <div class="match-timer justify-content-start align-items-start">
+                  <i class="fas fa-clock"></i> {{ match.match_date|date:"d M Y" }} &bull; {{ match.match_time }}
+                </div>
+                <div class="teams-row">
+                  <div class="team-node home">
+                    <div
+                      class="team-badge"
+                      style="background-image:url('{{ match.match_home_team.club_logo.url }}')"
+                    ></div>
+                    <span class="team-name"
+                      >{{ match.match_home_team.club_name }}</span
+                    >
+                  </div>
+                  <div class="scoreboard">
+                    <span class="score-display live-score">
+                      {% if match.result %}{{ match.result.result_home_team }}
+                      &mdash; {{ match.result.result_away_team }}{% else %}0
+                      &mdash; 0{% endif %}
+                    </span>
+                    <div class="score-divider"></div>
+                  </div>
+                  <div class="team-node away">
+                    <span class="team-name"
+                      >{{ match.match_away_team.club_name|default:"TBD" }}</span
+                    >
+                    <div
+                      class="team-badge"
+                      style="background-image:url('{{ match.match_away_team.club_logo.url }}')"
+                    ></div>
+                  </div>
+                </div>
+                <div class="match-venue">
+                  <i class="fas fa-map-marker-alt"></i> {{match.match_turf.turf_name }}
+                </div>
+              </article>
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-pitch">
+          <i
+            class="fas fa-broadcast-tower"
+            style="color: rgba(255, 255, 255, 0.2)"
+          ></i>
+          <p>No live matches right now.</p>
+        </div>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+
+  <!--  Finished Matches  -->
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-11">
+      <section class="fixture-section glass-card animate-on-scroll">
+        <div class="hud-corner tl"></div>
+        <div class="hud-corner tr"></div>
+        <div class="hud-corner bl"></div>
+        <div class="hud-corner br"></div>
+
+        <div class="section-header">
+          <i class="fas fa-history" style="color: var(--neon-pink)"></i>
+          <h3 class="section-title finished">Finished Matches</h3>
+          <span
+            class="stats-pill"
+            style="background: var(--neon-pink); color: #fff"
+            >{{ finished_matches|length }} played</span
+          >
+        </div>
+
+        {% if finished_matches %}
+        <div class="row g-4">
+          {% for match in finished_matches %}
+          <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+            <a
+              href="{% url 'go_to_match' match.match_id %}"
+              class="match-card animate-on-scroll"
+              data-delay="{{ forloop.counter }}"
+            >
+              <div class="card-glow"></div>
+              <article class="match-squad">
+                <span class="status-chip finished">FT</span>
+                <div class="match-timer">
+                  <i class="fas fa-calendar-check"></i> {{ match.match_date|date:"d M Y" }}
+                </div>
+                <div class="teams-row">
+                  <div class="team-node home">
+                    <div
+                      class="team-badge"
+                      style="background-image:url('{{ match.match_home_team.club_logo.url }}')"
+                    ></div>
+                    <span class="team-name"
+                      >{{ match.match_home_team.club_name }}</span
+                    >
+                  </div>
+                  <div class="scoreboard">
+                    <span class="score-display">
+                      {% if match.result %}
+                      {{ match.result.result_home_team }}&mdash; {{ match.result.result_away_team }}
+                      {% else%}
+                      &mdash; &mdash;
+                      {% endif %}
+                    </span>
+                    <div class="score-divider"></div>
+                  </div>
+                  <div class="team-node away">
+                    <span class="team-name"
+                      >{{ match.match_away_team.club_name|default:"TBD" }}</span
+                    >
+                    <div
+                      class="team-badge"
+                      style="background-image:url('{{ match.match_away_team.club_logo.url }}')"
+                    ></div>
+                  </div>
+                </div>
+              </article>
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-pitch">
+          <i
+            class="fas fa-flag-checkered"
+            style="color: rgba(255, 255, 255, 0.2)"
+          ></i>
+          <p>No finished matches yet.</p>
+        </div>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const delay = entry.target.dataset.delay;
+            if (delay) {
+              setTimeout(
+                () => entry.target.classList.add("visible"),
+                delay * 120,
+              );
+            } else {
+              entry.target.classList.add("visible");
+            }
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: "0px 0px -30px 0px" },
+    );
+
+    document
+      .querySelectorAll(".animate-on-scroll, .match-card")
+      .forEach((el) => observer.observe(el));
+  });
+</script>
+
+{% endblock %}

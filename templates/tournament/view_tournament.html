@@ -1,0 +1,2824 @@
+{% extends 'user/user_head.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<style>
+/* =========================================================
+   FTZ 01 • FOOTBALL TOURNAMENT GLASSMORPHISM SYSTEM
+   Bootstrap-first • responsive • animated • touch friendly
+   ========================================================= */
+
+:root{
+    --ftz-bg-1:#03070d;
+    --ftz-bg-2:#07131e;
+    --ftz-panel:rgba(9,20,32,.58);
+    --ftz-panel-strong:rgba(11,25,40,.78);
+    --ftz-border:rgba(255,255,255,.11);
+    --ftz-white:#f7fbff;
+    --ftz-muted:rgba(229,239,249,.64);
+    --ftz-green-01:#18f59a;
+    --ftz-blue-02:#20d9ff;
+    --ftz-purple-03:#a95cff;
+    --ftz-yellow-04:#ffd84d;
+    --ftz-red-05:#ff5574;
+    --ftz-shadow:0 24px 80px rgba(0,0,0,.38);
+}
+
+.ftz-20{
+    position:relative;
+    min-height:100vh;
+    overflow:hidden;
+    padding:clamp(18px,3vw,42px) 0 55px;
+    color:var(--ftz-white);
+    isolation:isolate;
+    background:
+        radial-gradient(circle at 8% 5%,rgba(32,217,255,.13),transparent 26rem),
+        radial-gradient(circle at 92% 18%,rgba(169,92,255,.12),transparent 27rem),
+        radial-gradient(circle at 52% 100%,rgba(24,245,154,.08),transparent 30rem),
+        linear-gradient(145deg,var(--ftz-bg-1),var(--ftz-bg-2) 52%,#02050a);
+}
+
+.ftz-20::before,
+.ftz-20::after{
+    content:"";
+    position:absolute;
+    z-index:-2;
+    border-radius:50%;
+    filter:blur(4px);
+    pointer-events:none;
+}
+.ftz-20::before{
+    width:420px;height:420px;
+    left:-180px;top:180px;
+    background:radial-gradient(circle,rgba(32,217,255,.08),transparent 68%);
+    animation:ftzOrb01 14s ease-in-out infinite alternate;
+}
+.ftz-20::after{
+    width:500px;height:500px;
+    right:-230px;bottom:100px;
+    background:radial-gradient(circle,rgba(24,245,154,.07),transparent 68%);
+    animation:ftzOrb02 18s ease-in-out infinite alternate;
+}
+
+.ftz-21{position:absolute;inset:0;overflow:hidden;z-index:-1;pointer-events:none;}
+.ftz-59{
+    position:absolute;
+    bottom:-10px;
+    border-radius:50%;
+    opacity:.5;
+    box-shadow:0 0 14px currentColor;
+    animation:ftzParticle01 linear infinite;
+}
+
+.ftz-01{
+    position:relative;
+    border:1px solid var(--ftz-border);
+    border-radius:26px;
+    background:
+        linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.018)),
+        var(--ftz-panel);
+    box-shadow:var(--ftz-shadow),inset 0 1px 0 rgba(255,255,255,.08);
+    backdrop-filter:blur(22px) saturate(135%);
+    -webkit-backdrop-filter:blur(22px) saturate(135%);
+}
+
+.ftz-01::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    pointer-events:none;
+    background:linear-gradient(115deg,rgba(255,255,255,.08),transparent 35%,rgba(32,217,255,.035));
+    opacity:.75;
+}
+
+.ftz-27{
+    overflow:hidden;
+    border-color:rgba(32,217,255,.19);
+    background:
+        radial-gradient(circle at 85% 15%,rgba(32,217,255,.13),transparent 17rem),
+        radial-gradient(circle at 10% 90%,rgba(24,245,154,.08),transparent 20rem),
+        linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.02)),
+        var(--ftz-panel-strong);
+}
+
+.ftz-27::after{
+    content:"⚽";
+    position:absolute;
+    right:3%;
+    bottom:-22%;
+    font-size:clamp(9rem,18vw,18rem);
+    opacity:.035;
+    transform:rotate(-18deg);
+    pointer-events:none;
+}
+
+.ftz-30{
+    text-shadow:0 0 18px rgba(32,217,255,.34),0 0 42px rgba(24,245,154,.13);
+}
+
+.ftz-29{
+    display:inline-flex;
+    align-items:center;
+    border:1px solid rgba(32,217,255,.28);
+    border-radius:999px;
+    background:rgba(32,217,255,.09);
+    color:#dffaff;
+    box-shadow:0 0 24px rgba(32,217,255,.08);
+}
+
+.ftz-32{
+    position:relative;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:18px;
+    background:rgba(255,255,255,.045);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+    transition:transform .25s ease,border-color .25s ease,background .25s ease;
+}
+.ftz-32:hover{transform:translateY(-2px);border-color:rgba(32,217,255,.22);background:rgba(255,255,255,.065);}
+
+.ftz-33{
+    height:8px;
+    overflow:hidden;
+    border-radius:999px;
+    background:rgba(255,255,255,.07);
+}
+.ftz-34{
+    border-radius:inherit;
+    background:linear-gradient(90deg,var(--ftz-green-01),var(--ftz-blue-02));
+    box-shadow:0 0 16px rgba(24,245,154,.3);
+    transition:width .7s ease;
+}
+
+.ftz-35{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    min-height:42px;
+    padding:10px 17px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:13px;
+    color:#fff!important;
+    text-decoration:none!important;
+    font-weight:800;
+    font-size:.84rem;
+    letter-spacing:.15px;
+    overflow:hidden;
+    transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease,background .22s ease;
+}
+.ftz-35::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    transform:translateX(-110%);
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.18),transparent);
+    transition:transform .55s ease;
+}
+.ftz-35:hover::before{transform:translateX(110%);}
+.ftz-35:hover{transform:translateY(-2px);color:#fff!important;}
+
+.ftz-37{background:linear-gradient(135deg,rgba(32,217,255,.22),rgba(32,217,255,.07));border-color:rgba(32,217,255,.38);box-shadow:0 8px 25px rgba(32,217,255,.1);}
+.ftz-37:hover{box-shadow:0 12px 30px rgba(32,217,255,.2);}
+.ftz-36{background:linear-gradient(135deg,rgba(255,216,77,.22),rgba(255,216,77,.06));border-color:rgba(255,216,77,.36);}
+.ftz-38{background:linear-gradient(135deg,rgba(255,85,116,.22),rgba(255,85,116,.06));border-color:rgba(255,85,116,.36);}
+.ftz-39{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.12);}
+.ftz-40{background:linear-gradient(135deg,rgba(169,92,255,.22),rgba(169,92,255,.06));border-color:rgba(169,92,255,.35);}
+
+.ftz-22{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:14px;
+    padding:15px 17px;
+    border:1px solid rgba(255,216,77,.2);
+    border-radius:18px;
+    background:linear-gradient(100deg,rgba(255,216,77,.10),rgba(255,255,255,.035));
+    box-shadow:0 12px 35px rgba(0,0,0,.16);
+    backdrop-filter:blur(16px);
+}
+.ftz-23{
+    flex:0 0 42px;
+    width:42px;height:42px;
+    display:grid;place-items:center;
+    border-radius:13px;
+    color:var(--ftz-yellow-04);
+    background:rgba(255,216,77,.1);
+}
+.ftz-24{font-weight:900;color:#fff;margin-bottom:3px;}
+.ftz-25{font-size:.86rem;color:var(--ftz-muted);}
+
+.ftz-26{
+    flex:0 0 auto;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:9px 13px;
+    border:1px solid rgba(32,217,255,.3);
+    border-radius:12px;
+    background:rgba(32,217,255,.09);
+    color:#dffaff!important;
+    text-decoration:none!important;
+    font-weight:800;
+    font-size:.78rem;
+}
+.ftz-26:hover{background:rgba(32,217,255,.17);}
+
+.ftz-46{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:17px 20px;
+    border-bottom:1px solid rgba(255,255,255,.07);
+    overflow:hidden;
+}
+.ftz-46::after{
+    content:"";
+    position:absolute;
+    left:0;bottom:0;
+    width:120px;height:2px;
+    background:linear-gradient(90deg,var(--ftz-blue-02),transparent);
+}
+.ftz-47{margin:0;font-size:1.02rem;font-weight:900;letter-spacing:.2px;}
+
+.ftz-02{
+    --bs-table-bg:transparent;
+    --bs-table-color:#e9edf5;
+    --bs-table-border-color:rgba(255,255,255,.065);
+    --bs-table-hover-bg:rgba(32,217,255,.055);
+    margin:0;
+    color:#e9edf5;
+}
+.ftz-02 thead th{
+    padding:13px 12px;
+    background:rgba(255,255,255,.035)!important;
+    color:rgba(225,239,250,.55)!important;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    font-size:.68rem;
+    font-weight:900;
+    letter-spacing:.08em;
+}
+.ftz-02 tbody td,.ftz-02 tbody th{
+    padding:14px 12px;
+    background:transparent!important;
+    color:#e9edf5;
+    border-color:rgba(255,255,255,.055);
+}
+.ftz-02 tbody tr{transition:background .2s ease,transform .2s ease;}
+.ftz-02 tbody tr:hover{background:rgba(32,217,255,.045)!important;}
+
+.ftz-48,.ftz-49,.ftz-50{
+    min-width:34px;
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+    padding:7px 11px!important;
+    font-weight:900;
+}
+.ftz-48{background:linear-gradient(135deg,#ffd84d,#ff9d00);color:#14100a;}
+.ftz-49{background:linear-gradient(135deg,#dce7f2,#8d9cac);color:#111;}
+.ftz-50{background:linear-gradient(135deg,#d89158,#8e4b22);color:#fff;}
+
+.ftz-52{
+    display:inline-flex;
+    min-width:42px;
+    justify-content:center;
+    padding:6px 10px;
+    border:1px solid rgba(24,245,154,.25);
+    border-radius:10px;
+    background:rgba(24,245,154,.1);
+    color:var(--ftz-green-01);
+    font-weight:900;
+}
+
+.ftz-03{
+    position:relative;
+    height:100%;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.105);
+    border-radius:22px;
+    background:
+        radial-gradient(circle at 50% 0%,rgba(32,217,255,.075),transparent 13rem),
+        linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.018)),
+        rgba(7,18,29,.72);
+    box-shadow:0 15px 45px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.07);
+    backdrop-filter:blur(17px);
+    transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease;
+}
+.ftz-03::before{
+    content:"";
+    position:absolute;
+    width:180px;height:180px;
+    left:50%;top:-120px;
+    transform:translateX(-50%);
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(32,217,255,.12),transparent 68%);
+    pointer-events:none;
+}
+.ftz-03:hover{
+    transform:translateY(-5px);
+    border-color:rgba(32,217,255,.27);
+    box-shadow:0 22px 60px rgba(0,0,0,.32),0 0 35px rgba(32,217,255,.055);
+}
+.ftz-04{border-color:rgba(255,85,116,.24);background:linear-gradient(145deg,rgba(255,85,116,.08),rgba(255,255,255,.018)),rgba(7,18,29,.74);}
+.ftz-04:hover{border-color:rgba(255,85,116,.42);box-shadow:0 22px 60px rgba(0,0,0,.32),0 0 35px rgba(255,85,116,.08);}
+
+.ftz-54::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border:1px solid rgba(255,85,116,.24);
+    border-radius:inherit;
+    pointer-events:none;
+    animation:ftzLive01 1.7s ease-in-out infinite;
+}
+
+.ftz-05{
+    color:var(--ftz-red-05);
+    background:linear-gradient(90deg,rgba(255,85,116,.11),transparent);
+    border-bottom:1px solid rgba(255,85,116,.13);
+    font-size:.72rem;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+}
+
+.ftz-06{color:var(--ftz-muted);font-size:.75rem;}
+.ftz-06 span{display:inline-block;margin-bottom:4px;}
+.ftz-07{font-size:1rem;font-weight:1000;color:rgba(255,255,255,.7);letter-spacing:.13em;}
+.ftz-08,.ftz-09{
+    width:52px;height:52px;
+    object-fit:contain;
+    filter:drop-shadow(0 8px 14px rgba(0,0,0,.3));
+}
+.ftz-09{width:44px;height:44px;}
+.ftz-10{line-height:1;text-shadow:0 0 18px rgba(24,245,154,.15);}
+.ftz-11{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:14px;}
+.ftz-12{
+    display:inline-flex;align-items:center;justify-content:center;gap:5px;
+    padding:6px 9px;border-radius:999px;
+    font-size:.64rem;font-weight:800;text-decoration:none;white-space:nowrap;
+}
+.ftz-13{color:var(--ftz-green-01);background:rgba(24,245,154,.09);border:1px solid rgba(24,245,154,.23);}
+.ftz-15{color:rgba(255,255,255,.57);background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.075);}
+.ftz-16{color:var(--ftz-blue-02);background:rgba(32,217,255,.08);border:1px solid rgba(32,217,255,.27);}
+.ftz-16:hover{color:#fff;background:rgba(32,217,255,.16);}
+.ftz-18{color:var(--ftz-green-01);background:rgba(24,245,154,.11);border:1px solid rgba(24,245,154,.24);}
+.ftz-19{color:#fff;background:rgba(255,85,116,.16);border:1px solid rgba(255,85,116,.32);}
+
+.ftz-41{
+    margin-top:16px;
+    padding:13px 15px;
+    border:1px solid rgba(255,255,255,.075);
+    border-radius:15px;
+    background:rgba(255,255,255,.035);
+}
+.ftz-42{font-weight:900;color:var(--ftz-yellow-04);margin-bottom:9px;}
+.ftz-43{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:10px 0;
+    border-top:1px solid rgba(255,255,255,.055);
+}
+.ftz-44{
+    display:inline-flex;align-items:center;
+    padding:7px 10px;border-radius:10px;
+    border:1px solid rgba(32,217,255,.25);
+    background:rgba(32,217,255,.07);
+    color:#dffaff!important;
+    text-decoration:none!important;
+    font-size:.7rem;font-weight:800;
+}
+.ftz-45{
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:16px;
+    background:rgba(255,255,255,.035);
+}
+
+.ftz-55{
+    position:relative;
+    min-height:165px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:20px 14px;
+    text-align:center;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:20px;
+    background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.018));
+    backdrop-filter:blur(15px);
+    transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease;
+}
+.ftz-55:hover{transform:translateY(-5px);border-color:rgba(255,216,77,.3);box-shadow:0 18px 40px rgba(0,0,0,.25);}
+.ftz-56{border-color:rgba(24,245,154,.18);}
+.ftz-57{border-color:rgba(255,216,77,.15);}
+.ftz-58{
+    padding:13px 15px;
+    border:1px dashed rgba(32,217,255,.24);
+    border-radius:14px;
+    background:rgba(32,217,255,.055);
+}
+
+.ftz-53{
+    opacity:0;
+    transform:translateY(18px);
+}
+.ftz-53.ftz-visible{opacity:1;transform:none;}
+
+
+.ftz-60{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    padding:7px 13px;
+    border-radius:999px;
+    border:1px solid rgba(255,85,116,.42);
+    background:linear-gradient(135deg,rgba(255,85,116,.18),rgba(255,85,116,.05));
+    color:#ff9caf;
+    font-size:.72rem;
+    font-weight:900;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    box-shadow:0 0 22px rgba(255,85,116,.12),inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.ftz-61{
+    position:relative;
+    overflow:hidden;
+    border:1px solid rgba(255,216,77,.28);
+    border-radius:26px;
+    background:
+        radial-gradient(circle at 50% 0%,rgba(255,216,77,.16),transparent 32%),
+        linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.018)),
+        rgba(9,20,32,.66);
+    box-shadow:
+        0 24px 70px rgba(0,0,0,.32),
+        0 0 35px rgba(255,216,77,.08),
+        inset 0 1px 0 rgba(255,255,255,.09);
+    backdrop-filter:blur(22px) saturate(140%);
+    -webkit-backdrop-filter:blur(22px) saturate(140%);
+}
+.ftz-61::before{
+    content:"🏆";
+    position:absolute;
+    right:3%;
+    top:-35%;
+    font-size:clamp(8rem,18vw,15rem);
+    opacity:.045;
+    transform:rotate(12deg);
+    pointer-events:none;
+}
+.ftz-62{
+    width:82px;
+    height:82px;
+    object-fit:contain;
+    border-radius:20px;
+    padding:9px;
+    background:rgba(255,255,255,.055);
+    border:1px solid rgba(255,216,77,.25);
+    box-shadow:0 0 26px rgba(255,216,77,.16),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.ftz-63{
+    color:var(--ftz-yellow-04);
+    text-shadow:0 0 16px rgba(255,216,77,.28);
+}
+.ftz-64{
+    color:rgba(255,255,255,.62);
+    font-size:.76rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    font-weight:800;
+}
+@media (max-width:575.98px){
+    .ftz-61{border-radius:20px;}
+    .ftz-62{width:64px;height:64px;border-radius:15px;}
+}
+
+@keyframes ftzParticle01{
+    from{transform:translateY(10vh) scale(.8);opacity:0}
+    12%{opacity:.55}
+    85%{opacity:.2}
+    to{transform:translateY(-115vh) scale(1.25);opacity:0}
+}
+@keyframes ftzOrb01{to{transform:translate(90px,50px) scale(1.12)}}
+@keyframes ftzOrb02{to{transform:translate(-80px,-45px) scale(.92)}}
+@keyframes ftzLive01{0%,100%{opacity:.2}50%{opacity:.7}}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    .ftz-53{opacity:1;transform:none}
+}
+
+@media (max-width:991.98px){
+    .ftz-27::after{opacity:.55;}
+    .ftz-46{padding:15px 16px;}
+}
+@media (max-width:767.98px){
+    .ftz-20{padding:12px 0 35px;}
+    .ftz-01{border-radius:20px;}
+    .ftz-27 .card-body{padding:22px!important;}
+    .ftz-27 h1{font-size:clamp(2rem,9vw,3rem)!important;line-height:1.05;}
+    .ftz-32{border-radius:15px;}
+    .ftz-43{align-items:flex-start;flex-direction:column;}
+    .ftz-44{width:100%;justify-content:center;}
+    .ftz-22{align-items:flex-start;flex-wrap:wrap;}
+    .ftz-26{width:100%;justify-content:center;}
+    .ftz-03{border-radius:18px;}
+    .ftz-08{width:45px!important;height:45px!important;}
+    .ftz-07{font-size:.82rem;}
+    .ftz-06{font-size:.67rem;}
+    .ftz-12{font-size:.6rem;padding:5px 7px;}
+    .ftz-55{min-height:150px;padding:16px 10px;}
+}
+@media (max-width:575.98px){
+    .ftz-20 > .container-fluid{padding-left:10px!important;padding-right:10px!important;}
+    .ftz-27 .card-body{padding:18px!important;}
+    .ftz-27 .row{--bs-gutter-y:1rem;}
+    .ftz-46{display:block;}
+    .ftz-47{font-size:.95rem;}
+    .ftz-02{font-size:.72rem;}
+    .ftz-02 thead th{padding:10px 8px;font-size:.59rem;}
+    .ftz-02 tbody td,.ftz-02 tbody th{padding:11px 8px;}
+    .ftz-09{width:38px!important;height:38px!important;}
+    .ftz-08{width:40px!important;height:40px!important;}
+    .ftz-10{font-size:1.4rem!important;}
+    .ftz-07{font-size:.75rem;}
+    .ftz-03 .card-body{padding:14px!important;}
+    .ftz-55{min-height:140px;border-radius:16px;}
+    .ftz-35{width:100%;font-size:.78rem;}
+}
+
+
+/* =========================================================
+   FTZ RESPONSIVE TABLE SYSTEM
+   Desktop: real table
+   Mobile: each row becomes a readable card
+   Prevents horizontal page overflow
+   ========================================================= */
+.ftz-table-shell,
+.ftz-01,
+.ftz-01 .card-body,
+.ftz-20,
+.ftz-20 .container-fluid,
+.ftz-20 .row,
+.ftz-20 [class*="col-"]{
+    min-width:0;
+}
+
+.ftz-responsive-table{
+    width:100%;
+    margin:0;
+    table-layout:fixed;
+    border-collapse:separate;
+    border-spacing:0;
+}
+
+.ftz-responsive-table th,
+.ftz-responsive-table td{
+    vertical-align:middle;
+    overflow-wrap:anywhere;
+    word-break:normal;
+}
+
+.ftz-responsive-table th:nth-child(1),
+.ftz-responsive-table td:nth-child(1){width:70px;}
+
+.ftz-responsive-table th:nth-child(2),
+.ftz-responsive-table td:nth-child(2){width:30%;}
+
+@media (max-width:767.98px){
+    /* Never let a wide table push the entire page sideways. */
+    .ftz-01 .table-responsive{
+        overflow-x:visible!important;
+        overflow-y:visible!important;
+        -webkit-overflow-scrolling:touch;
+    }
+
+    .ftz-responsive-table{
+        display:block;
+        width:100%;
+        min-width:0!important;
+        table-layout:auto;
+    }
+
+    .ftz-responsive-table thead{
+        display:none;
+    }
+
+    .ftz-responsive-table tbody,
+    .ftz-responsive-table tr{
+        display:block;
+        width:100%;
+    }
+
+    .ftz-responsive-table tbody tr{
+        margin:0 0 12px;
+        padding:8px;
+        border:1px solid rgba(255,255,255,.08);
+        border-radius:18px;
+        background:
+            linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
+        box-shadow:0 10px 28px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    .ftz-responsive-table tbody tr:last-child{
+        margin-bottom:0;
+    }
+
+    .ftz-responsive-table tbody td,
+    .ftz-responsive-table tbody th{
+        display:grid;
+        grid-template-columns:minmax(72px,30%) minmax(0,1fr);
+        align-items:center;
+        gap:10px;
+        width:100%!important;
+        min-width:0!important;
+        padding:10px 9px!important;
+        border:0!important;
+        border-bottom:1px solid rgba(255,255,255,.055)!important;
+        text-align:right!important;
+        white-space:normal!important;
+    }
+
+    .ftz-responsive-table tbody tr td:last-child,
+    .ftz-responsive-table tbody tr th:last-child{
+        border-bottom:0!important;
+    }
+
+    .ftz-responsive-table tbody td::before,
+    .ftz-responsive-table tbody th::before{
+        display:block;
+        text-align:left;
+        color:rgba(229,239,249,.52);
+        font-size:.62rem;
+        font-weight:800;
+        letter-spacing:.08em;
+        text-transform:uppercase;
+    }
+
+    /* Points / group standings labels */
+    .ftz-responsive-table tbody td:nth-child(1)::before{content:"Rank";}
+    .ftz-responsive-table tbody td:nth-child(2)::before{content:"Club";}
+    .ftz-responsive-table tbody td:nth-child(3)::before{content:"Played";}
+    .ftz-responsive-table tbody td:nth-child(4)::before{content:"Won";}
+    .ftz-responsive-table tbody td:nth-child(5)::before{content:"Draw";}
+    .ftz-responsive-table tbody td:nth-child(6)::before{content:"Lost";}
+    .ftz-responsive-table tbody td:nth-child(7)::before{content:"Goals For";}
+    .ftz-responsive-table tbody td:nth-child(8)::before{content:"Goals Against";}
+    .ftz-responsive-table tbody td:nth-child(9)::before{content:"Goal Difference";}
+    .ftz-responsive-table tbody td:nth-child(10)::before{content:"Points";}
+
+    .ftz-responsive-table tbody td:nth-child(1){
+        text-align:left!important;
+    }
+
+    .ftz-responsive-table tbody td:nth-child(1)>*{
+        justify-self:end;
+    }
+
+    .ftz-responsive-table tbody td:nth-child(2){
+        text-align:left!important;
+    }
+
+    .ftz-responsive-table tbody td:nth-child(2)>div{
+        min-width:0;
+        width:100%;
+    }
+
+    .ftz-responsive-table tbody td:nth-child(2) img{
+        width:38px!important;
+        height:38px!important;
+        min-width:38px;
+        margin-right:8px!important;
+    }
+
+    .ftz-responsive-table tbody td:nth-child(2) .fw-bold{
+        font-size:.82rem;
+        line-height:1.15;
+        overflow-wrap:anywhere;
+    }
+
+    .ftz-responsive-table tbody td:nth-child(2) .badge{
+        font-size:.56rem!important;
+        padding:3px 6px!important;
+    }
+
+    .ftz-responsive-table .ftz-52{
+        min-width:42px;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+    }
+}
+
+@media (max-width:420px){
+    .ftz-responsive-table tbody tr{
+        border-radius:15px;
+        padding:6px;
+    }
+
+    .ftz-responsive-table tbody td,
+    .ftz-responsive-table tbody th{
+        grid-template-columns:78px minmax(0,1fr);
+        gap:7px;
+        padding:9px 7px!important;
+        font-size:.76rem;
+    }
+
+    .ftz-responsive-table tbody td::before,
+    .ftz-responsive-table tbody th::before{
+        font-size:.56rem;
+    }
+}
+
+/* Match Center cards must also never create page-level horizontal scroll. */
+.ftz-03,
+.ftz-03 *{
+    max-width:100%;
+    overflow-wrap:anywhere;
+}
+
+.ftz-03 .d-flex{
+    min-width:0;
+}
+
+@media (max-width:575.98px){
+    .ftz-03 .px-3{
+        padding-left:12px!important;
+        padding-right:12px!important;
+    }
+
+    .ftz-03 .badge{
+        max-width:100%;
+        white-space:normal;
+        text-align:center;
+    }
+}
+
+</style>
+
+
+<div class="ftz-20">
+
+    <div class="ftz-21" id="ftzParticles01"></div>
+
+    <div class="container-fluid position-relative">
+
+
+        <!-- =====================================================
+             PENDING SQUAD ALERTS
+        ====================================================== -->
+
+        {% if is_manager and matches %}
+
+            {% if my_pending_squad_matches %}
+
+                <div class="row">
+
+                    <div class="col-12">
+
+                        {% for pm in my_pending_squad_matches %}
+
+                            <div class="ftz-22">
+
+                                <div class="ftz-23">
+                                    <i class="fas fa-users"></i>
+                                </div>
+
+                                <div class="flex-grow-1">
+
+                                    <div class="ftz-24">
+                                        <i class="fas fa-exclamation-circle me-1"></i>
+                                        Select Your Squad
+                                    </div>
+
+                                    <div class="ftz-25">
+
+                                        You need to select your squad for
+
+                                        <strong style="color: var(--ftz-blue-02);">
+                                            {{ pm.match.match_home_team.club_name }}
+                                            vs
+                                            {{ pm.match.match_away_team.club_name }}
+                                        </strong>
+
+                                        ({{ pm.side|title }} Team)
+
+                                    </div>
+
+                                </div>
+
+                                <a
+                                    href="{% url 'select_squad' pm.match.match_id pm.side %}"
+                                    class="ftz-26"
+                                >
+                                    <i class="fas fa-user-check"></i>
+                                    Select Squad
+                                </a>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             TOURNAMENT HERO
+        ====================================================== -->
+
+        <div class="ftz-01 ftz-27 mb-4 mb-md-5">
+
+            <div class="card-body p-4 p-md-5 position-relative">
+
+                <div class="row align-items-center">
+
+
+                    <!-- LEFT -->
+
+                    <div class="col-lg-8 mb-4 mb-lg-0">
+
+                        <div class="d-flex align-items-center mb-3 flex-wrap gap-2">
+
+                            <i
+                                class="fas fa-trophy fa-2x"
+                                style="
+                                    color: var(--ftz-yellow-04);
+                                    filter:
+                                    drop-shadow(
+                                        0 0 10px
+                                        rgba(255,221,87,0.5)
+                                    );
+                                "
+                            ></i>
+
+                            <span class="ftz-29 badge px-3 py-2">
+
+                                <i class="fas fa-futbol me-1"></i>
+
+                                Tournament Arena
+
+                            </span>
+
+                            {% if tournament.is_completed %}
+
+                                <span class="ftz-60">
+
+                                    <i class="fas fa-flag-checkered"></i>
+
+                                    Tournament Ended
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <h1
+                            class="display-4 fw-bold mb-3 ftz-30"
+                            style="color:#fff;"
+                        >
+                            {{ tournament.t_name }}
+                        </h1>
+
+
+                        <div class="row g-3 text-light">
+
+                            <div class="col-md-6">
+
+                                <p class="mb-2">
+
+                                    <i
+                                        class="fas fa-calendar me-2"
+                                        style="color:var(--ftz-blue-02);"
+                                    ></i>
+
+                                    {{ tournament.t_date|date:"F d, Y" }}
+
+                                </p>
+
+
+                                <p class="mb-0">
+
+                                    <i
+                                        class="fas fa-home me-2"
+                                        style="color:var(--ftz-purple-03);"
+                                    ></i>
+
+                                    Hosted by
+
+                                    <span
+                                        class="fw-bold"
+                                        style="color:var(--ftz-green-01);"
+                                    >
+                                        {{ tournament.t_host.club_name }}
+                                    </span>
+
+                                </p>
+
+                            </div>
+
+
+                            {% if tournament.prize_pool %}
+
+                                <div class="col-md-6">
+
+                                    <p class="mb-0">
+
+                                        <i
+                                            class="fas fa-gift me-2"
+                                            style="color:var(--ftz-yellow-04);"
+                                        ></i>
+
+                                        Prize Pool:
+
+                                        <span
+                                            class="fw-bold fs-5"
+                                            style="color:var(--ftz-yellow-04);"
+                                        >
+                                            ₹{{ tournament.prize_pool }}
+                                        </span>
+
+                                    </p>
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RIGHT -->
+
+                    <div class="col-lg-4">
+
+                        <div class="d-flex flex-column gap-3">
+
+
+                            <!-- TEAMS -->
+
+                            <div class="ftz-32 p-3 text-center">
+
+                                <div
+                                    class="
+                                        d-flex
+                                        justify-content-between
+                                        align-items-center
+                                        mb-2
+                                    "
+                                >
+
+                                    <span class="text-light">
+
+                                        <i class="fas fa-users me-2"></i>
+                                        Teams
+
+                                    </span>
+
+                                    <span
+                                        class="fw-bold fs-4"
+                                        style="color:var(--ftz-green-01);"
+                                    >
+                                        {{ tournament.registered_teams_count }}/{{ tournament.max_teams }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="ftz-33">
+
+                                    <div
+                                        class="ftz-34 h-100"
+                                        style="
+                                            width:
+                                            {% widthratio tournament.registered_teams_count tournament.max_teams 100 %}%;
+                                        "
+                                    ></div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- FEE + FORMAT -->
+
+                            <div class="d-flex gap-2">
+
+                                <div class="ftz-32 flex-fill p-2 text-center">
+
+                                    <small class="text-white d-block">
+                                        Entry Fee
+                                    </small>
+
+                                    <span
+                                        class="fw-bold"
+                                        style="color:var(--ftz-yellow-04);"
+                                    >
+
+                                        <i class="fas fa-rupee-sign"></i>
+
+                                        {{ tournament.registration_fee }}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="ftz-32 flex-fill p-2 text-center">
+
+                                    <small class="text-white d-block">
+                                        Format
+                                    </small>
+
+                                    <span
+                                        class="fw-bold"
+                                        style="color:var(--ftz-blue-02);"
+                                    >
+                                        {{ tournament.get_format_display }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     MANAGER ACTIONS
+                ================================================== -->
+
+                {% if is_manager %}
+
+                    <div
+                        class="mt-4 pt-4"
+                        style="
+                            border-top:
+                            1px solid
+                            rgba(255,255,255,0.1);
+                        "
+                    >
+
+                        <div class="d-flex flex-wrap gap-2">
+
+
+                            {% if tournament.t_host.club_manager == user %}
+
+                                <a
+                                    href="{% url 'edit_tournament' tournament.t_id %}"
+                                    class="ftz-35 ftz-36"
+                                >
+                                    <i class="fas fa-edit"></i>
+                                    Edit Tournament
+                                </a>
+
+
+                                {% if not matches %}
+
+                                    <a
+                                        href="{% url 'generate_tournament_fixtures' tournament.t_id %}"
+                                        class="ftz-35 ftz-37"
+                                        onclick="
+                                            return confirm(
+                                                'Generate fixtures for all registered teams?'
+                                            )
+                                        "
+                                    >
+                                        <i class="fas fa-random"></i>
+                                        Generate Fixtures
+                                    </a>
+
+                                {% endif %}
+
+
+                                <a
+                                    href="{% url 'delete_tournament' tournament.t_id %}"
+                                    class="ftz-35 ftz-38"
+                                    onclick="
+                                        return confirm(
+                                            'Are you sure you want to delete this tournament?'
+                                        )
+                                    "
+                                >
+                                    <i class="fas fa-trash"></i>
+                                    Delete
+                                </a>
+
+
+                            {% else %}
+
+
+                                {% if tournament.is_completed %}
+
+                                    <span class="ftz-35 ftz-38 disabled">
+
+                                        <i class="fas fa-flag-checkered"></i>
+
+                                        Tournament Ended
+
+                                    </span>
+
+
+                                {% elif is_registered %}
+
+                                    {% if registration_pending_payment %}
+
+                                        <a
+                                            href="{% url 'tournament_payment_initiate' tournament.t_id %}"
+                                            class="ftz-35 ftz-36 btn-lg"
+                                        >
+                                            <i class="fas fa-credit-card"></i>
+                                            Complete Payment
+                                            (₹{{ tournament.registration_fee }})
+                                        </a>
+
+                                    {% else %}
+
+                                        <span
+                                            class="
+                                                ftz-35
+                                                ftz-37
+                                                disabled
+                                                opacity-75
+                                            "
+                                        >
+                                            <i class="fas fa-check"></i>
+                                            Registered
+                                        </span>
+
+                                    {% endif %}
+
+
+                                    {% if not matches %}
+
+                                        <a
+                                            href="{% url 'leave_tournament' tournament.t_id %}"
+                                            class="ftz-35 ftz-38"
+                                            onclick="
+                                                return confirm(
+                                                    'Leave this tournament?'
+                                                )
+                                            "
+                                        >
+                                            <i class="fas fa-sign-out-alt"></i>
+                                            Leave
+                                        </a>
+
+                                    {% endif %}
+
+
+                                {% elif not tournament.is_full %}
+
+
+                                    {% if tournament.registration_deadline and tournament.registration_deadline >= today %}
+
+                                        <a
+                                            href="{% url 'join_tournament' tournament.t_id %}"
+                                            class="ftz-35 ftz-37 btn-lg"
+                                        >
+
+                                            <i class="fas fa-sign-in-alt"></i>
+
+                                            {% if tournament.registration_fee > 0 %}
+                                                Register Now
+                                                (₹{{ tournament.registration_fee }})
+                                            {% else %}
+                                                Register Free
+                                            {% endif %}
+
+                                        </a>
+
+
+                                    {% elif not tournament.registration_deadline %}
+
+                                        <a
+                                            href="{% url 'join_tournament' tournament.t_id %}"
+                                            class="ftz-35 ftz-37 btn-lg"
+                                        >
+
+                                            <i class="fas fa-sign-in-alt"></i>
+
+                                            {% if tournament.registration_fee > 0 %}
+                                                Register Now
+                                                (₹{{ tournament.registration_fee }})
+                                            {% else %}
+                                                Register Free
+                                            {% endif %}
+
+                                        </a>
+
+
+                                    {% else %}
+
+                                        <span class="ftz-35 ftz-39 disabled">
+                                            Registration Closed
+                                        </span>
+
+                                    {% endif %}
+
+
+                                {% elif tournament.is_full %}
+
+                                    <span class="ftz-35 ftz-38 disabled">
+
+                                        <i class="fas fa-ban"></i>
+
+                                        Tournament Full
+
+                                    </span>
+
+                                {% endif %}
+
+                            {% endif %}
+
+
+                            {% if matches %}
+
+                                <a
+                                    href="{% url 'update_tournament_stats' tournament.t_id %}"
+                                    class="ftz-35 ftz-40"
+                                >
+                                    <i class="fas fa-sync"></i>
+                                    Update Stats
+                                </a>
+
+
+                                <a
+                                    href="{% url 'tournament_bracket' tournament.t_id %}"
+                                    class="ftz-35 ftz-39"
+                                >
+                                    <i class="fas fa-sitemap"></i>
+                                    View Bracket
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- =================================================
+                     HOST PENDING SQUADS
+                ================================================== -->
+
+                {% if tournament.t_host.club_manager == user and pending_squad_matches %}
+
+                    <div class="ftz-41 mt-3">
+
+                        <div class="ftz-42">
+
+                            <i class="fas fa-exclamation-circle"></i>
+
+                            Matches Awaiting Squad Selection
+
+                        </div>
+
+
+                        {% for pm in pending_squad_matches %}
+
+                            <div class="ftz-43">
+
+                                <span class="text-light">
+
+                                    <strong>
+                                        {{ pm.match.match_home_team.club_name|default:"TBD" }}
+                                    </strong>
+
+                                    vs
+
+                                    <strong>
+                                        {{ pm.match.match_away_team.club_name|default:"TBD" }}
+                                    </strong>
+
+                                    <span
+                                        class="ms-2"
+                                        style="color:rgba(255,255,255,0.4);"
+                                    >
+                                        | Round {{ pm.match.round_number }}
+                                    </span>
+
+                                </span>
+
+
+                                <div>
+
+                                    {% if pm.needs_home %}
+
+                                        <a
+                                            href="{% url 'select_squad' pm.match.match_id 'home' %}"
+                                            class="ftz-44 me-1"
+                                        >
+                                            <i class="fas fa-user-plus me-1"></i>
+                                            Home Squad
+                                        </a>
+
+                                    {% endif %}
+
+
+                                    {% if pm.needs_away %}
+
+                                        <a
+                                            href="{% url 'select_squad' pm.match.match_id 'away' %}"
+                                            class="ftz-44"
+                                        >
+                                            <i class="fas fa-user-plus me-1"></i>
+                                            Away Squad
+                                        </a>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- DESCRIPTION -->
+
+                {% if tournament.description %}
+
+                    <div class="ftz-45 mt-4 p-3">
+
+                        <p
+                            class="mb-0"
+                            style="color:rgba(255,255,255,0.7);"
+                        >
+                            {{ tournament.description }}
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             TOURNAMENT WINNER
+        ====================================================== -->
+
+        {% if tournament.is_completed and tournament_winner %}
+
+            <div class="ftz-61 mb-4 mb-md-5">
+
+                <div class="card-body p-4 p-md-5">
+
+                    <div class="row align-items-center g-4">
+
+                        <div class="col-md-auto text-center">
+
+                            {% if tournament_winner.club_logo %}
+
+                                <img
+                                    src="{{ tournament_winner.club_logo.url }}"
+                                    class="ftz-62"
+                                    alt="{{ tournament_winner.club_name }}"
+                                >
+
+                            {% else %}
+
+                                <img
+                                    src="{% static 'images/default_club.png' %}"
+                                    class="ftz-62"
+                                    alt="{{ tournament_winner.club_name }}"
+                                >
+
+                            {% endif %}
+
+                        </div>
+
+                        <div class="col text-center text-md-start">
+
+                            <div class="ftz-64 mb-1">
+
+                                <i class="fas fa-trophy me-1 ftz-63"></i>
+
+                                Tournament Champion
+
+                            </div>
+
+                            <h2 class="fw-black mb-2 ftz-63">
+
+                                {{ tournament_winner.club_name }}
+
+                            </h2>
+
+                            <p class="mb-0 text-light opacity-75">
+
+                                <i class="fas fa-crown me-2 ftz-63"></i>
+
+                                Champions of {{ tournament.t_name }}
+
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-auto text-center">
+
+                            <div
+                                class="badge px-3 py-2"
+                                style="
+                                    border:1px solid rgba(255,216,77,.3);
+                                    background:rgba(255,216,77,.08);
+                                    color:var(--ftz-yellow-04);
+                                    border-radius:999px;
+                                "
+                            >
+
+                                <i class="fas fa-check-circle me-1"></i>
+
+                                Tournament Completed
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             POINTS TABLE
+        ====================================================== -->
+
+        {% if registrations %}
+
+            <div
+                class="ftz-01 mb-4 mb-md-5"
+                style="
+                    border-radius:24px;
+                    overflow:hidden;
+                "
+            >
+
+                <div
+                    class="ftz-46"
+                    style="
+                        background:
+                        linear-gradient(
+                            135deg,
+                            rgba(0,255,136,0.1),
+                            rgba(0,212,255,0.1)
+                        );
+                    "
+                >
+
+                    <h4
+                        class="ftz-47"
+                        style="color:var(--ftz-green-01);"
+                    >
+
+                        <i class="fas fa-table me-2"></i>
+
+                        Points Table
+
+                    </h4>
+
+                </div>
+
+
+                <div class="card-body p-0">
+
+                    <div class="table-responsive">
+
+                        <table
+                            class="
+                                table
+                                ftz-02
+                                ftz-responsive-table
+                                text-center
+                                align-middle
+                            "
+                        >
+
+                            <thead>
+
+                                <tr>
+
+                                    <th
+                                        class="text-start"
+                                        style="width:60px;"
+                                    >
+                                        RANK
+                                    </th>
+
+                                    <th class="text-start">
+                                        CLUB
+                                    </th>
+
+                                    <th>PLD</th>
+                                    <th>W</th>
+                                    <th>D</th>
+                                    <th>L</th>
+                                    <th>GF</th>
+                                    <th>GA</th>
+                                    <th>GD</th>
+                                    <th>PTS</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for reg in registrations %}
+
+                                    <tr>
+
+                                        <td class="text-start">
+
+                                            {% if forloop.counter == 1 %}
+
+                                                <span
+                                                    class="
+                                                        badge
+                                                        ftz-48
+                                                        rounded-pill
+                                                        px-3
+                                                    "
+                                                >
+                                                    1
+                                                </span>
+
+                                            {% elif forloop.counter == 2 %}
+
+                                                <span
+                                                    class="
+                                                        badge
+                                                        ftz-49
+                                                        rounded-pill
+                                                        px-3
+                                                    "
+                                                >
+                                                    2
+                                                </span>
+
+                                            {% elif forloop.counter == 3 %}
+
+                                                <span
+                                                    class="
+                                                        badge
+                                                        ftz-50
+                                                        rounded-pill
+                                                        px-3
+                                                    "
+                                                >
+                                                    3
+                                                </span>
+
+                                            {% else %}
+
+                                                <span
+                                                    class="
+                                                        badge
+                                                        bg-dark
+                                                        rounded-pill
+                                                        px-3
+                                                    "
+                                                >
+                                                    {{ forloop.counter }}
+                                                </span>
+
+                                            {% endif %}
+
+                                        </td>
+
+
+                                        <td class="text-start">
+
+                                            <div
+                                                class="
+                                                    d-flex
+                                                    align-items-center
+                                                "
+                                            >
+
+                                                <img
+                                                    src="
+                                                    {% if reg.t_c_club.club_logo %}
+                                                        {{ reg.t_c_club.club_logo.url }}
+                                                    {% else %}
+                                                        {% static 'images/default_club.png' %}
+                                                    {% endif %}
+                                                    "
+                                                    class="
+                                                        ftz-09
+                                                        me-3
+                                                    "
+                                                    alt=""
+                                                >
+
+
+                                                <div>
+
+                                                    <div
+                                                        class="
+                                                            fw-bold
+                                                            text-light
+                                                        "
+                                                    >
+                                                        {{ reg.t_c_club.club_name }}
+                                                    </div>
+
+
+                                                    {% if reg.t_c_club == tournament.t_host %}
+
+                                                        <span
+                                                            class="badge"
+                                                            style="
+                                                                background:
+                                                                rgba(
+                                                                    0,212,255,0.2
+                                                                );
+                                                                color:
+                                                                var(--ftz-blue-02);
+                                                                font-size:
+                                                                0.7rem;
+                                                            "
+                                                        >
+                                                            HOST
+                                                        </span>
+
+                                                    {% endif %}
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <td class="text-light">
+                                            {{ reg.played }}
+                                        </td>
+
+                                        <td
+                                            class="fw-bold"
+                                            style="color:var(--ftz-green-01);"
+                                        >
+                                            {{ reg.won }}
+                                        </td>
+
+                                        <td class="text-light">
+                                            {{ reg.drawn }}
+                                        </td>
+
+                                        <td style="color:var(--ftz-red-05);">
+                                            {{ reg.lost }}
+                                        </td>
+
+                                        <td class="text-light">
+                                            {{ reg.goals_for }}
+                                        </td>
+
+                                        <td class="text-light">
+                                            {{ reg.goals_against }}
+                                        </td>
+
+                                        <td
+                                            class="
+                                                fw-bold
+                                                {% if reg.goal_difference > 0 %}
+                                                    ftz-30
+                                                {% elif reg.goal_difference < 0 %}
+                                                    text-danger
+                                                {% endif %}
+                                            "
+                                        >
+                                            {{ reg.goal_difference }}
+                                        </td>
+
+                                        <td>
+
+                                            <span class="ftz-52">
+                                                {{ reg.points }}
+                                            </span>
+
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             GROUP STANDINGS
+        ====================================================== -->
+
+        {% if group_standings %}
+
+            {% for group_name, teams in group_standings.items %}
+
+                <div
+                    class="ftz-01 mb-4 mb-md-5"
+                    style="
+                        border-radius:24px;
+                        overflow:hidden;
+                    "
+                >
+
+                    <div
+                        class="ftz-46"
+                        style="
+                            background:
+                            linear-gradient(
+                                135deg,
+                                rgba(0,212,255,0.1),
+                                rgba(184,41,221,0.1)
+                            );
+                        "
+                    >
+
+                        <h4
+                            class="ftz-47"
+                            style="color:var(--ftz-blue-02);"
+                        >
+
+                            <i class="fas fa-layer-group me-2"></i>
+
+                            Group {{ group_name }}
+
+                        </h4>
+
+                    </div>
+
+
+                    <div class="card-body p-0">
+
+                        <div class="table-responsive">
+
+                            <table
+                                class="
+                                    table
+                                    ftz-02
+                                    ftz-responsive-table
+                                    text-center
+                                    align-middle
+                                "
+                            >
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th
+                                            class="text-start"
+                                            style="width:60px;"
+                                        >
+                                            POS
+                                        </th>
+
+                                        <th class="text-start">
+                                            CLUB
+                                        </th>
+
+                                        <th>PLD</th>
+                                        <th>W</th>
+                                        <th>D</th>
+                                        <th>L</th>
+                                        <th>GF</th>
+                                        <th>GA</th>
+                                        <th>GD</th>
+                                        <th>PTS</th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    {% for reg in teams %}
+
+                                        <tr
+                                            {% if forloop.counter <= tournament.teams_qualifying %}
+                                                style="
+                                                    background:
+                                                    rgba(
+                                                        0,255,136,0.05
+                                                    );
+                                                "
+                                            {% endif %}
+                                        >
+
+                                            <td class="text-start">
+
+                                                {% if forloop.counter <= tournament.teams_qualifying %}
+
+                                                    <span
+                                                        class="
+                                                            badge
+                                                            rounded-pill
+                                                            px-3
+                                                        "
+                                                        style="
+                                                            background:
+                                                            linear-gradient(
+                                                                135deg,
+                                                                var(--ftz-green-01),
+                                                                #00aa66
+                                                            );
+                                                            color:#000;
+                                                            font-weight:800;
+                                                        "
+                                                    >
+                                                        {{ forloop.counter }}
+                                                    </span>
+
+                                                {% else %}
+
+                                                    <span
+                                                        class="
+                                                            badge
+                                                            bg-dark
+                                                            rounded-pill
+                                                            px-3
+                                                        "
+                                                    >
+                                                        {{ forloop.counter }}
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <td class="text-start">
+
+                                                <div
+                                                    class="
+                                                        d-flex
+                                                        align-items-center
+                                                    "
+                                                >
+
+                                                    <img
+                                                        src="
+                                                        {% if reg.t_c_club.club_logo %}
+                                                            {{ reg.t_c_club.club_logo.url }}
+                                                        {% else %}
+                                                            {% static 'images/default_club.png' %}
+                                                        {% endif %}
+                                                        "
+                                                        class="
+                                                            ftz-09
+                                                            me-3
+                                                        "
+                                                        alt=""
+                                                    >
+
+
+                                                    <div>
+
+                                                        <div
+                                                            class="
+                                                                fw-bold
+                                                                text-light
+                                                            "
+                                                        >
+                                                            {{ reg.t_c_club.club_name }}
+                                                        </div>
+
+
+                                                        {% if forloop.counter <= tournament.teams_qualifying %}
+
+                                                            <span
+                                                                class="badge"
+                                                                style="
+                                                                    background:
+                                                                    rgba(
+                                                                        0,255,136,0.2
+                                                                    );
+                                                                    color:
+                                                                    var(--ftz-green-01);
+                                                                    font-size:
+                                                                    0.7rem;
+                                                                "
+                                                            >
+
+                                                                <i
+                                                                    class="
+                                                                        fas
+                                                                        fa-check
+                                                                        me-1
+                                                                    "
+                                                                ></i>
+
+                                                                QUALIFIED
+
+                                                            </span>
+
+                                                        {% endif %}
+
+                                                    </div>
+
+                                                </div>
+
+                                            </td>
+
+
+                                            <td class="text-light">
+                                                {{ reg.played }}
+                                            </td>
+
+                                            <td
+                                                class="fw-bold"
+                                                style="color:var(--ftz-green-01);"
+                                            >
+                                                {{ reg.won }}
+                                            </td>
+
+                                            <td class="text-light">
+                                                {{ reg.drawn }}
+                                            </td>
+
+                                            <td style="color:var(--ftz-red-05);">
+                                                {{ reg.lost }}
+                                            </td>
+
+                                            <td class="text-light">
+                                                {{ reg.goals_for }}
+                                            </td>
+
+                                            <td class="text-light">
+                                                {{ reg.goals_against }}
+                                            </td>
+
+                                            <td
+                                                class="
+                                                    fw-bold
+                                                    {% if reg.goal_difference > 0 %}
+                                                        ftz-30
+                                                    {% elif reg.goal_difference < 0 %}
+                                                        text-danger
+                                                    {% endif %}
+                                                "
+                                            >
+                                                {{ reg.goal_difference }}
+                                            </td>
+
+                                            <td>
+
+                                                <span class="ftz-52">
+                                                    {{ reg.points }}
+                                                </span>
+
+                                            </td>
+
+                                        </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             MATCH CENTER
+        ====================================================== -->
+
+        {% if match_center_groups %}
+
+            <section
+                class="ftz-01 mb-4 mb-md-5"
+                style="
+                    border-radius:24px;
+                    overflow:hidden;
+                "
+            >
+
+                <div
+                    class="ftz-46"
+                    style="
+                        background:
+                        linear-gradient(
+                            135deg,
+                            rgba(0,255,136,0.10),
+                            rgba(0,212,255,0.08),
+                            rgba(255,56,96,0.08)
+                        );
+                    "
+                >
+                    <h4 class="ftz-47 text-white mb-0">
+                        <i
+                            class="fas fa-futbol me-2"
+                            style="color:var(--ftz-green-01);"
+                        ></i>
+                        Match Center
+                    </h4>
+                </div>
+
+                <div class="card-body p-3 p-md-4">
+
+                    {% for section in match_center_groups %}
+
+                        <div
+                            class="mb-4 {% if not forloop.last %}pb-4{% endif %}"
+                            style="
+                                {% if not forloop.last %}
+                                border-bottom:1px solid rgba(255,255,255,0.07);
+                                {% endif %}
+                            "
+                        >
+
+                            <!-- STAGE / ROUND HEADER -->
+                            <div
+                                class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3"
+                            >
+
+                                <div>
+                                    <span
+                                        class="badge px-3 py-2"
+                                        style="
+                                            background:
+                                            {% if section.stage_title == 'Knockout Stage' %}
+                                            linear-gradient(135deg,rgba(255,56,96,0.28),rgba(255,56,96,0.08));
+                                            color:var(--ftz-red-05);
+                                            border:1px solid rgba(255,56,96,0.30);
+                                            {% else %}
+                                            linear-gradient(135deg,rgba(0,212,255,0.25),rgba(0,212,255,0.08));
+                                            color:var(--ftz-blue-02);
+                                            border:1px solid rgba(0,212,255,0.25);
+                                            {% endif %}
+                                        "
+                                    >
+                                        <i class="{{ section.stage_icon }} me-2"></i>
+                                        {{ section.stage_title }}
+                                    </span>
+                                </div>
+
+                                <span
+                                    class="badge px-3 py-2"
+                                    style="
+                                        background:rgba(255,255,255,0.06);
+                                        color:#dfe7f2;
+                                        border:1px solid rgba(255,255,255,0.09);
+                                    "
+                                >
+                                    {{ section.round_name }}
+                                </span>
+
+                            </div>
+
+                            <!-- MATCH CARDS -->
+                            <div class="row g-3">
+
+                                {% for item in section.matches %}
+
+                                    <div class="col-12 col-md-6 col-xl-4">
+
+                                        <article
+                                            class="ftz-03 ftz-53 h-100"
+                                            style="
+                                                border-radius:20px;
+                                                overflow:hidden;
+                                            "
+                                        >
+
+                                            <!-- MATCH STATUS -->
+                                            <div
+                                                class="d-flex justify-content-between align-items-center px-3 py-2"
+                                                style="
+                                                    background:rgba(255,255,255,0.035);
+                                                    border-bottom:1px solid rgba(255,255,255,0.06);
+                                                "
+                                            >
+
+                                                <span class="small fw-bold text-uppercase">
+                                                    {% if item.is_completed %}
+                                                        <span style="color:var(--ftz-green-01);">
+                                                            <i class="fas fa-check-circle me-1"></i>FT
+                                                        </span>
+                                                    {% elif item.is_bye %}
+                                                        <span class="text-warning">
+                                                            <i class="fas fa-forward me-1"></i>BYE
+                                                        </span>
+                                                    {% elif item.match.match_started and not item.match.match_finished %}
+                                                        <span style="color:var(--ftz-red-05);">
+                                                            <i class="fas fa-circle me-1"></i>LIVE
+                                                        </span>
+                                                    {% elif item.match.match_home_team and item.match.match_away_team %}
+                                                        <span style="color:var(--ftz-blue-02);">
+                                                            <i class="fas fa-clock me-1"></i>UPCOMING
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="text-muted">
+                                                            <i class="fas fa-hourglass-half me-1"></i>WAITING
+                                                        </span>
+                                                    {% endif %}
+                                                </span>
+
+                                                <span class="small text-muted">
+                                                    #{{ item.match.match_id }}
+                                                </span>
+
+                                            </div>
+
+                                            <div class="card-body p-3 p-md-4">
+
+                                                <!-- TEAMS + SCORE -->
+                                                <div
+                                                    class="d-flex align-items:center justify-content-between"
+                                                >
+
+                                                    <!-- HOME -->
+                                                    <div
+                                                        class="text-center"
+                                                        style="width:35%;"
+                                                    >
+                                                        {% if item.match.match_home_team %}
+                                                            <img
+                                                                src="{% if item.match.match_home_team.club_logo %}{{ item.match.match_home_team.club_logo.url }}{% else %}{% static 'images/default_club.png' %}{% endif %}"
+                                                                class="ftz-08 mb-2"
+                                                                style="width:54px;height:54px;object-fit:contain;"
+                                                                alt=""
+                                                            >
+                                                            <div
+                                                                class="small fw-bold text-light"
+                                                                style="min-height:38px;display:flex;align-items:center;justify-content:center;"
+                                                            >
+                                                                {{ item.match.match_home_team.club_name }}
+                                                            </div>
+                                                        {% else %}
+                                                            <div
+                                                                class="mx-auto mb-2 d-flex align-items-center justify-content-center"
+                                                                style="width:54px;height:54px;border-radius:14px;background:rgba(255,255,255,0.05);border:1px dashed rgba(255,255,255,0.12);"
+                                                            >
+                                                                <i class="fas fa-question text-muted"></i>
+                                                            </div>
+                                                            <div class="small text-muted">TBD</div>
+                                                        {% endif %}
+                                                    </div>
+
+                                                    <!-- SCORE -->
+                                                    <div class="text-center" style="width:30%;">
+
+                                                        {% if item.is_completed %}
+                                                            <div
+                                                                class="fw-bold"
+                                                                style="font-size:1.9rem;color:var(--ftz-green-01);line-height:1;"
+                                                            >
+                                                                {{ item.result.result_home_team }}
+                                                                <span class="mx-1 text-muted">-</span>
+                                                                {{ item.result.result_away_team }}
+                                                            </div>
+                                                        {% elif item.match.match_finished and not item.result %}
+                                                            <div
+                                                                class="fw-bold text-warning"
+                                                                style="font-size:1.15rem;"
+                                                            >
+                                                                BYE
+                                                            </div>
+                                                        {% elif item.match.match_started and not item.match.match_finished %}
+                                                            <div
+                                                                class="fw-bold"
+                                                                style="font-size:1.7rem;color:var(--ftz-red-05);"
+                                                            >
+                                                                {% if item.result %}
+                                                                    {{ item.result.result_home_team }}
+                                                                    <span class="mx-1">-</span>
+                                                                    {{ item.result.result_away_team }}
+                                                                {% else %}
+                                                                    0 <span class="mx-1">-</span> 0
+                                                                {% endif %}
+                                                            </div>
+                                                        {% else %}
+                                                            <div
+                                                                class="fw-bold text-muted"
+                                                                style="font-size:1.25rem;"
+                                                            >
+                                                                —
+                                                            </div>
+                                                        {% endif %}
+
+                                                    </div>
+
+                                                    <!-- AWAY -->
+                                                    <div
+                                                        class="text-center"
+                                                        style="width:35%;"
+                                                    >
+                                                        {% if item.match.match_away_team %}
+                                                            <img
+                                                                src="{% if item.match.match_away_team.club_logo %}{{ item.match.match_away_team.club_logo.url }}{% else %}{% static 'images/default_club.png' %}{% endif %}"
+                                                                class="ftz-08 mb-2"
+                                                                style="width:54px;height:54px;object-fit:contain;"
+                                                                alt=""
+                                                            >
+                                                            <div
+                                                                class="small fw-bold text-light"
+                                                                style="min-height:38px;display:flex;align-items:center;justify-content:center;"
+                                                            >
+                                                                {{ item.match.match_away_team.club_name }}
+                                                            </div>
+                                                        {% else %}
+                                                            <div
+                                                                class="mx-auto mb-2 d-flex align-items-center justify-content-center"
+                                                                style="width:54px;height:54px;border-radius:14px;background:rgba(255,255,255,0.05);border:1px dashed rgba(255,255,255,0.12);"
+                                                            >
+                                                                <i class="fas fa-question text-muted"></i>
+                                                            </div>
+                                                            <div class="small text-muted">TBD</div>
+                                                        {% endif %}
+                                                    </div>
+
+                                                </div>
+
+                                                <!-- SQUAD STATUS -->
+                                                {% if item.match.match_home_team and item.match.match_away_team and not item.is_completed %}
+                                                    <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+
+                                                        {% if item.match.home_squad_selected %}
+                                                            <span class="ftz-12 ftz-13">
+                                                                <i class="fas fa-check"></i> Home Ready
+                                                            </span>
+                                                        {% elif user == item.match.match_home_team.club_manager %}
+                                                            <a
+                                                                href="{% url 'select_squad' item.match.match_id 'home' %}"
+                                                                class="ftz-12 ftz-16"
+                                                            >
+                                                                <i class="fas fa-user-plus"></i> Select Home
+                                                            </a>
+                                                        {% else %}
+                                                            <span class="ftz-12 ftz-15">
+                                                                <i class="fas fa-clock"></i> Home Pending
+                                                            </span>
+                                                        {% endif %}
+
+                                                        {% if item.match.away_squad_selected %}
+                                                            <span class="ftz-12 ftz-13">
+                                                                <i class="fas fa-check"></i> Away Ready
+                                                            </span>
+                                                        {% elif user == item.match.match_away_team.club_manager %}
+                                                            <a
+                                                                href="{% url 'select_squad' item.match.match_id 'away' %}"
+                                                                class="ftz-12 ftz-16"
+                                                            >
+                                                                <i class="fas fa-user-plus"></i> Select Away
+                                                            </a>
+                                                        {% else %}
+                                                            <span class="ftz-12 ftz-15">
+                                                                <i class="fas fa-clock"></i> Away Pending
+                                                            </span>
+                                                        {% endif %}
+
+                                                    </div>
+                                                {% endif %}
+
+                                                <!-- DATE / TIME / VENUE -->
+                                                <div
+                                                    class="ftz-06 text-center mt-3 pt-3"
+                                                    style="border-top:1px solid rgba(255,255,255,0.06);"
+                                                >
+                                                    {% if item.match.match_date %}
+                                                        <span class="me-2">
+                                                            <i class="fas fa-calendar me-1" style="color:var(--ftz-blue-02);"></i>
+                                                            {{ item.match.match_date|date:"M d, Y" }}
+                                                        </span>
+                                                    {% endif %}
+
+                                                    {% if item.match.match_time %}
+                                                        <span class="me-2">
+                                                            <i class="fas fa-clock me-1" style="color:var(--ftz-blue-02);"></i>
+                                                            {{ item.match.match_time }}
+                                                        </span>
+                                                    {% endif %}
+
+                                                    {% if item.match.match_turf %}
+                                                        <span>
+                                                            <i class="fas fa-map-marker-alt me-1" style="color:var(--ftz-red-05);"></i>
+                                                            {{ item.match.match_turf.turf_name }}
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+
+                                                <!-- ACTION -->
+                                                {% if item.match.match_home_team and item.match.match_away_team %}
+                                                    <div class="text-center mt-3">
+
+                                                        {% if item.match.match_started and not item.match.match_finished %}
+
+                                                            <a
+                                                                href="{% url 'go_to_match' item.match.match_id %}"
+                                                                class="ftz-35 ftz-37 btn-sm"
+                                                            >
+                                                                <i class="fas fa-futbol me-1"></i>
+                                                                Open Live Match
+                                                            </a>
+
+                                                        {% elif item.is_completed %}
+
+                                                            <a
+                                                                href="{% url 'go_to_match' item.match.match_id %}"
+                                                                class="ftz-35 ftz-37 btn-sm"
+                                                            >
+                                                                <i class="fas fa-eye me-1"></i>
+                                                                View Match
+                                                            </a>
+
+                                                        {% elif item.match.home_squad_selected and item.match.away_squad_selected and item.match.home_squad.exists and item.match.away_squad.exists %}
+
+                                                            <a
+                                                                href="{% url 'go_to_match' item.match.match_id %}"
+                                                                class="ftz-35 ftz-37 btn-sm"
+                                                            >
+                                                                <i class="fas fa-futbol me-1"></i>
+                                                                Open Match
+                                                            </a>
+
+                                                        {% else %}
+
+                                                            <div
+                                                                class="ftz-35"
+                                                                style="
+                                                                    display:inline-flex;
+                                                                    align-items:center;
+                                                                    justify-content:center;
+                                                                    gap:8px;
+                                                                    opacity:.65;
+                                                                    cursor:not-allowed;
+                                                                "
+                                                            >
+                                                                <i class="fas fa-lock"></i>
+                                                                Waiting for Both Squads
+                                                            </div>
+
+                                                        {% endif %}
+
+                                                    </div>
+                                                {% endif %}
+
+                                            </div>
+                                        </article>
+
+                                    </div>
+
+                                {% empty %}
+                                    <div class="col-12">
+                                        <div class="text-center text-muted py-4">
+                                            No matches in this stage yet.
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+            </section>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             REGISTERED TEAMS
+        ====================================================== -->
+
+        <div
+            class="ftz-01"
+            style="
+                border-radius:24px;
+                overflow:hidden;
+            "
+        >
+
+            <div
+                class="ftz-46"
+                style="
+                    background:
+                    linear-gradient(
+                        135deg,
+                        rgba(255,221,87,0.1),
+                        rgba(255,149,0,0.1)
+                    );
+                "
+            >
+
+                <h4
+                    class="ftz-47"
+                    style="color:var(--ftz-yellow-04);"
+                >
+
+                    <i class="fas fa-users me-2"></i>
+
+                    Registered Teams
+
+                    <span
+                        class="badge ms-2"
+                        style="
+                            background:
+                            rgba(255,255,255,0.1);
+                            color:#fff;
+                        "
+                    >
+                        {{ tournament.registered_teams_count }}
+                    </span>
+
+                </h4>
+
+            </div>
+
+
+            <div class="card-body p-3 p-md-4">
+
+                <div class="row g-3">
+
+
+                    {% for reg in registrations %}
+
+                        <div
+                            class="
+                                col-6
+                                col-md-4
+                                col-lg-3
+                            "
+                        >
+
+                            <div
+                                class="
+                                    ftz-55
+                                    h-100
+                                    ftz-53
+                                    {% if reg.is_paid %}
+                                        ftz-56
+                                    {% else %}
+                                        ftz-57
+                                    {% endif %}
+                                "
+                            >
+
+                                <img
+                                    src="
+                                    {% if reg.t_c_club.club_logo %}
+                                        {{ reg.t_c_club.club_logo.url }}
+                                    {% else %}
+                                        {% static 'images/default_club.png' %}
+                                    {% endif %}
+                                    "
+                                    class="
+                                        ftz-08
+                                        mx-auto
+                                    "
+                                    alt=""
+                                >
+
+
+                                <h6
+                                    class="
+                                        fw-bold
+                                        mb-1
+                                        text-light
+                                    "
+                                >
+                                    {{ reg.t_c_club.club_name }}
+                                </h6>
+
+
+                                <small
+                                    style="
+                                        color:
+                                        rgba(255,255,255,0.5);
+                                    "
+                                >
+                                    {{ reg.t_c_club.club_district }}
+                                </small>
+
+
+                                <div
+                                    class="
+                                        mt-3
+                                        d-flex
+                                        flex-wrap
+                                        justify-content-center
+                                        gap-1
+                                    "
+                                >
+
+
+                                    {% if reg.is_paid %}
+
+                                        <span
+                                            class="badge px-2 py-1"
+                                            style="
+                                                background:
+                                                rgba(
+                                                    0,255,136,0.2
+                                                );
+                                                color:
+                                                var(--ftz-green-01);
+                                                border:
+                                                1px solid
+                                                rgba(
+                                                    0,255,136,0.3
+                                                );
+                                            "
+                                        >
+
+                                            <i class="fas fa-check me-1"></i>
+
+                                            Paid
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span
+                                            class="badge px-2 py-1"
+                                            style="
+                                                background:
+                                                rgba(
+                                                    255,221,87,0.2
+                                                );
+                                                color:
+                                                var(--ftz-yellow-04);
+                                                border:
+                                                1px solid
+                                                rgba(
+                                                    255,221,87,0.3
+                                                );
+                                            "
+                                        >
+
+                                            <i class="fas fa-clock me-1"></i>
+
+                                            Pending
+
+                                        </span>
+
+                                    {% endif %}
+
+
+                                    {% if reg.group_name %}
+
+                                        <span
+                                            class="badge px-2 py-1"
+                                            style="
+                                                background:
+                                                rgba(
+                                                    0,212,255,0.2
+                                                );
+                                                color:
+                                                var(--ftz-blue-02);
+                                                border:
+                                                1px solid
+                                                rgba(
+                                                    0,212,255,0.3
+                                                );
+                                            "
+                                        >
+                                            Group {{ reg.group_name }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% empty %}
+
+                        <div class="col-12 text-center py-5">
+
+                            <i
+                                class="
+                                    fas
+                                    fa-users
+                                    fa-3x
+                                    mb-3
+                                "
+                                style="
+                                    color:
+                                    rgba(255,255,255,0.1);
+                                "
+                            ></i>
+
+                            <p class="text-muted">
+                                No teams registered yet.
+                                Be the first!
+                            </p>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- SPOTS REMAINING -->
+
+                {% if spots_remaining > 0 %}
+
+                    <div
+                        class="
+                            ftz-58
+                            mt-4
+                            text-center
+                        "
+                    >
+
+                        <i
+                            class="
+                                fas
+                                fa-info-circle
+                                me-2
+                            "
+                            style="
+                                color:var(--ftz-blue-02);
+                            "
+                        ></i>
+
+                        <span
+                            class="text-light fw-bold"
+                        >
+                            {{ spots_remaining }}
+                        </span>
+
+                        <span
+                            style="
+                                color:
+                                rgba(255,255,255,0.7);
+                            "
+                        >
+                            spot{{ spots_remaining|pluralize }}
+                            remaining!
+                        </span>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     PARTICLES + ANIMATION
+========================================================= -->
+
+<script>
+
+function ftzCreateParticles01() {
+
+    const container =
+        document.getElementById('ftzParticles01');
+
+    if (!container) {
+        return;
+    }
+
+    const colors = [
+        '#00ff88',
+        '#00d4ff',
+        '#b829dd',
+        '#ffdd57'
+    ];
+
+    for (let i = 0; i < 20; i++) {
+
+        const p =
+            document.createElement('div');
+
+        p.className =
+            'ftz-59';
+
+        p.style.left =
+            Math.random() * 100 + '%';
+
+        p.style.animationDelay =
+            Math.random() * 15 + 's';
+
+        p.style.animationDuration =
+            (10 + Math.random() * 10) + 's';
+
+        p.style.color =
+            colors[
+                Math.floor(
+                    Math.random() * colors.length
+                )
+            ];
+
+        p.style.background =
+            p.style.color;
+
+        const size =
+            2 + Math.random() * 4;
+
+        p.style.width =
+            size + 'px';
+
+        p.style.height =
+            size + 'px';
+
+        container.appendChild(p);
+    }
+}
+
+
+ftzCreateParticles01();
+
+
+document.addEventListener(
+    'DOMContentLoaded',
+    function() {
+
+        const cards =
+            document.querySelectorAll(
+                '.ftz-53'
+            );
+
+        cards.forEach(
+            (card, index) => {
+
+                setTimeout(
+                    () => {
+
+                        card.style.transition =
+                            'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+
+                        card.style.opacity =
+                            '1';
+
+                        card.style.transform =
+                            'translateY(0)';
+
+                    },
+                    index * 90
+                );
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}

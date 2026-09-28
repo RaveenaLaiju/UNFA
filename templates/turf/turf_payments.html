@@ -1,0 +1,52 @@
+{% extends 'user/user_head.html' %}
+{% block content %}
+<div class="py-5">
+  <div class="container glass-panel animate-on-scroll">
+{% load static %}
+
+<section class="turf-page">
+  <div class="container animate-on-scroll">
+    <header class="stadium-hero animate-on-scroll">
+      <div>
+        <span class="kicker"><i class="fas fa-credit-card"></i> Payment Center</span>
+        <h1 class="clubs-title">Turf Payments</h1>
+        <p class="clubs-intro">Track all payments and transactions for your turfs.</p>
+      </div>
+      <div class="live-badge animate-scale" aria-label="Total bookings">
+        <i class="fas fa-rupee-sign" style="font-size: 1.5rem; color: var(--primary);"></i>
+        <strong>{{ bookings|length }}</strong>
+        <span>Bookings</span>
+      </div>
+    </header>
+
+    <div class="dashboard-card animate-on-scroll">
+      {% if bookings %}
+        <div class="match-scroll">
+          <table class="booking-table">
+            <thead>
+              <tr><th>Turf</th><th>Customer</th><th>Date</th><th>Time Slot</th><th>Amount</th><th>Payment Status</th><th>Booking Status</th></tr>
+            </thead>
+            <tbody>
+              {% for booking in bookings %}
+              <tr class="animate-on-scroll" data-delay="{{ forloop.counter }}">
+                <td><strong>{{ booking.turf.turf_name }}</strong></td>
+                <td>{{ booking.customer.user_name }}</td>
+                <td>{{ booking.booking_date }}</td>
+                <td>{{ booking.time_slot.tt_time.time_range }}</td>
+                <td style="color: var(--primary); font-weight: 700;">₹{{ booking.turf.turf_rate }}</td>
+                <td>{% if booking.is_paid %}<<span class="status-badge accepted"><i class="fas fa-check"></i> Paid</span>{% else %}<<span class="status-badge pending">Pending</span>{% endif %}</td>
+                <td><span class="status-badge {{ booking.status|lower }}">{{ booking.status }}</span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-state"><i class="fas fa-receipt"></i><p>No payment records yet.</p></div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+  </div>
+</div>
+{% endblock %}

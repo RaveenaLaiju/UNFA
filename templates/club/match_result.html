@@ -1,0 +1,993 @@
+{% extends 'user/user_head.html' %}
+{% block content %}
+{% load static %}
+
+<section class="match-arena">
+  <div class="arena-container">
+    
+    <header class="match-header" data-animate="fade-up">
+      <div class="match-badge">
+        <span class="badge-pulse"></span>
+        <i class="fas fa-flag-checkered"></i>
+        <span class="badge-text">MATCH FINISHED</span>
+      </div>
+
+      <div class="score-arena">
+        <!-- Home Team -->
+        <div class="team-home" data-animate="slide-right" data-delay="100">
+          <div class="team-shield">
+            <img src="{{ result.result_match.match_home_team.club_logo.url }}" 
+                 alt="{{ result.result_match.match_home_team.club_name }}" 
+                 class="shield-img">
+            <div class="shield-glow"></div>
+          </div>
+          <h2 class="team-name">{{ result.result_match.match_home_team.club_name }}</h2>
+        </div>
+
+        <!-- Score Display -->
+        <div class="score-board" data-animate="zoom-in" data-delay="200">
+          <div class="score-digit home-score">{{ result.result_home_team }}</div>
+          <div class="score-divider">
+            <span class="divider-colon">:</span>
+            <div class="divider-glow"></div>
+          </div>
+          <div class="score-digit away-score">{{ result.result_away_team }}</div>
+        </div>
+
+        <!-- Away Team -->
+        <div class="team-away" data-animate="slide-left" data-delay="100">
+          <div class="team-shield">
+            <img src="{{ result.result_match.match_away_team.club_logo.url }}" 
+                 alt="{{ result.result_match.match_away_team.club_name }}" 
+                 class="shield-img">
+            <div class="shield-glow away-glow"></div>
+          </div>
+          <h2 class="team-name">{{ result.result_match.match_away_team.club_name }}</h2>
+        </div>
+      </div>
+
+      <div class="match-meta" data-animate="fade-in" data-delay="300">
+        <div class="meta-chip">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>{{ result.result_match.match_turf.turf_name }}</span>
+        </div>
+        <div class="meta-separator"></div>
+        <div class="meta-chip">
+          <i class="fas fa-calendar-alt"></i>
+          <span>{{ result.result_match.match_date|date:"d M Y" }}</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="scorers-grid">
+      
+      <!-- Home Scorers -->
+      <article class="scorers-panel home-panel" data-animate="fade-up" data-delay="150">
+        <div class="panel-header">
+          <div class="panel-icon home-icon">
+            <i class="fas fa-futbol"></i>
+          </div>
+          <h3 class="panel-title">{{ result.result_match.match_home_team.club_name }} Goals</h3>
+          <div class="panel-accent home-accent"></div>
+        </div>
+        
+        <div class="scorers-list">
+          {% if home_goal_counts %}
+            {% for scorer in home_goal_counts %}
+            <div class="scorer-card" data-animate="slide-up" data-delay="{{ forloop.counter|add:200 }}">
+              <div class="scorer-avatar">
+                <span class="avatar-count">{{ scorer.goal_count }}</span>
+                <div class="avatar-ring"></div>
+              </div>
+              <div class="scorer-info">
+                <span class="scorer-name">{{ scorer.player__player_card_name }}</span>
+                <span class="scorer-label">Goals scored</span>
+              </div>
+              <a href="{% url 'player_public_profile' scorer.player__player_id %}" 
+                 class="scorer-action" aria-label="View player profile">
+                <i class="fas fa-eye"></i>
+                <span class="action-tooltip">Profile</span>
+              </a>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="empty-arena" data-animate="fade-in">
+              <div class="empty-icon">
+                <i class="fas fa-times-circle"></i>
+              </div>
+              <p class="empty-text">No goals scored</p>
+            </div>
+          {% endif %}
+        </div>
+      </article>
+
+      <!-- Away Scorers -->
+      <article class="scorers-panel away-panel" data-animate="fade-up" data-delay="250">
+        <div class="panel-header">
+          <div class="panel-icon away-icon">
+            <i class="fas fa-futbol"></i>
+          </div>
+          <h3 class="panel-title">{{ result.result_match.match_away_team.club_name }} Goals</h3>
+          <div class="panel-accent away-accent"></div>
+        </div>
+        
+        <div class="scorers-list">
+          {% if away_goal_counts %}
+            {% for scorer in away_goal_counts %}
+            <div class="scorer-card" data-animate="slide-up" data-delay="{{ forloop.counter|add:300 }}">
+              <div class="scorer-avatar away-avatar">
+                <span class="avatar-count">{{ scorer.goal_count }}</span>
+                <div class="avatar-ring away-ring"></div>
+              </div>
+              <div class="scorer-info">
+                <span class="scorer-name">{{ scorer.player__player_card_name }}</span>
+                <span class="scorer-label">Goals scored</span>
+              </div>
+              <a href="{% url 'player_public_profile' scorer.player__player_id %}" 
+                 class="scorer-action away-action" aria-label="View player profile">
+                <i class="fas fa-eye"></i>
+                <span class="action-tooltip">Profile</span>
+              </a>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="empty-arena" data-animate="fade-in">
+              <div class="empty-icon">
+                <i class="fas fa-times-circle"></i>
+              </div>
+              <p class="empty-text">No goals scored</p>
+            </div>
+          {% endif %}
+        </div>
+      </article>
+    </div>
+
+    {% if is_manager %}
+    <div class="video-command" data-animate="fade-up" data-delay="200">
+      <div class="video-panel">
+        <div class="video-header">
+          <div class="video-icon">
+            <i class="fas fa-video"></i>
+          </div>
+          <h3 class="video-title">Match Video</h3>
+        </div>
+        
+        <form method="POST" action="{% url 'upload_video' result.result_id %}" 
+              enctype="multipart/form-data" class="upload-form">
+          {% csrf_token %}
+          <div class="upload-zone">
+            <div class="upload-input-wrap">
+              <label class="upload-label">
+                <i class="fas fa-cloud-upload-alt"></i>
+                Upload Match Highlights
+              </label>
+              <input type="file" name="match_video" class="upload-input" accept="video/*">
+            </div>
+            <button type="submit" class="upload-btn">
+              <i class="fas fa-upload"></i>
+              <span>Upload</span>
+            </button>
+          </div>
+        </form>
+
+        {% if result.result_video %}
+        <div class="video-stage" data-animate="zoom-in" data-delay="100">
+          <div class="video-frame">
+            <video controls class="match-reel">
+              <source src="{{ result.result_video.url }}" type="video/mp4">
+              <span class="video-fallback">Your browser does not support the video tag.</span>
+            </video>
+            <div class="video-overlay"></div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    
+    {% elif result.result_video %}
+    <div class="video-command" data-animate="fade-up" data-delay="200">
+      <div class="video-panel">
+        <div class="video-header">
+          <div class="video-icon">
+            <i class="fas fa-play-circle"></i>
+          </div>
+          <h3 class="video-title">Match Highlights</h3>
+        </div>
+        <div class="video-stage" data-animate="zoom-in" data-delay="100">
+          <div class="video-frame">
+            <video controls class="match-reel">
+              <source src="{{ result.result_video.url }}" type="video/mp4">
+              <span class="video-fallback">Your browser does not support the video tag.</span>
+            </video>
+            <div class="video-overlay"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<style>
+:root {
+  --neon-cyan: #00f0ff;
+  --neon-green: #00ff88;
+  --neon-pink: #ff006e;
+  --neon-purple: #8338ec;
+  --neon-orange: #ff9f1c;
+  --glass-bg: rgba(15, 23, 42, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.05);
+  --shadow-glow: 0 8px 32px rgba(0, 240, 255, 0.15);
+  --font-display: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ─── Arena Base ─── */
+.match-arena {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  background: 
+    radial-gradient(ellipse at 20% 20%, rgba(131, 56, 236, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0, 240, 255, 0.1) 0%, transparent 50%),
+    linear-gradient(135deg, #0f172a 0%, #1a103c 50%, #0f172a 100%);
+  background-attachment: fixed;
+  font-family: var(--font-display);
+}
+
+.arena-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ─── Glassmorphism Utility ─── */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: 
+    0 4px 24px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 var(--glass-highlight);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+}
+
+/* ─── Match Header ─── */
+.match-header {
+  composes: glass-panel;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  animation: fadeUp 0.8s ease-out;
+}
+
+.match-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 100px;
+  color: var(--neon-green);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.badge-pulse {
+  width: 8px;
+  height: 8px;
+  background: var(--neon-green);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--neon-green);
+  animation: pulse 2s infinite;
+}
+
+.score-arena {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.team-home, .team-away {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  min-width: 140px;
+}
+
+.team-shield {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  padding: 4px;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+}
+
+.team-away .team-shield {
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-orange));
+}
+
+.shield-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid rgba(15, 23, 42, 0.8);
+  position: relative;
+  z-index: 2;
+}
+
+.shield-glow {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: inherit;
+  filter: blur(12px);
+  opacity: 0.4;
+  z-index: 1;
+  animation: glowRotate 4s linear infinite;
+}
+
+.team-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  letter-spacing: -0.02em;
+}
+
+/* Score Board */
+.score-board {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.score-digit {
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-score {
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.5));
+}
+
+.away-score {
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-orange));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(255, 0, 110, 0.5));
+}
+
+.score-divider {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.divider-colon {
+  font-size: 3rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1;
+}
+
+/* Match Meta */
+.match-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+}
+
+.meta-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.meta-chip i {
+  color: var(--neon-cyan);
+}
+
+.meta-separator {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ─── Scorers Grid ─── */
+.scorers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.scorers-panel {
+  composes: glass-panel;
+  padding: 1.5rem;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+}
+
+.panel-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.home-icon {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 255, 136, 0.2));
+  color: var(--neon-green);
+  box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+}
+
+.away-icon {
+  background: linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(255, 159, 28, 0.2));
+  color: var(--neon-pink);
+  box-shadow: 0 4px 15px rgba(255, 0, 110, 0.2);
+}
+
+.panel-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  flex: 1;
+}
+
+.panel-accent {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  border-radius: 2px;
+}
+
+.home-accent {
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+}
+
+.away-accent {
+  background: linear-gradient(90deg, var(--neon-pink), var(--neon-orange));
+}
+
+/* Scorer Cards */
+.scorers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.scorer-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.scorer-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0, 240, 255, 0.05), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.away-panel .scorer-card::before {
+  background: linear-gradient(90deg, rgba(255, 0, 110, 0.05), transparent);
+}
+
+.scorer-card:hover {
+  transform: translateX(4px);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.scorer-card:hover::before {
+  opacity: 1;
+}
+
+.scorer-avatar {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.away-avatar {
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-orange));
+}
+
+.avatar-count {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #0f172a;
+  position: relative;
+  z-index: 2;
+}
+
+.avatar-ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin 8s linear infinite;
+}
+
+.away-ring {
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-orange)) border-box;
+}
+
+.scorer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.scorer-name {
+  font-weight: 700;
+  color: #fff;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scorer-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.scorer-action {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.2s;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.scorer-action:hover {
+  background: var(--neon-cyan);
+  color: #0f172a;
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+}
+
+.away-action:hover {
+  background: var(--neon-pink);
+  border-color: var(--neon-pink);
+  color: #fff;
+  box-shadow: 0 0 20px rgba(255, 0, 110, 0.4);
+}
+
+.action-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.8);
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 0.7rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+}
+
+.scorer-action:hover .action-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+/* Empty State */
+.empty-arena {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 0.95rem;
+}
+
+/* ─── Video Section ─── */
+.video-command {
+  composes: glass-panel;
+}
+
+.video-panel {
+  padding: 1.5rem;
+}
+
+.video-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.video-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(131, 56, 236, 0.2), rgba(0, 240, 255, 0.2));
+  color: var(--neon-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 15px rgba(131, 56, 236, 0.2);
+}
+
+.video-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Upload Form */
+.upload-form {
+  margin-bottom: 1.5rem;
+}
+
+.upload-zone {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.upload-input-wrap {
+  flex: 1;
+  min-width: 200px;
+}
+
+.upload-label {
+  display: block;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.upload-label i {
+  color: var(--neon-cyan);
+}
+
+.upload-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.upload-input:hover {
+  border-color: var(--neon-cyan);
+  background: rgba(0, 240, 255, 0.05);
+}
+
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan));
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 20px rgba(131, 56, 236, 0.3);
+}
+
+.upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(131, 56, 236, 0.4);
+}
+
+/* Video Player */
+.video-stage {
+  margin-top: 1.5rem;
+}
+
+.video-frame {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.match-reel {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16/9;
+  background: #000;
+}
+
+.video-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 60px rgba(0, 240, 255, 0.05);
+  border-radius: 20px;
+}
+
+.video-fallback {
+  display: block;
+  padding: 2rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ─── Animations ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideLeft {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+@keyframes glowRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Scroll-triggered animations */
+[data-animate] {
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+[data-animate="fade-up"] { animation: fadeUp 0.7s ease-out forwards; }
+[data-animate="slide-right"] { animation: slideRight 0.7s ease-out forwards; }
+[data-animate="slide-left"] { animation: slideLeft 0.7s ease-out forwards; }
+[data-animate="zoom-in"] { animation: zoomIn 0.6s ease-out forwards; }
+[data-animate="fade-in"] { animation: fadeUp 0.5s ease-out forwards; }
+[data-animate="slide-up"] { animation: fadeUp 0.5s ease-out forwards; }
+
+[data-delay="100"] { animation-delay: 0.1s; }
+[data-delay="150"] { animation-delay: 0.15s; }
+[data-delay="200"] { animation-delay: 0.2s; }
+[data-delay="250"] { animation-delay: 0.25s; }
+[data-delay="300"] { animation-delay: 0.3s; }
+
+/* Dynamic delays for loop items */
+[style*="animation-delay"] {
+  /* Inline styles from template will override */
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .match-arena {
+    padding: 1rem 0.75rem;
+  }
+  
+  .score-arena {
+    gap: 1rem;
+  }
+  
+  .team-shield {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .team-name {
+    font-size: 1rem;
+  }
+  
+  .score-digit {
+    font-size: 2.5rem;
+  }
+  
+  .divider-colon {
+    font-size: 2rem;
+  }
+  
+  .score-board {
+    padding: 0.75rem 1.25rem;
+    order: -1;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .team-home, .team-away {
+    flex: 0 0 auto;
+  }
+  
+  .scorers-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .upload-zone {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .upload-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .match-header {
+    padding: 1.5rem 1rem;
+  }
+  
+  .score-arena {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .score-board {
+    order: 0;
+  }
+  
+  .match-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .meta-separator {
+    display: none;
+  }
+  
+  .scorer-card {
+    padding: 0.75rem;
+  }
+  
+  .scorer-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .avatar-count {
+    font-size: 1rem;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.animationPlayState = 'running';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('[data-animate]').forEach(el => {
+    el.style.opacity = '0';
+    observer.observe(el);
+  });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends 'admin/admin_base.html' %}
+{% block title %}Turfs - Football Arena Admin{% endblock %}
+
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+  
+    <div class="fb-header-section">
+        <div class="fb-header-glow"></div>
+        <div class="row align-items-center">
+            <div class="col-12 col-md-8 text-center text-md-start">
+                <h1 class="fb-title-animated mb-2">🏟️ Turf Grounds</h1>
+                <p class="text-white-50 mb-0">Manage football turfs, validations, and pitch bookings.</p>
+            </div>
+            <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
+                <div class="fb-live-indicator fb-glass-light">
+                    <span class="fb-live-dot"></span>
+                    <span style="color: var(--fb-neon-green);">{{ turfs|length }} Turfs Active</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+    <div class="fb-filter-bar fb-glass">
+        <form method="get">
+            <div class="row g-3 align-items-end">
+                <!-- 4.1 Name Filter -->
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <label class="fb-filter-label">🔍 Turf Name</label>
+                    <input type="text" name="name" class="form-control fb-filter-input" 
+                           placeholder="Search turf..." value="{{ request.GET.name }}">
+                </div>
+                
+                <!-- 4.2 Location Filter -->
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <label class="fb-filter-label">📍 Location</label>
+                    <input type="text" name="location" class="form-control fb-filter-input" 
+                           placeholder="Search location..." value="{{ request.GET.location }}">
+                </div>
+                
+                <!-- 4.3 Sort Filter -->
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <label class="fb-filter-label">💰 Sort By</label>
+                    <select name="sort" class="form-select fb-filter-select">
+                        <option value="">Default Order</option>
+                        <option value="high" {% if request.GET.sort == 'high' %}selected{% endif %}>
+                            Rate: High → Low
+                        </option>
+                        <option value="low" {% if request.GET.sort == 'low' %}selected{% endif %}>
+                            Rate: Low → High
+                        </option>
+                    </select>
+                </div>
+                
+                <!-- 4.4 Action Buttons -->
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="fb-btn fb-btn-primary flex-fill">
+                            <span>🔍</span> Scout
+                        </button>
+                        <a href="{% url 'admin_view_turfs' %}" class="fb-btn fb-btn-danger flex-fill text-center text-decoration-none">
+                            <span>✕</span> Reset
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="fb-turf-grid">
+        <div class="row g-4">
+            {% for turf in turfs %}
+            <!-- 5.1 Individual Turf Card -->
+            <div class="col-12 col-sm-6 col-lg-6 col-xl-4">
+                <div class="fb-turf-card fb-glass" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:0|divisibleby:4 }}00">
+                    
+                    <!-- 5.1.1 Card Shine Effect -->
+                    <div class="fb-card-shine"></div>
+                    
+                    <!-- 5.1.2 Card Header -->
+                    <div class="fb-card-header">
+                        <div class="fb-card-avatar-wrap">
+                            {% if turf.turf_image %}
+                            <img src="{{ turf.turf_image.url }}" alt="{{ turf.turf_name }}" class="fb-card-avatar">
+                            {% else %}
+                            <div class="fb-card-avatar-placeholder">🌱</div>
+                            {% endif %}
+                            <div class="fb-card-avatar-ring"></div>
+                        </div>
+                        <div class="flex-grow-1" style="min-width: 0;">
+                            <div class="fb-card-title text-truncate">{{ turf.turf_name }}</div>
+                            <div class="fb-card-location text-truncate">
+                                📍 {{ turf.turf_district }}
+                            </div>
+                            <div class="mt-2">
+                                {% if turf.is_validated %}
+                                <span class="fb-badge fb-badge-validated">
+                                    <span>✅</span> Validated
+                                </span>
+                                {% else %}
+                                <span class="fb-badge fb-badge-pending">
+                                    <span>⏳</span> Pending
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 5.1.3 Card Body / Stats -->
+                    <div class="fb-card-body">
+                        <div class="fb-stat-row">
+                            <div class="fb-stat-icon fb-stat-icon-owner">👤</div>
+                            <span class="fb-stat-label">Owner</span>
+                            <span class="fb-stat-value text-truncate ms-2" style="max-width: 120px;">{{ turf.turf_owner.user_name }}</span>
+                        </div>
+                        <div class="fb-stat-row">
+                            <div class="fb-stat-icon fb-stat-icon-location">📍</div>
+                            <span class="fb-stat-label">Location</span>
+                            <span class="fb-stat-value text-truncate ms-2" style="max-width: 120px;">{{ turf.turf_location }}</span>
+                        </div>
+                        <div class="fb-stat-row">
+                            <div class="fb-stat-icon fb-stat-icon-rate">💰</div>
+                            <span class="fb-stat-label">Rate</span>
+                            <span class="fb-stat-value-gold ms-2">₹{{ turf.turf_rate }}/hr</span>
+                        </div>
+                        <div class="fb-stat-row">
+                            <div class="fb-stat-icon fb-stat-icon-bookings">📅</div>
+                            <span class="fb-stat-label">Bookings</span>
+                            <span class="fb-stat-value-blue ms-2">{{ turf.booking_count }}</span>
+                        </div>
+                        {% if turf.validated_at %}
+                        <div class="fb-stat-row">
+                            <div class="fb-stat-icon fb-stat-icon-date">✅</div>
+                            <span class="fb-stat-label">Validated</span>
+                            <span class="fb-stat-value ms-2">{{ turf.validated_at|date:"M d, Y" }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- 5.1.4 Card Footer / Actions -->
+                    <div class="fb-card-footer">
+                        {% if not turf.is_validated %}
+                        <form method="post" action="{% url 'validate_turf' turf.turf_id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="fb-btn-action fb-btn-success">
+                                <span>✅</span> Validate
+                            </button>
+                        </form>
+                        {% endif %}
+                       
+                        <form method="post" action="{% url 'delete_turf' turf.turf_id %}" 
+                              data-confirm="Delete turf '{{ turf.turf_name }}'?">
+                            {% csrf_token %}
+                            <button type="submit" class="fb-btn-action fb-btn-danger">
+                                <span>🗑️</span> Delete
+                            </button>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+            {% empty %}
+            <!-- 5.2 Empty State -->
+            <div class="col-12">
+                <div class="fb-empty-state fb-glass">
+                    <div class="fb-empty-icon">🌱</div>
+                    <div class="fb-empty-title">No Turfs Found</div>
+                    <p class="fb-empty-text">Try adjusting your scouting filters to find more turfs.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

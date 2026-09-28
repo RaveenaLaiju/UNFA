@@ -1,0 +1,212 @@
+{% extends 'user/user_head.html' %}
+{% block content %}
+{% load static %}
+
+<div class="fc1-stadium-universe">
+  <div class="fc1-nebula-layer"></div>
+  <div class="fc1-aurora-beams"></div>
+  <div class="fc1-pitch-matrix"></div>
+  <div class="fc1-floating-orbs"></div>
+  <div class="fc1-energy-rings"></div>
+</div>
+
+<main class="fc1-arena-mainframe">
+  <div class="fc1-championship-wrapper">
+    
+    <header class="fc1-neon-billboard" id="heroBoard">
+      <div class="fc1-billboard-content">
+        
+        <h1 class="fc1-glitch-title">Football Clubs</h1>
+        <p class="fc1-billboard-sub">Scout squads, compare strength ratings, and dive into match-ready clubs — built for fans who live for matchday.</p>
+      </div>
+      <div class="fc1-live-counter" aria-label="Live scout mode">
+        <span class="fc1-super-pulse"></span>
+        <strong class="fc1-counter-glow" id="clubCount">{{ clubs|length }}</strong>
+        <span class="fc1-counter-tag">Clubs</span>
+      </div>
+      <div class="fc1-billboard-reflection"></div>
+    </header>
+
+    <section class="fc1-command-deck">
+      <div class="fc1-deck-wrapper">
+        <label class="fc1-neon-search" for="liveSearch">
+          <i class="fas fa-search" aria-hidden="true"></i>
+          <input type="search" id="liveSearch" placeholder="Search club, district, ground…" autocomplete="off">
+          <div class="fc1-search-rainbow"></div>
+        </label>
+        <div class="fc1-deck-counter" aria-live="polite">
+          <span class="fc1-counter-pill" id="clubCountText">{{ clubs|length }}</span>
+          <span class="fc1-pill-text">clubs active</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Clubs Grid: Holographic Player Cards -->
+    <section class="fc1-transfer-market">
+      <div class="fc1-market-grid" id="clubContainer">
+        
+        {% for club in clubs %}
+        <a href="{% url 'club_details' club.club_id %}" class="fc1-transfer-link" data-delay="{{ forloop.counter }}">
+          <article class="fc1-player-holo-card" data-weight="{{ club.club_weight }}">
+            <div class="fc1-holo-shell"></div>
+            <div class="fc1-holo-rainbow"></div>
+            <div class="fc1-holo-glare"></div>
+            <div class="fc1-holo-particles"></div>
+            
+            <div class="fc1-card-crown">
+              <div class="fc1-crest-shield">
+                <img src="{{ club.club_logo.url }}" class="fc1-crest-img" alt="{{ club.club_name }} logo" loading="lazy">
+                <div class="fc1-crest-aura"></div>
+              </div>
+              <div class="fc1-crown-info">
+                <h2 class="fc1-team-name">{{ club.club_name }}</h2>
+                <span class="fc1-ovr-shield">
+                  <i class="fas fa-bolt"></i> OVR {{ club.club_weight }}
+                </span>
+              </div>
+            </div>
+
+            <div class="fc1-card-stats">
+              <ul class="fc1-stat-lines">
+                <li class="fc1-stat-line">
+                  <span class="fc1-line-badge" style="--line-color: #ff00aa;">
+                    <i class="fas fa-user-tie"></i>
+                  </span>
+                  <div class="fc1-line-info">
+                    <span class="fc1-line-key fc1-text-white">Manager</span>
+                    <span class="fc1-line-value">{{ club.club_manager.user_name }}</span>
+                  </div>
+                </li>
+                <li class="fc1-stat-line">
+                  <span class="fc1-line-badge" style="--line-color: #00f0ff;">
+                    <i class="fas fa-map-marker-alt"></i>
+                  </span>
+                  <div class="fc1-line-info">
+                    <span class="fc1-line-key fc1-text-white">Location</span>
+                    <span class="fc1-line-value">{{ club.club_location }}, {{ club.club_district }}</span>
+                  </div>
+                </li>
+                <li class="fc1-stat-line">
+                  <span class="fc1-line-badge" style="--line-color: #39ff14;">
+                    <i class="fas fa-home"></i>
+                  </span>
+                  <div class="fc1-line-info">
+                    <span class="fc1-line-key fc1-text-white">Home Ground</span>
+                    <span class="fc1-line-value">{{ club.club_home_ground.turf_name }}</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="fc1-card-actions">
+              <div class="fc1-action-pills">
+                <span class="fc1-pill-tag fc1-fire-tag">
+                  <i class="fas fa-eye"></i> View
+                </span>
+                <span class="fc1-pill-tag fc1-ice-tag">
+                  <i class="fas fa-shield-alt"></i> Squad
+                </span>
+              </div>
+            </div>
+            
+            <div class="fc1-card-float"></div>
+          </article>
+        </a>
+        
+        {% empty %}
+        <div class="fc1-empty-arena" style="grid-column: 1/-1;">
+          <div class="fc1-empty-vortex">
+            <i class="fas fa-futbol"></i>
+            <div class="fc1-vortex-ring"></div>
+            <div class="fc1-vortex-ring" style="animation-delay: 0.5s;"></div>
+          </div>
+          <p class="fc1-empty-call">No clubs in the league yet</p>
+          {% if is_manager %}
+          <a href="{% url 'register_club' %}" class="fc1-neon-cta">
+            <i class="fas fa-plus"></i> Register Club
+          </a>
+          {% endif %}
+        </div>
+        {% endfor %}
+        
+      </div>
+    </section>
+
+  </div>
+</main>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Intersection Observer for dramatic scroll reveals
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const delay = entry.target.dataset.delay || 0;
+        setTimeout(() => {
+          entry.target.classList.add('fc1-visible');
+        }, delay * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.fc1-transfer-link, .fc1-holo-card, .fc1-neon-billboard, .fc1-command-deck').forEach(el => {
+    observer.observe(el);
+  });
+
+  // Live Search with Color Feedback
+  const searchInput = document.getElementById('liveSearch');
+  const clubContainer = document.getElementById('clubContainer');
+  const countText = document.getElementById('clubCountText');
+  const countBadge = document.getElementById('clubCount');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', function(e) {
+      const query = e.target.value.toLowerCase().trim();
+      const cards = clubContainer.querySelectorAll('.fc1-transfer-link');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const cardText = card.textContent.toLowerCase();
+        if (cardText.includes(query)) {
+          card.style.display = 'block';
+          card.classList.remove('fc1-visible');
+          setTimeout(() => card.classList.add('fc1-visible'), 50);
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      countText.textContent = visibleCount;
+      if (countBadge) countBadge.textContent = visibleCount;
+      
+      // Flash counter color on change
+      countText.parentElement.style.borderColor = 'var(--fc1-neon-lime)';
+      setTimeout(() => {
+        countText.parentElement.style.borderColor = 'var(--fc1-glass-edge)';
+      }, 300);
+    });
+  }
+
+  // Dynamic OVR-based card coloring
+  document.querySelectorAll('.fc1-player-holo-card').forEach(card => {
+    const weight = parseInt(card.dataset.weight) || 0;
+    const shell = card.querySelector('.fc1-holo-shell');
+    
+    if (weight >= 90) {
+      shell.style.background = 'linear-gradient(135deg, rgba(255,240,31,0.8), rgba(255,0,170,0.8), rgba(0,240,255,0.8), rgba(255,240,31,0.8))';
+      shell.style.backgroundSize = '400% 400%';
+      card.querySelector('.fc1-ovr-shield').style.borderColor = 'var(--fc1-neon-gold)';
+      card.querySelector('.fc1-ovr-shield').style.color = 'var(--fc1-neon-gold)';
+      card.querySelector('.fc1-ovr-shield').style.boxShadow = '0 0 20px rgba(255,240,31,0.3)';
+    } else if (weight >= 75) {
+      shell.style.background = 'linear-gradient(135deg, rgba(0,240,255,0.7), rgba(176,38,255,0.7), rgba(0,240,255,0.7))';
+      shell.style.backgroundSize = '300% 300%';
+    }
+  });
+});
+</script>
+
+{% endblock %}

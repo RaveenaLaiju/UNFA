@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Football Arena</title>
+    <link rel="stylesheet" href="{% static 'admin_panel/css/admin_login.css' %}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- 🏟️ Stadium Atmosphere -->
+    <div class="stadium-bg"></div>
+    <div class="pitch-overlay"></div>
+    <div class="scanlines"></div>
+
+    <!-- ✨ Floating Match Particles -->
+    <div class="trophy-particles" id="trophyParticles"></div>
+
+    <!-- 🎮 Main Locker Room Container -->
+    <div class="locker-room">
+        <div class="player-card" id="playerCard">
+            
+            <!-- Team Badge with Glow -->
+            <div class="team-badge">
+                <div class="badge-icon">⚽</div>
+                <div class="badge-glow"></div>
+                <div class="badge-ring"></div>
+            </div>
+
+            <!-- Match Headers -->
+            <h1 class="match-title">UNFA</h1>
+            <p class="match-subtitle">Admin Control Center</p>
+
+            <!-- Match Alerts (Messages) -->
+            {% if messages %}
+            <div class="match-alerts">
+                {% for message in messages %}
+                <div class="alert flag-{{ message.tags }}">
+                    <span class="flag-icon">🚩</span>
+                    <span class="alert-text">{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Tactical Form (Login) -->
+            <form method="post" class="tactical-form">
+                {% csrf_token %}
+                
+                <div class="squad-field">
+                    <label class="field-label">
+                        <span class="label-icon">👤</span>
+                        <span>Manager ID</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" name="username" class="squad-input" placeholder="Enter superuser username" required autofocus>
+                        <div class="input-line"></div>
+                        <div class="input-glow"></div>
+                    </div>
+                </div>
+
+                <div class="squad-field">
+                    <label class="field-label">
+                        <span class="label-icon">🔑</span>
+                        <span>Access Key</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="password" name="password" class="squad-input" placeholder="Enter your password" required>
+                        <div class="input-line"></div>
+                        <div class="input-glow"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="kickoff-btn" id="kickoffBtn">
+                    <span class="btn-icon">🔐</span>
+                    <span class="btn-text">Sign In as Admin</span>
+                    <div class="btn-shine"></div>
+                    <div class="btn-ripple"></div>
+                </button>
+            </form>
+
+            <!-- Security Footer -->
+            <p class="security-note">
+                <span class="lock-icon">🔒</span>
+                <span>Superuser access only. Unauthorized access is prohibited.</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- 🌟 Stadium Floodlights -->
+    <div class="floodlights">
+        <div class="light-beam left"></div>
+        <div class="light-beam right"></div>
+    </div>
+
+    <!-- 🎚️ Scoreboard Decoration -->
+    <div class="scoreboard-decor">
+        <div class="score-dot"></div>
+        <div class="score-dot"></div>
+        <div class="score-dot live"></div>
+    </div>
+
+    <script src="{% static 'admin\js\admin_login.js' %}"></script>
+</body>
+</html>

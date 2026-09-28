@@ -1,0 +1,1941 @@
+{% extends 'user/user_head.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+  :root {
+    --pitch-green: #0a2e0a;
+    --neon-green: #39ff14;
+    --neon-blue: #00f0ff;
+    --neon-purple: #bf00ff;
+    --neon-orange: #ff6b35;
+    --dark-bg: #050505;
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --text-primary: #ffffff;
+    --text-secondary: #8a8a8a;
+    --accent-gold: #ffd700;
+    --danger: #ff4444;
+    --success: #00c851;
+    --warning: #ffbb33;
+    --info: #00f0ff;
+    --shadow-glow: 0 0 30px rgba(57, 255, 20, 0.12);
+    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2rem;
+    --space-xl: 3rem;
+    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 5px rgba(57, 255, 20, 0.3); }
+    50% { box-shadow: 0 0 25px rgba(57, 255, 20, 0.6); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes tabSlide {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes previewPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(57,255,20,0.1); }
+    50% { box-shadow: 0 0 40px rgba(57,255,20,0.25); }
+  }
+
+  .animate-fade-up { animation: fadeInUp 0.7s ease-out forwards; opacity: 0; }
+  .animate-fade { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
+  .animate-slide-left { animation: slideInLeft 0.6s ease-out forwards; opacity: 0; }
+  .animate-slide-right { animation: slideInRight 0.6s ease-out forwards; opacity: 0; }
+  .animate-scale { animation: scaleIn 0.5s ease-out forwards; opacity: 0; }
+  .animate-tab { animation: tabSlide 0.4s ease-out forwards; }
+
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+  .delay-5 { animation-delay: 0.5s; }
+  .delay-6 { animation-delay: 0.6s; }
+
+  /* ===== LAYOUT ===== */
+  .arena-wrapper {
+    padding: var(--space-lg) 0;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+  }
+
+  .pitch-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+  }
+
+  /* ===== HEADER ===== */
+  .stadium-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+    padding: var(--space-lg) var(--space-xl);
+    background: linear-gradient(135deg, rgba(10,46,10,0.5), rgba(0,20,20,0.5));
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(57,255,20,0.15);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-glow), inset 0 1px 0 rgba(255,255,255,0.05);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stadium-header::after {
+    content: '';
+    position: absolute;
+    top: -50%; right: -10%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(57,255,20,0.08), transparent 70%);
+    pointer-events: none;
+  }
+
+  .team-badge {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    position: relative;
+    z-index: 1;
+  }
+
+  .team-badge .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1.2rem;
+    background: rgba(57,255,20,0.1);
+    border: 1px solid rgba(57,255,20,0.25);
+    border-radius: 50px;
+    font-size: 0.75rem;
+    color: var(--neon-green);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    width: fit-content;
+  }
+  .team-badge .kicker i { animation: rotate 6s linear infinite; }
+
+  .team-badge .welcome-text {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-top: var(--space-xs);
+    background: linear-gradient(135deg, var(--neon-green), var(--neon-blue), var(--accent-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+  }
+  .team-badge .welcome-text span {
+    -webkit-text-fill-color: var(--accent-gold);
+    position: relative;
+  }
+
+  .action-zone {
+    display: flex;
+    gap: var(--space-sm);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== BUTTONS ===== */
+  .neon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, rgba(57,255,20,0.12), rgba(0,240,255,0.08));
+    border: 1.5px solid var(--neon-green);
+    border-radius: var(--radius-sm);
+    color: var(--neon-green);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+  }
+
+  .neon-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(57,255,20,0.2), transparent);
+    transition: left 0.6s;
+  }
+  .neon-btn:hover::before { left: 100%; }
+  .neon-btn:hover {
+    background: rgba(57,255,20,0.18);
+    box-shadow: 0 0 25px rgba(57,255,20,0.3);
+    transform: translateY(-2px);
+    color: #fff;
+  }
+
+  .neon-btn.secondary {
+    border-color: var(--neon-blue);
+    color: var(--neon-blue);
+    background: linear-gradient(135deg, rgba(0,240,255,0.12), rgba(191,0,255,0.08));
+  }
+  .neon-btn.secondary:hover {
+    background: rgba(0,240,255,0.18);
+    box-shadow: 0 0 25px rgba(0,240,255,0.3);
+    color: #fff;
+  }
+
+  .neon-btn.danger {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: rgba(255,68,68,0.12);
+  }
+  .neon-btn.danger:hover {
+    background: rgba(255,68,68,0.2);
+    box-shadow: 0 0 25px rgba(255,68,68,0.3);
+    color: #fff;
+  }
+
+  .neon-btn.ghost {
+    background: transparent;
+    border-color: rgba(255,255,255,0.15);
+    color: var(--text-secondary);
+  }
+  .neon-btn.ghost:hover {
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    background: rgba(57,255,20,0.05);
+  }
+
+  .neon-btn.gold {
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+    background: rgba(255,215,0,0.1);
+  }
+  .neon-btn.gold:hover {
+    background: rgba(255,215,0,0.2);
+    box-shadow: 0 0 25px rgba(255,215,0,0.3);
+    color: #fff;
+  }
+
+  .neon-btn.full { width: 100%; }
+  .neon-btn.sm { padding: 0.5rem 1rem; font-size: 0.8rem; }
+
+  /* ===== SIDEBAR NAVIGATION ===== */
+  .tactics-sidebar {
+    padding: var(--space-lg);
+    background: linear-gradient(180deg, rgba(10,46,10,0.35), rgba(0,20,20,0.35));
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(57,255,20,0.12);
+    border-radius: var(--radius-xl);
+    min-width: 270px;
+    height: fit-content;
+    position: sticky;
+    top: var(--space-lg);
+    box-shadow: var(--shadow-card);
+  }
+
+  .tactics-sidebar .sidebar-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--neon-green);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid rgba(57,255,20,0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  .nav-menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .nav-menu li { width: 100%; }
+
+  .nav-menu a {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 1rem 1.25rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    font-weight: 500;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nav-menu a::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--neon-green), var(--neon-blue));
+    border-radius: 0 4px 4px 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .nav-menu a:hover {
+    background: rgba(57,255,20,0.06);
+    color: var(--neon-green);
+    border-color: rgba(57,255,20,0.15);
+    padding-left: 1.5rem;
+  }
+  .nav-menu a:hover::before { opacity: 1; }
+
+  .nav-menu a.active {
+    background: linear-gradient(135deg, rgba(57,255,20,0.12), rgba(0,240,255,0.06));
+    color: var(--neon-green);
+    border-color: rgba(57,255,20,0.25);
+    box-shadow: 0 0 20px rgba(57,255,20,0.08), inset 0 1px 0 rgba(255,255,255,0.05);
+    font-weight: 600;
+  }
+  .nav-menu a.active::before { opacity: 1; }
+
+  .nav-menu a i {
+    width: 22px;
+    text-align: center;
+    font-size: 1.05rem;
+    transition: transform 0.3s;
+  }
+  .nav-menu a:hover i { transform: scale(1.15); }
+  .nav-menu a.active i { color: var(--neon-green); }
+
+  .nav-menu a .nav-badge {
+    margin-left: auto;
+    padding: 0.2rem 0.6rem;
+    background: rgba(255,68,68,0.2);
+    border: 1px solid rgba(255,68,68,0.4);
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--danger);
+    min-width: 24px;
+    text-align: center;
+  }
+
+  .nav-menu a .nav-badge.green {
+    background: rgba(0,200,81,0.2);
+    border-color: rgba(0,200,81,0.4);
+    color: var(--success);
+  }
+
+  .nav-menu a .nav-badge.gold {
+    background: rgba(255,215,0,0.2);
+    border-color: rgba(255,215,0,0.4);
+    color: var(--accent-gold);
+  }
+
+  /* Mobile Sidebar Toggle */
+  .sidebar-toggle {
+    display: none;
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 100;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(57,255,20,0.2), rgba(0,240,255,0.15));
+    border: 1px solid rgba(57,255,20,0.3);
+    color: var(--neon-green);
+    font-size: 1.3rem;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-glow);
+    transition: var(--transition);
+  }
+  .sidebar-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(57,255,20,0.4);
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  .formation-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .match-zone {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    min-height: 0;
+  }
+
+  .tab-content {
+    display: none;
+    animation: tabSlide 0.4s ease-out;
+  }
+  .tab-content.active {
+    display: block;
+  }
+
+  .scoreboard-card {
+    padding: var(--space-xl);
+    background: linear-gradient(135deg, rgba(10,46,10,0.25), rgba(0,20,20,0.25));
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(57,255,20,0.12);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scoreboard-card::after {
+    content: '';
+    position: absolute;
+    bottom: -50%; left: -10%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,240,255,0.05), transparent 70%);
+    pointer-events: none;
+  }
+
+  .scoreboard-card .section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--neon-green);
+    margin-bottom: var(--space-lg);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+    z-index: 1;
+  }
+  .scoreboard-card .section-title i { color: var(--accent-gold); }
+
+  /* ===== STATS CARDS ===== */
+  .stats-formation {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+  }
+
+  .stat-card {
+    padding: var(--space-lg);
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
+    opacity: 0.6;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-glow);
+    border-color: rgba(57,255,20,0.2);
+  }
+
+  .stat-card .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: var(--space-sm);
+    background: rgba(57,255,20,0.1);
+    border: 1px solid rgba(57,255,20,0.2);
+    color: var(--neon-green);
+  }
+
+  .stat-card .stat-icon.blue {
+    background: rgba(0,240,255,0.1);
+    border-color: rgba(0,240,255,0.2);
+    color: var(--neon-blue);
+  }
+  .stat-card .stat-icon.purple {
+    background: rgba(191,0,255,0.1);
+    border-color: rgba(191,0,255,0.2);
+    color: var(--neon-purple);
+  }
+  .stat-card .stat-icon.gold {
+    background: rgba(255,215,0,0.1);
+    border-color: rgba(255,215,0,0.2);
+    color: var(--accent-gold);
+  }
+
+  .stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+  .stat-card .stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .stat-card .stat-change {
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    font-weight: 600;
+  }
+  .stat-card .stat-change.up { color: var(--success); }
+  .stat-card .stat-change.down { color: var(--danger); }
+
+  /* ===== TURF CARDS ===== */
+  .pitch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-lg);
+    position: relative;
+    z-index: 1;
+  }
+
+  .field-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(57,255,20,0.08);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: var(--transition);
+    position: relative;
+  }
+
+  .field-card .field-image-wrap {
+    position: relative;
+    overflow: hidden;
+    height: 200px;
+  }
+
+  .field-card .field-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+  .field-card:hover .field-image { transform: scale(1.12); }
+
+  .field-card .field-image-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 60%;
+    background: linear-gradient(to top, rgba(5,5,5,0.9), transparent);
+    pointer-events: none;
+  }
+
+  .field-card .field-badge {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    padding: 0.4rem 0.8rem;
+    background: rgba(57,255,20,0.15);
+    border: 1px solid rgba(57,255,20,0.3);
+    border-radius: 50px;
+    color: var(--neon-green);
+    font-size: 0.75rem;
+    font-weight: 700;
+    z-index: 2;
+    backdrop-filter: blur(10px);
+  }
+
+  .field-card .field-info {
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
+    position: relative;
+    z-index: 1;
+  }
+
+  .field-card .field-info h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+  }
+
+  .field-card .field-rate {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.4rem 1rem;
+    background: rgba(57,255,20,0.1);
+    border: 1px solid rgba(57,255,20,0.25);
+    border-radius: 50px;
+    color: var(--neon-green);
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .field-card .field-location {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: var(--space-md);
+  }
+  .field-card .field-location i { color: var(--neon-blue); }
+
+  .field-card .field-meta {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+    padding: var(--space-sm) 0;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .field-card .field-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+  .field-card .field-meta-item i { color: var(--neon-purple); font-size: 0.9rem; }
+
+  .field-card .field-actions {
+    display: flex;
+    gap: var(--space-sm);
+  }
+  .field-card .field-actions .neon-btn {
+    flex: 1;
+    font-size: 0.85rem;
+    padding: 0.6rem;
+  }
+
+  /* ===== TABLE ===== */
+  .match-table-container {
+    overflow-x: auto;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(57,255,20,0.1);
+    position: relative;
+    z-index: 1;
+  }
+
+  .match-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.9rem;
+  }
+
+  .match-table thead th {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--neon-green);
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    border-bottom: 2px solid rgba(57,255,20,0.2);
+    background: linear-gradient(135deg, rgba(10,46,10,0.5), rgba(0,20,20,0.5));
+    white-space: nowrap;
+  }
+  .match-table thead th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+  .match-table thead th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+
+  .match-table td {
+    padding: 1.25rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text-primary);
+    vertical-align: middle;
+  }
+
+  .match-table tbody tr {
+    transition: var(--transition);
+    background: transparent;
+  }
+  .match-table tbody tr:hover {
+    background: rgba(57,255,20,0.03);
+  }
+  .match-table tbody tr:last-child td { border-bottom: none; }
+  .match-table tbody tr:last-child td:first-child { border-radius: 0 0 0 var(--radius-sm); }
+  .match-table tbody tr:last-child td:last-child { border-radius: 0 0 var(--radius-sm) 0; }
+
+  .match-table .customer-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .match-table .customer-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--neon-green), var(--neon-blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #000;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  .status-pill.pending {
+    background: rgba(255,187,51,0.12);
+    color: var(--warning);
+    border: 1px solid rgba(255,187,51,0.3);
+  }
+  .status-pill.approved {
+    background: rgba(0,200,81,0.12);
+    color: var(--success);
+    border: 1px solid rgba(0,200,81,0.3);
+  }
+  .status-pill.rejected {
+    background: rgba(255,68,68,0.12);
+    color: var(--danger);
+    border: 1px solid rgba(255,68,68,0.3);
+  }
+  .status-pill.completed {
+    background: rgba(0,240,255,0.12);
+    color: var(--neon-blue);
+    border: 1px solid rgba(0,240,255,0.3);
+  }
+  .status-pill::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 2s infinite;
+  }
+
+  .action-btns {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .action-btns .neon-btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-arena {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xl);
+    text-align: center;
+    color: var(--text-secondary);
+    position: relative;
+    z-index: 1;
+  }
+  .empty-arena i {
+    font-size: 4rem;
+    margin-bottom: var(--space-md);
+    color: rgba(57,255,20,0.2);
+    animation: float 4s ease-in-out infinite;
+  }
+  .empty-arena p {
+    font-size: 1.2rem;
+    margin-bottom: var(--space-md);
+    font-weight: 500;
+  }
+  .empty-arena .sub-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-lg);
+  }
+
+  /* ===== PAYMENT CARDS ===== */
+  .payment-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-lg);
+    background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-sm);
+    transition: var(--transition);
+  }
+  .payment-card:hover {
+    border-color: rgba(57,255,20,0.15);
+    transform: translateX(4px);
+  }
+  .payment-card .payment-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+  .payment-card .payment-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    background: rgba(0,240,255,0.1);
+    border: 1px solid rgba(0,240,255,0.2);
+    color: var(--neon-blue);
+  }
+  .payment-card .payment-info h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+  .payment-card .payment-info p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+  .payment-card .payment-right {
+    text-align: right;
+  }
+  .payment-card .payment-amount {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--success);
+  }
+  .payment-card .payment-date {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.2rem;
+  }
+
+  /* ===== SECTION HEADER ===== */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+  .section-header .section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--neon-green);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section-header .section-title i { color: var(--accent-gold); }
+  .section-header .section-actions {
+    display: flex;
+    gap: var(--space-sm);
+  }
+
+  /* ===== UPDATE FORM ===== */
+  .update-hero {
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid rgba(57,255,20,0.1);
+  }
+  .update-hero .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1.2rem;
+    background: rgba(57,255,20,0.1);
+    border: 1px solid rgba(57,255,20,0.25);
+    border-radius: 50px;
+    font-size: 0.75rem;
+    color: var(--neon-green);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+  }
+  .update-hero .page-title {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--neon-green), var(--neon-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .update-hero p {
+    color: var(--text-secondary);
+    margin-top: var(--space-sm);
+    font-size: 1rem;
+  }
+
+  .update-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+  }
+
+  .update-panel {
+    padding: var(--space-xl);
+    background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .update-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
+    opacity: 0.7;
+  }
+
+  .update-panel:hover {
+    border-color: rgba(57,255,20,0.15);
+    box-shadow: var(--shadow-glow);
+  }
+
+  .update-panel .panel-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--neon-green);
+    margin-bottom: var(--space-lg);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    position: relative;
+    z-index: 1;
+  }
+  .update-panel .panel-title i { color: var(--accent-gold); }
+
+  .update-form-group {
+    margin-bottom: var(--space-md);
+    position: relative;
+    z-index: 1;
+  }
+
+  .update-form-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .update-form-group label i { color: var(--neon-blue); font-size: 0.85rem; }
+
+  .update-glass-input {
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: var(--transition);
+    outline: none;
+    font-family: inherit;
+  }
+
+  .update-glass-input:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 15px rgba(57,255,20,0.1);
+    background: rgba(57,255,20,0.03);
+  }
+
+  select.update-glass-input {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2339ff14' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+  }
+
+  select.update-glass-input option {
+    background: #0a0a0a;
+    color: var(--text-primary);
+  }
+
+  .update-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+  }
+
+  .update-error {
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    background: rgba(255,68,68,0.08);
+    border: 1px solid rgba(255,68,68,0.3);
+    color: var(--danger);
+    margin-bottom: var(--space-lg);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+  }
+  .update-error i { font-size: 1.1rem; }
+
+  .slot-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    position: relative;
+    z-index: 1;
+  }
+
+  .slot-chip {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    background: rgba(57,255,20,0.08);
+    border: 1px solid rgba(57,255,20,0.2);
+    border-radius: var(--radius-md);
+    color: var(--neon-green);
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: var(--transition);
+  }
+
+  .slot-chip:hover {
+    background: rgba(57,255,20,0.15);
+    transform: translateY(-2px);
+  }
+
+  .slot-chip i { font-size: 0.75rem; color: var(--neon-green); }
+  .slot-chip a {
+    color: var(--danger);
+    margin-left: var(--space-sm);
+    transition: transform 0.2s;
+    display: inline-flex;
+  }
+  .slot-chip a:hover { transform: scale(1.2); }
+
+  .slot-add-form {
+    display: flex;
+    gap: var(--space-sm);
+    padding-top: var(--space-lg);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    z-index: 1;
+  }
+  .slot-add-form .update-glass-input { flex: 1; }
+
+  .pending-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xl);
+    text-align: center;
+    color: var(--text-secondary);
+    position: relative;
+    z-index: 1;
+  }
+  .pending-state i {
+    font-size: 3.5rem;
+    margin-bottom: var(--space-md);
+    color: var(--warning);
+    animation: pulse 2s infinite;
+  }
+  .pending-state p {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+  .pending-state .sub {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  /* ===== LIVE PREVIEW ===== */
+  .preview-section {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-xl);
+    border-top: 1px solid rgba(57,255,20,0.1);
+  }
+
+  .preview-section .preview-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--neon-green);
+    margin-bottom: var(--space-lg);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .preview-section .preview-title i { color: var(--accent-gold); }
+  .preview-section .preview-title .live-badge {
+    margin-left: auto;
+    padding: 0.2rem 0.6rem;
+    background: rgba(57,255,20,0.15);
+    border: 1px solid rgba(57,255,20,0.3);
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--neon-green);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: pulse 2s infinite;
+  }
+
+  .preview-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(57,255,20,0.15);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: var(--transition);
+    animation: previewPulse 3s infinite;
+    max-width: 400px;
+  }
+
+  .preview-card .preview-image-wrap {
+    position: relative;
+    overflow: hidden;
+    height: 200px;
+  }
+
+  .preview-card .preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+
+  .preview-card .preview-image-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 60%;
+    background: linear-gradient(to top, rgba(5,5,5,0.9), transparent);
+    pointer-events: none;
+  }
+
+  .preview-card .preview-badge {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    padding: 0.4rem 0.8rem;
+    background: rgba(57,255,20,0.15);
+    border: 1px solid rgba(57,255,20,0.3);
+    border-radius: 50px;
+    color: var(--neon-green);
+    font-size: 0.75rem;
+    font-weight: 700;
+    z-index: 2;
+    backdrop-filter: blur(10px);
+  }
+
+  .preview-card .preview-info {
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
+    position: relative;
+    z-index: 1;
+  }
+
+  .preview-card .preview-info h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+  }
+
+  .preview-card .preview-location {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: var(--space-sm);
+  }
+  .preview-card .preview-location i { color: var(--neon-blue); }
+
+  .preview-card .preview-meta {
+    display: flex;
+    gap: var(--space-md);
+    padding: var(--space-sm) 0;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .preview-card .preview-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+  .preview-card .preview-meta-item i { color: var(--neon-purple); font-size: 0.9rem; }
+
+  .image-preview-box {
+    width: 100%;
+    height: 180px;
+    border: 2px dashed rgba(57,255,20,0.2);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+    overflow: hidden;
+    position: relative;
+    transition: var(--transition);
+  }
+
+  .image-preview-box:hover {
+    border-color: rgba(57,255,20,0.4);
+    background: rgba(57,255,20,0.02);
+  }
+
+  .image-preview-box.has-image {
+    border-style: solid;
+    border-color: rgba(57,255,20,0.3);
+  }
+
+  .image-preview-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0; left: 0;
+  }
+
+  .image-preview-box .preview-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    z-index: 1;
+  }
+  .image-preview-box .preview-placeholder i {
+    font-size: 2rem;
+    color: rgba(57,255,20,0.3);
+  }
+  .image-preview-box .preview-placeholder span {
+    font-size: 0.85rem;
+  }
+
+  .file-input-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .file-input-wrapper input[type="file"] {
+    position: absolute;
+    left: 0; top: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1200px) {
+    .stats-formation { grid-template-columns: repeat(2, 1fr); }
+    .update-form-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 1024px) {
+    .formation-grid { grid-template-columns: 1fr; }
+    .tactics-sidebar {
+      position: static;
+      min-width: auto;
+    }
+    .nav-menu {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+    }
+    .sidebar-toggle { display: flex; }
+  }
+
+  @media (max-width: 768px) {
+    .stadium-header { flex-direction: column; text-align: center; padding: var(--space-md); }
+    .team-badge .welcome-text { font-size: 1.6rem; }
+    .action-zone { width: 100%; justify-content: center; }
+    .stats-formation { grid-template-columns: 1fr; }
+    .pitch-grid { grid-template-columns: 1fr; }
+    .nav-menu { grid-template-columns: 1fr; }
+    .match-table th, .match-table td { padding: 0.875rem 0.75rem; font-size: 0.8rem; }
+    .action-btns { flex-direction: column; }
+    .update-form-row { grid-template-columns: 1fr; }
+    .slot-add-form { flex-direction: column; }
+    .payment-card { flex-direction: column; align-items: flex-start; gap: var(--space-sm); }
+    .payment-card .payment-right { text-align: left; width: 100%; }
+    .preview-card { max-width: 100%; }
+  }
+
+  @media (max-width: 480px) {
+    .pitch-container { padding: 0 var(--space-sm); }
+    .team-badge .welcome-text { font-size: 1.3rem; }
+    .neon-btn { padding: 0.6rem 1rem; font-size: 0.8rem; }
+    .scoreboard-card, .update-panel { padding: var(--space-md); }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb { background: rgba(57,255,20,0.25); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(57,255,20,0.45); }
+</style>
+
+<div class="arena-wrapper">
+  <div class="pitch-container">
+
+    <!-- Stadium Header -->
+    <div class="stadium-header animate-fade-up">
+      <div class="team-badge">
+        <span class="kicker"><i class="fas fa-futbol"></i> Turf Owner Dashboard</span>
+        <h1 class="welcome-text">Welcome, <span>{{ user.user_name }}</span></h1>
+      </div>
+      <div class="action-zone">
+        <a href="{% url 'register_turf' %}" class="neon-btn">
+          <i class="fas fa-plus-circle"></i> Register New Turf
+        </a>
+      </div>
+    </div>
+
+    <!-- Formation Grid -->
+    <div class="formation-grid">
+
+      <!-- ===== SIDE NAVIGATION ===== -->
+      <aside class="tactics-sidebar animate-slide-left delay-1">
+        <h3 class="sidebar-title"><i class="fas fa-gamepad"></i> Navigation</h3>
+        <ul class="nav-menu">
+          <li>
+            <a href="#" class="nav-link active" data-tab="dashboard">
+              <i class="fas fa-home"></i> Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-tab="requests">
+              <i class="fas fa-clipboard-list"></i> Requests
+              <span class="nav-badge">{{ pending_count|default:"3" }}</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-tab="myturfs">
+              <i class="fas fa-map-marked-alt"></i> My Turfs
+              <span class="nav-badge green">{{ owned_turfs|length|default:"0" }}</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-tab="payments">
+              <i class="fas fa-credit-card"></i> Payments
+              <span class="nav-badge gold">₹{{ total_earnings|default:"0" }}</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-tab="updateturf">
+              <i class="fas fa-edit"></i> Update Turf
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Match Zone -->
+      <div class="match-zone">
+
+        <!-- ===== DASHBOARD TAB ===== -->
+        <div id="dashboard" class="tab-content active">
+          <div class="stats-formation animate-fade-up delay-2">
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fas fa-futbol"></i></div>
+              <div class="stat-value">{{ owned_turfs|length|default:"0" }}</div>
+              <div class="stat-label">Total Turfs</div>
+              <div class="stat-change up"><i class="fas fa-arrow-up"></i> Active</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon blue"><i class="fas fa-calendar-check"></i></div>
+              <div class="stat-value">{{ bookings|length|default:"0" }}</div>
+              <div class="stat-label">Total Bookings</div>
+              <div class="stat-change up"><i class="fas fa-arrow-up"></i> This month</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon purple"><i class="fas fa-clock"></i></div>
+              <div class="stat-value">{{ pending_count|default:"0" }}</div>
+              <div class="stat-label">Pending Requests</div>
+              <div class="stat-change down"><i class="fas fa-exclamation"></i> Needs action</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon gold"><i class="fas fa-wallet"></i></div>
+              <div class="stat-value">₹{{ total_earnings|default:"0" }}</div>
+              <div class="stat-label">Total Earnings</div>
+              <div class="stat-change up"><i class="fas fa-arrow-up"></i> Lifetime</div>
+            </div>
+          </div>
+
+          <div class="scoreboard-card animate-fade-up delay-3">
+            <div class="section-header">
+              <h3 class="section-title"><i class="fas fa-trophy"></i> Recent Bookings</h3>
+              <a href="#" class="nav-link neon-btn ghost" data-tab="requests" style="font-size:0.8rem;padding:0.5rem 1rem;">
+                View All <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+            {% if bookings %}
+              <div class="match-table-container">
+                <table class="match-table">
+                  <thead>
+                    <tr><th>Turf</th><th>Customer</th><th>Date</th><th>Time</th><th>Status</th><th>Action</th></tr>
+                  </thead>
+                  <tbody>
+                    {% for booking in bookings|slice:":5" %}
+                    <tr>
+                      <td><strong>{{ booking.turf.turf_name }}</strong></td>
+                      <td>
+                        <div class="customer-cell">
+                          <div class="customer-avatar">{{ booking.customer.user_name|first|upper }}</div>
+                          {{ booking.customer.user_name }}
+                        </div>
+                      </td>
+                      <td>{{ booking.booking_date }}</td>
+                      <td>{{ booking.time_slot.tt_time.time_range }}</td>
+                      <td><span class="status-pill {{ booking.status|lower }}">{{ booking.status }}</span></td>
+                      <td>
+                        {% if booking.status == 'Pending' %}
+                        <div class="action-btns">
+                          <a href="{% url 'approve_booking' booking.booking_id %}" class="neon-btn" title="Approve"><i class="fas fa-check"></i></a>
+                          <a href="{% url 'reject_booking' booking.booking_id %}" class="neon-btn danger" title="Reject"><i class="fas fa-times"></i></a>
+                        </div>
+                        {% else %}
+                        <span style="color:var(--text-secondary);font-size:0.8rem;">—</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <div class="empty-arena">
+                <i class="fas fa-clipboard-list"></i>
+                <p>No bookings yet</p>
+                <p class="sub-text">Waiting for the match to begin!</p>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="scoreboard-card animate-fade-up delay-4">
+            <div class="section-header">
+              <h3 class="section-title"><i class="fas fa-futbol"></i> My Turfs</h3>
+              <a href="#" class="nav-link neon-btn ghost" data-tab="myturfs" style="font-size:0.8rem;padding:0.5rem 1rem;">
+                View All <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+            {% if owned_turfs %}
+              <div class="pitch-grid">
+                {% for turf in owned_turfs|slice:":3" %}
+                <div class="field-card">
+                  <div class="field-image-wrap">
+                    <img src="{{ turf.turf_image.url }}" class="field-image" alt="{{ turf.turf_name }}">
+                    <span class="field-badge">₹{{ turf.turf_rate }}/hr</span>
+                  </div>
+                  <div class="field-info">
+                    <h3>{{ turf.turf_name }}</h3>
+                    <p class="field-location"><i class="fas fa-map-marker-alt"></i> {{ turf.turf_location }}, {{ turf.turf_district }}</p>
+                    <div class="field-actions">
+                      <a href="{% url 'update_turf' turf.turf_id %}" class="neon-btn ghost"><i class="fas fa-edit"></i> Edit Field</a>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="empty-arena">
+                <i class="fas fa-futbol"></i>
+                <p>No turfs registered yet</p>
+                <p class="sub-text">Build your arena and start earning!</p>
+                <a href="{% url 'register_turf' %}" class="neon-btn mt-lg"><i class="fas fa-plus"></i> Register Turf</a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- ===== REQUESTS TAB ===== -->
+        <div id="requests" class="tab-content">
+          <div class="scoreboard-card animate-tab">
+            <div class="section-header">
+              <h3 class="section-title"><i class="fas fa-clipboard-list"></i> Booking Requests</h3>
+              <div class="section-actions">
+                <button class="neon-btn ghost sm"><i class="fas fa-filter"></i> Filter</button>
+              </div>
+            </div>
+            {% if bookings %}
+              <div class="match-table-container">
+                <table class="match-table">
+                  <thead>
+                    <tr><th>Turf</th><th>Customer</th><th>Date</th><th>Time</th><th>Amount</th><th>Status</th><th>Action</th></tr>
+                  </thead>
+                  <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                      <td><strong>{{ booking.turf.turf_name }}</strong></td>
+                      <td>
+                        <div class="customer-cell">
+                          <div class="customer-avatar">{{ booking.customer.user_name|first|upper }}</div>
+                          {{ booking.customer.user_name }}
+                        </div>
+                      </td>
+                      <td>{{ booking.booking_date }}</td>
+                      <td>{{ booking.time_slot.tt_time.time_range }}</td>
+                      <td style="color:var(--accent-gold);font-weight:700;">₹{{ booking.amount|default:turf.turf_rate }}</td>
+                      <td><span class="status-pill {{ booking.status|lower }}">{{ booking.status }}</span></td>
+                      <td>
+                        {% if booking.status == 'Pending' %}
+                        <div class="action-btns">
+                          <a href="{% url 'approve_booking' booking.booking_id %}" class="neon-btn sm"><i class="fas fa-check"></i> Approve</a>
+                          <a href="{% url 'reject_booking' booking.booking_id %}" class="neon-btn danger sm"><i class="fas fa-times"></i></a>
+                        </div>
+                        {% elif booking.status == 'Approved' %}
+                        <span class="status-pill approved" style="cursor:default;"><i class="fas fa-check-double" style="margin-right:0.3rem;"></i> Done</span>
+                        {% else %}
+                        <span class="status-pill rejected" style="cursor:default;"><i class="fas fa-ban" style="margin-right:0.3rem;"></i> Rejected</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <div class="empty-arena">
+                <i class="fas fa-clipboard-list"></i>
+                <p>No requests yet</p>
+                <p class="sub-text">Your inbox is clean — for now!</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- ===== MY TURFS TAB ===== -->
+        <div id="myturfs" class="tab-content">
+          <div class="scoreboard-card animate-tab">
+            <div class="section-header">
+              <h3 class="section-title"><i class="fas fa-map-marked-alt"></i> My Turfs</h3>
+              <div class="section-actions">
+                <a href="{% url 'register_turf' %}" class="neon-btn sm"><i class="fas fa-plus"></i> Add New</a>
+              </div>
+            </div>
+            {% if owned_turfs %}
+              <div class="pitch-grid">
+                {% for turf in owned_turfs %}
+                <div class="field-card">
+                  <div class="field-image-wrap">
+                    <img src="{{ turf.turf_image.url }}" class="field-image" alt="{{ turf.turf_name }}">
+                    <span class="field-badge">₹{{ turf.turf_rate }}/hr</span>
+                  </div>
+                  <div class="field-info">
+                    <h3>{{ turf.turf_name }}</h3>
+                    <p class="field-location"><i class="fas fa-map-marker-alt"></i> {{ turf.turf_location }}, {{ turf.turf_district }}</p>
+                    <div class="field-meta">
+                      <span class="field-meta-item"><i class="fas fa-ruler-combined"></i> {{ turf.turf_size|default:"Standard" }}</span>
+                      <span class="field-meta-item"><i class="fas fa-users"></i> {{ turf.capacity|default:"10v10" }}</span>
+                      <span class="field-meta-item"><i class="fas fa-star"></i> {{ turf.rating|default:"4.5" }}</span>
+                    </div>
+                    <div class="field-actions">
+                      <a href="{% url 'update_turf' turf.turf_id %}" class="neon-btn ghost"><i class="fas fa-edit"></i> Edit</a>
+                      <a href="{% url 'delete_turf' turf.turf_id %}" class="neon-btn danger" onclick="return confirm('Delete this turf?');"><i class="fas fa-trash"></i></a>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="empty-arena">
+                <i class="fas fa-futbol"></i>
+                <p>No turfs registered yet</p>
+                <p class="sub-text">Build your arena and start earning!</p>
+                <a href="{% url 'register_turf' %}" class="neon-btn mt-lg"><i class="fas fa-plus"></i> Register Turf</a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- ===== PAYMENTS TAB ===== -->
+        <div id="payments" class="tab-content">
+          <div class="scoreboard-card animate-tab">
+            <div class="section-header">
+              <h3 class="section-title"><i class="fas fa-credit-card"></i> Payments</h3>
+              <div class="section-actions">
+                <button class="neon-btn ghost sm"><i class="fas fa-download"></i> Export</button>
+              </div>
+            </div>
+            <div class="stats-formation" style="margin-bottom:var(--space-xl);">
+              <div class="stat-card">
+                <div class="stat-icon gold"><i class="fas fa-wallet"></i></div>
+                <div class="stat-value">₹{{ total_earnings|default:"0" }}</div>
+                <div class="stat-label">Total Earnings</div>
+                <div class="stat-change up"><i class="fas fa-arrow-up"></i> Lifetime</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                <div class="stat-value">₹{{ monthly_earnings|default:"0" }}</div>
+                <div class="stat-label">This Month</div>
+                <div class="stat-change up"><i class="fas fa-arrow-up"></i> +12%</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-hand-holding-usd"></i></div>
+                <div class="stat-value">₹{{ pending_payments|default:"0" }}</div>
+                <div class="stat-label">Pending</div>
+                <div class="stat-change down"><i class="fas fa-clock"></i> Awaiting</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon purple"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-value">{{ total_transactions|default:"0" }}</div>
+                <div class="stat-label">Transactions</div>
+                <div class="stat-change up"><i class="fas fa-check"></i> Completed</div>
+              </div>
+            </div>
+            {% if payments %}
+              {% for payment in payments %}
+              <div class="payment-card">
+                <div class="payment-left">
+                  <div class="payment-icon"><i class="fas fa-money-bill-wave"></i></div>
+                  <div class="payment-info">
+                    <h4>Booking #{{ payment.booking_id }}</h4>
+                    <p>{{ payment.turf.turf_name }} • {{ payment.customer.user_name }}</p>
+                  </div>
+                </div>
+                <div class="payment-right">
+                  <div class="payment-amount">+ ₹{{ payment.amount }}</div>
+                  <div class="payment-date"><i class="fas fa-calendar"></i> {{ payment.payment_date|default:payment.booking_date }}</div>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="empty-arena">
+                <i class="fas fa-credit-card"></i>
+                <p>No payments yet</p>
+                <p class="sub-text">Complete bookings to see earnings here!</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- ===== UPDATE TURF TAB ===== -->
+        <div id="updateturf" class="tab-content">
+          {% if turf %}
+          <div class="scoreboard-card animate-tab">
+            <div class="update-hero">
+              <span class="kicker"><i class="fas fa-edit"></i> Turf Management</span>
+              <h1 class="page-title">Update Turf</h1>
+              <p>Manage {{ turf.turf_name }} details and time slots</p>
+            </div>
+            <div class="update-form-grid">
+              <div class="update-panel">
+                <h2 class="panel-title"><i class="fas fa-futbol"></i> Turf Details</h2>
+                {% if error %}
+                <div class="update-error"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                {% endif %}
+                <form method="POST" action="{% url 'update_turf' turf.turf_id %}" enctype="multipart/form-data" id="updateForm">
+                  {% csrf_token %}
+                  <div class="update-form-group">
+                    <label><i class="fas fa-signature"></i> Turf Name</label>
+                    <input type="text" name="turf_name" id="turfName" class="update-glass-input" value="{{ turf.turf_name }}" required>
+                  </div>
+                  <div class="update-form-row">
+                    <div class="update-form-group">
+                      <label><i class="fas fa-map-marked-alt"></i> District</label>
+                      <select name="turf_district" id="turfDistrict" class="update-glass-input" required>
+                        <option value="{{ turf.turf_district }}" selected>{{ turf.turf_district }}</option>
+                        <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+                        <option value="Kollam">Kollam</option>
+                        <option value="Pathanamthitta">Pathanamthitta</option>
+                        <option value="Alappuzha">Alappuzha</option>
+                        <option value="Kottayam">Kottayam</option>
+                        <option value="Idukki">Idukki</option>
+                        <option value="Ernakulam">Ernakulam</option>
+                        <option value="Thrissur">Thrissur</option>
+                        <option value="Palakkad">Palakkad</option>
+                        <option value="Malappuram">Malappuram</option>
+                        <option value="Kozhikode">Kozhikode</option>
+                        <option value="Wayanad">Wayanad</option>
+                        <option value="Kannur">Kannur</option>
+                        <option value="Kasaragod">Kasaragod</option>
+                      </select>
+                    </div>
+                    <div class="update-form-group">
+                      <label><i class="fas fa-city"></i> Location</label>
+                      <input type="text" name="turf_location" id="turfLocation" class="update-glass-input" value="{{ turf.turf_location }}" required>
+                    </div>
+                  </div>
+                  <div class="update-form-group">
+                    <label><i class="fas fa-rupee-sign"></i> Hourly Rate (₹)</label>
+                    <input type="number" name="turf_rate" id="turfRate" class="update-glass-input" value="{{ turf.turf_rate }}" required min="100">
+                  </div>
+                  <div class="update-form-group">
+                    <label><i class="fas fa-image"></i> Update Image</label>
+                    <div class="image-preview-box" id="imagePreviewBox">
+                      <img id="previewImage" src="{{ turf.turf_image.url }}" alt="Preview" style="display:block;">
+                      <div class="preview-placeholder" id="previewPlaceholder" style="display:none;">
+                        <i class="fas fa-image"></i>
+                        <span>Click to select new image</span>
+                      </div>
+                    </div>
+                    <div class="file-input-wrapper">
+                      <input type="file" name="turf_image" id="turfImage" class="update-glass-input" accept="image/*">
+                      <button type="button" class="neon-btn ghost full" onclick="document.getElementById('turfImage').click()">
+                        <i class="fas fa-upload"></i> Choose New Image
+                      </button>
+                    </div>
+                  </div>
+                  <button type="submit" class="neon-btn full" style="margin-top:var(--space-sm);">
+                    <i class="fas fa-save"></i> Update Turf
+                  </button>
+                </form>
+              </div>
+              <div class="update-panel">
+                <h2 class="panel-title"><i class="fas fa-clock"></i> Time Slots</h2>
+                {% if turf.is_validated %}
+                  <div style="margin-bottom:var(--space-lg);">
+                    <h4 style="margin-bottom:var(--space-md);color:var(--text-secondary);font-size:0.85rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;">
+                      <i class="fas fa-check-circle" style="color:var(--success);margin-right:0.4rem;"></i> Available Slots
+                    </h4>
+                    <div class="slot-grid">
+                      {% for slot in time_map %}
+                      <div class="slot-chip">
+                        <i class="fas fa-clock"></i>
+                        <span>{{ slot.tt_time.time_range }}</span>
+                        <a href="{% url 'remove_time_map' slot.tt_id %}" onclick="return confirm('Remove this slot?');"><i class="fas fa-times"></i></a>
+                      </div>
+                      {% empty %}
+                      <p style="color:var(--text-secondary);font-size:0.9rem;">No time slots added yet.</p>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:var(--space-lg);">
+                    <h4 style="margin-bottom:var(--space-md);color:var(--text-secondary);font-size:0.85rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;">
+                      <i class="fas fa-plus-circle" style="color:var(--neon-green);margin-right:0.4rem;"></i> Add New Slot
+                    </h4>
+                    <form method="POST" action="{% url 'add_time_map' turf.turf_id %}">
+                      {% csrf_token %}
+                      <div class="slot-add-form">
+                        <select name="slot_id" class="update-glass-input" required>
+                          <option value="">Select Time Slot</option>
+                          {% for slot in time_slots %}
+                          <option value="{{ slot.time_id }}">{{ slot.time_range }}</option>
+                          {% endfor %}
+                        </select>
+                        <button type="submit" class="neon-btn"><i class="fas fa-plus"></i> Add</button>
+                      </div>
+                    </form>
+                  </div>
+                {% else %}
+                  <div class="pending-state">
+                    <i class="fas fa-clock"></i>
+                    <p>Turf pending validation.</p>
+                    <p class="sub">Time slots can be added after admin approval.</p>
+                  </div>
+                {% endif %}
+                <div class="preview-section">
+                  <h3 class="preview-title">
+                    <i class="fas fa-eye"></i> Live Preview
+                    <span class="live-badge"><i class="fas fa-circle" style="font-size:0.5rem;margin-right:0.3rem;"></i>Live</span>
+                  </h3>
+                  <div class="preview-card" id="livePreviewCard">
+                    <div class="preview-image-wrap">
+                      <img src="{{ turf.turf_image.url }}" class="preview-image" id="livePreviewImage" alt="{{ turf.turf_name }}">
+                      <span class="preview-badge" id="livePreviewRate">₹{{ turf.turf_rate }}/hr</span>
+                    </div>
+                    <div class="preview-info">
+                      <h3 id="livePreviewName">{{ turf.turf_name }}</h3>
+                      <p class="preview-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="livePreviewLocation">{{ turf.turf_location }}, {{ turf.turf_district }}</span>
+                      </p>
+                      <div class="preview-meta">
+                        <span class="preview-meta-item"><i class="fas fa-ruler-combined"></i> Standard</span>
+                        <span class="preview-meta-item"><i class="fas fa-users"></i> 10v10</span>
+                        <span class="preview-meta-item"><i class="fas fa-star"></i> 4.5</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <div class="scoreboard-card animate-tab">
+            <div class="empty-arena">
+              <i class="fas fa-edit"></i>
+              <p>Select a turf to edit</p>
+              <p class="sub-text">Go to "My Turfs" and click Edit on any turf to update it here.</p>
+              <a href="#" class="nav-link neon-btn" data-tab="myturfs" style="margin-top:var(--space-md);">
+                <i class="fas fa-map-marked-alt"></i> Go to My Turfs
+              </a>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+  <i class="fas fa-bars"></i>
+</button>
+
+<script>
+  // Tab Switching
+  document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('.nav-link[data-tab]');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    {% if turf %}
+    navLinks.forEach(l => l.classList.remove('active'));
+    tabContents.forEach(t => t.classList.remove('active'));
+    document.querySelector('.nav-link[data-tab="updateturf"]').classList.add('active');
+    document.getElementById('updateturf').classList.add('active');
+    {% endif %}
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetTab = this.getAttribute('data-tab');
+        navLinks.forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        tabContents.forEach(tab => tab.classList.remove('active'));
+        const target = document.getElementById(targetTab);
+        if (target) {
+          target.classList.add('active');
+          target.style.animation = 'none';
+          target.offsetHeight;
+          target.style.animation = '';
+        }
+        if (window.innerWidth <= 1024) {
+          document.querySelector('.match-zone').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Live Preview
+    const turfName = document.getElementById('turfName');
+    const turfDistrict = document.getElementById('turfDistrict');
+    const turfLocation = document.getElementById('turfLocation');
+    const turfRate = document.getElementById('turfRate');
+    const turfImage = document.getElementById('turfImage');
+    const livePreviewName = document.getElementById('livePreviewName');
+    const livePreviewLocation = document.getElementById('livePreviewLocation');
+    const livePreviewRate = document.getElementById('livePreviewRate');
+    const livePreviewImage = document.getElementById('livePreviewImage');
+    const previewImage = document.getElementById('previewImage');
+    const imagePreviewBox = document.getElementById('imagePreviewBox');
+    const previewPlaceholder = document.getElementById('previewPlaceholder');
+
+    if (turfName) {
+      turfName.addEventListener('input', function() {
+        if (livePreviewName) livePreviewName.textContent = this.value || 'Turf Name';
+      });
+    }
+    function updateLocation() {
+      const loc = turfLocation ? turfLocation.value : '';
+      const dist = turfDistrict ? turfDistrict.value : '';
+      if (livePreviewLocation) livePreviewLocation.textContent = loc + (dist ? ', ' + dist : '');
+    }
+    if (turfLocation) turfLocation.addEventListener('input', updateLocation);
+    if (turfDistrict) turfDistrict.addEventListener('change', updateLocation);
+    if (turfRate) {
+      turfRate.addEventListener('input', function() {
+        if (livePreviewRate) livePreviewRate.textContent = '₹' + (this.value || '0') + '/hr';
+      });
+    }
+    if (turfImage) {
+      turfImage.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const imageUrl = e.target.result;
+            if (livePreviewImage) livePreviewImage.src = imageUrl;
+            if (previewImage) { previewImage.src = imageUrl; previewImage.style.display = 'block'; }
+            if (previewPlaceholder) previewPlaceholder.style.display = 'none';
+            if (imagePreviewBox) imagePreviewBox.classList.add('has-image');
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  });
+
+  function toggleSidebar() {
+    const sidebar = document.querySelector('.tactics-sidebar');
+    sidebar.classList.toggle('mobile-open');
+  }
+</script>
+
+{% endblock %}

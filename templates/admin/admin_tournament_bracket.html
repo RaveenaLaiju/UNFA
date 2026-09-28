@@ -1,0 +1,179 @@
+{% extends 'admin/admin_base.html' %}
+{% block title %}{{ tournament.t_name }} - Knockout Bracket{% endblock %}
+
+{% block content %}
+
+    <header class="stadium-header-glass">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                
+                <!-- 2A: Breadcrumb Navigation -->
+                <div class="col-12 col-md-8">
+                    <nav aria-label="breadcrumb" class="arena-breadcrumb">
+                        <ol class="breadcrumb mb-2">
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'admin_view_tournaments' %}" class="breadcrumb-link">
+                                    <i class="bi bi-trophy-fill me-1"></i>Tournaments
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'admin_view_tournament_detail' tournament.t_id %}" class="breadcrumb-link">
+                                    {{ tournament.t_name|default:"Detail" }}
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active text-white" aria-current="page">
+                                Bracket
+                            </li>
+                        </ol>
+                    </nav>
+                    
+                    <!-- 2B: Arena Title -->
+                    <h1 class="arena-title-glass">
+                        <span class="title-icon animate-bounce">⚽</span>
+                        <span class="title-text">{{ tournament.t_name }}</span>
+                        <span class="title-badge d-none d-sm-inline">Knockout</span>
+                    </h1>
+                    <p class="arena-subtitle-glass mb-0">
+                        <i class="bi bi-diagram-3-fill me-2"></i>Visual tournament bracket with advancing winners
+                    </p>
+                </div>
+                
+                <!-- 2C: Back Button -->
+                <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="{% url 'admin_view_tournament_detail' tournament.t_id %}" 
+                       class="btn btn-back-glass">
+                        <i class="bi bi-arrow-left-circle-fill me-2"></i>Back to Tournament
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid bracket-container">
+        
+        {% if bracket_rounds %}
+        
+        <!-- 3A: Bracket Scroll Wrapper -->
+        <div class="bracket-scroll-wrapper">
+            <div class="bracket-grid-bootstrap">
+                
+                {% for round in bracket_rounds %}
+                <!-- 3B: Round Column -->
+                <div class="round-column-bootstrap">
+                    
+                    <!-- 3B-1: Round Badge -->
+                    <div class="round-badge-glass">
+                        <span class="round-number">R{{ forloop.counter }}</span>
+                        <span class="round-name">{{ round.round_name }}</span>
+                    </div>
+                    
+                    <!-- 3B-2: Matches Container -->
+                    <div class="matches-container">
+                        
+                        {% for item in round.matches %}
+                        <!-- 3B-2a: Match Card -->
+                        <div class="match-card-glass">
+                            
+                            <!-- 3B-2a-i: Home Team Row -->
+                            <div class="team-row home-team 
+                                {% if item.result and item.result.result_home_team > item.result.result_away_team %}team-winner
+                                {% elif item.result %}team-loser{% endif %}">
+                                <div class="team-info">
+                                    <div class="team-icon-wrapper">
+                                        <span class="team-icon">🏠</span>
+                                    </div>
+                                    <span class="team-name 
+                                        {% if not item.match.match_home_team %}team-tbd{% endif %}">
+                                        {% if item.match.match_home_team %}
+                                            {{ item.match.match_home_team.club_name }}
+                                        {% else %}
+                                            TBD
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <span class="team-score-badge">
+                                    {{ item.home_score|default:"—" }}
+                                </span>
+                            </div>
+                            
+                            <!-- 3B-2a-ii: Divider -->
+                            <div class="match-divider">
+                                <span class="vs-text">VS</span>
+                            </div>
+                            
+                            <!-- 3B-2a-iii: Away Team Row -->
+                            <div class="team-row away-team 
+                                {% if item.result and item.result.result_away_team > item.result.result_home_team %}team-winner
+                                {% elif item.result %}team-loser{% endif %}">
+                                <div class="team-info">
+                                    <div class="team-icon-wrapper">
+                                        <span class="team-icon">✈️</span>
+                                    </div>
+                                    <span class="team-name 
+                                        {% if not item.match.match_away_team %}team-tbd{% endif %}">
+                                        {% if item.match.match_away_team %}
+                                            {{ item.match.match_away_team.club_name }}
+                                        {% else %}
+                                            TBD
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <span class="team-score-badge">
+                                    {{ item.away_score|default:"—" }}
+                                </span>
+                            </div>
+                            
+                            <!-- 3B-2a-iv: Match Footer -->
+                            <div class="match-footer-glass">
+                                <div class="d-flex justify-content-between align-items-center w-100">
+                                    <a href="{% url 'admin_tournament_match_detail' item.match.match_id %}" 
+                                       class="btn btn-view-match">
+                                        <i class="bi bi-eye-fill me-1"></i>View Match
+                                    </a>
+                                    
+                                    {% if item.match.match_finished %}
+                                        <span class="match-status-badge status-done">
+                                            <i class="bi bi-check-circle-fill me-1"></i>Done
+                                        </span>
+                                    {% elif item.match.match_started %}
+                                        <span class="match-status-badge status-live">
+                                            <span class="live-dot"></span>Live
+                                        </span>
+                                    {% else %}
+                                        <span class="match-status-badge status-upcoming">
+                                            <i class="bi bi-clock me-1"></i>Upcoming
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                        </div>
+                        {% endfor %}
+                        
+                    </div>
+                </div>
+                {% endfor %}
+                
+            </div>
+        </div>
+        
+        {% else %}
+        
+        <!-- 3C: Empty State -->
+        <div class="empty-state-glass">
+            <div class="empty-icon-wrapper">
+                <span class="empty-icon">🏟️</span>
+            </div>
+            <h3 class="empty-title">No Bracket Available</h3>
+            <p class="empty-text">Knockout matches haven't been generated yet for this tournament.</p>
+            <a href="{% url 'admin_view_tournament_detail' tournament.t_id %}" 
+               class="btn btn-back-glass mt-3">
+                <i class="bi bi-arrow-left me-2"></i>Return to Tournament
+            </a>
+        </div>
+        
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

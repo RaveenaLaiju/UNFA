@@ -1,0 +1,261 @@
+{% extends 'user/user_head.html' %}
+{% block content %}
+{% load static %}
+
+
+<div class="battle-arena">
+  <div class="particle-field" id="particleField"></div>
+
+  <!-- Header -->
+  <header class="arena-header d-flex justify-content-center align-items-center">
+    
+    <h1 class="arena-title">Meet the <span class="neon-accent">Players</span></h1>
+  </header>
+
+  <!-- Filter Command Center -->
+  <div class="command-center">
+    <div class="command-panel">
+      <h2 class="command-label"><i class="fas fa-sliders-h"></i> Tactical Filters</h2>
+      <form method="get" action="{% url 'user_players' %}" class="command-grid">
+        <input type="text" name="searchName" class="command-input" placeholder="Search name..." value="{{ request.GET.searchName }}">
+        <input type="text" name="searchDistrict" class="command-input" placeholder="District..." value="{{ request.GET.searchDistrict }}">
+        <select name="filterPosition" class="command-select">
+          <option value="">All positions</option>
+          {% for position in positions %}
+          <option value="{{ position.position_code }}" {% if request.GET.filterPosition == position.position_code %}selected{% endif %}>{{ position.position_code }}</option>
+          {% endfor %}
+        </select>
+        <select name="sortRating" class="command-select">
+          <option value="">Sort rating</option>
+          <option value="high" {% if request.GET.sortRating == "high" %}selected{% endif %}>High → Low</option>
+          <option value="low" {% if request.GET.sortRating == "low" %}selected{% endif %}>Low → High</option>
+        </select>
+        <select name="filterRecruit" class="command-select">
+          <option value="">All players</option>
+          <option value="available" {% if request.GET.filterRecruit == "available" %}selected{% endif %}>Available</option>
+          <option value="assigned" {% if request.GET.filterRecruit == "assigned" %}selected{% endif %}>In club</option>
+        </select>
+        <button type="submit" class="command-btn"><i class="fas fa-crosshairs"></i> Apply</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Roster Zone -->
+  <section class="roster-zone">
+    <div class="roster-grid">
+      {% for player in players %}
+      <article class="hero-card" tabindex="0" role="button" aria-label="Flip card for {{ player.player_card_name }}" data-player-id="{{ player.player_id }}">
+        <div class="hero-sleeve">
+
+          <!-- FRONT -->
+          <div class="hero-front">
+            <div class="card-crown">
+              <span class="live-ping">Active</span>
+              <span>ID //{{ player.player_id|stringformat:"04d" }}</span>
+            </div>
+
+            <div class="visual-arena">
+              <div class="avatar-orbit">
+                <img src="{{ player.player_image.url }}" alt="{{ player.player_card_name }}" class="hero-portrait" loading="lazy" draggable="false">
+                {% if player.player_club %}
+                <img src="{{ player.player_club.club_logo.url }}" alt="" class="club-emblem" draggable="false">
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="card-core">
+              <h2 class="hero-name">{{ player.player_card_name }}</h2>
+              <div class="ability-chips">
+                <span class="chip-ovr">OVR {{ player.player_rating }}</span>
+                <span class="chip-pos">{{ player.player_position.position_code }}</span>
+              </div>
+              <div class="power-bars">
+                <div class="power-row">
+                  <span>Power</span>
+                  <div class="power-track"><div class="power-fill" data-w="{{ player.player_power }}"></div></div>
+                  <span>{{ player.player_power }}</span>
+                </div>
+                <div class="power-row">
+                  <span>Rating</span>
+                  <div class="power-track"><div class="power-fill" data-w="{{ player.player_rating }}"></div></div>
+                  <span>{{ player.player_rating }}</span>
+                </div>
+              </div>
+              <p class="flip-hint text-white text-bold"><i class="fas fa-hand-pointer"></i> Tap to flip</p>
+            </div>
+          </div>
+
+          <!-- BACK -->
+          <div class="hero-back">
+            <div class="intel-crown">
+              <span><i class="fas fa-clipboard-list"></i> Scout Report</span>
+              <span>Profile</span>
+            </div>
+            <ul class="scout-data">
+              <li><span class="text-white"><i class="fas fa-birthday-cake"></i> Age</span><strong>{{ player.player_user.user_age }}</strong></li>
+              <li><span class="text-white"><i class="fas fa-ruler-vertical"></i> Height</span><strong>{{ player.player_height }} cm</strong></li>
+              <li><span class="text-white"><i class="fas fa-weight-hanging"></i> Weight</span><strong>{{ player.player_weight }} kg</strong></li>
+              <li><span class="text-white"><i class="fas fa-shoe-prints"></i> Foot</span><strong>{{ player.player_strong_foot }}</strong></li>
+              <li><span class="text-white"><i class="fas fa-map-marker-alt"></i> District</span><strong>{{ player.player_district }}</strong></li>
+            </ul>
+            <div class="battle-trio">
+              <div class="trio-cell"><span class="text-white">Goals</span><strong>{{ player.total_goals }}</strong></div>
+              <div class="trio-cell"><span class="text-white">Assists</span><strong>{{ player.total_assists }}</strong></div>
+              <div class="trio-cell"><span class="text-white">Saves</span><strong>{{ player.total_saves }}</strong></div>
+            </div>
+            <div class="action-dock">
+              {% if is_manager and club and not player.player_club %}
+              <a href="{% url 'recruit_player' club.club_id player.player_id %}" class="action-btn recruit" onclick="return confirm('Recruit {{ player.player_card_name|escapejs }}?');">
+                <i class="fas fa-plus-circle"></i> Recruit
+              </a>
+              {% endif %}
+              <a href="{% url 'player_public_profile' player.player_id %}" class="action-btn view">
+                <i class="fas fa-eye"></i> View
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </article>
+      {% empty %}
+      <div class="empty-arena">
+        <i class="fas fa-search"></i>
+        <h2>No Players Found</h2>
+        <p>Adjust your tactical filters and scout again.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+
+<script>
+  /* Floating Particles */
+const field = document.getElementById('particleField');
+const colors = ['#00f0ff','#00ff88','#ff00aa','#ffd700','#b829dd','#ff6b35'];
+for(let i=0;i<25;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  p.style.left=Math.random()*100+'%';
+  p.style.animationDuration=(Math.random()*10+8)+'s';
+  p.style.animationDelay=Math.random()*8+'s';
+  p.style.background=colors[Math.floor(Math.random()*colors.length)];
+  p.style.boxShadow='0 0 8px '+p.style.background;
+  p.style.width=(Math.random()*3+2)+'px';
+  p.style.height=p.style.width;
+  field.appendChild(p);
+}
+
+/* ====== TOUCH & CLICK FLIP LOGIC ====== */
+document.addEventListener('DOMContentLoaded', () => {
+  const cards = document.querySelectorAll('.hero-card');
+
+  cards.forEach(card => {
+    let touchStartY = 0;
+    let touchStartX = 0;
+    let isTap = true;
+    const TAP_THRESHOLD = 10; // pixels
+
+    // ---- TOUCH EVENTS ----
+    card.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        isTap = true;
+        card.classList.add('touched');
+      }
+    }, { passive: true });
+
+    card.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1) {
+        const dx = Math.abs(e.touches[0].clientX - touchStartX);
+        const dy = Math.abs(e.touches[0].clientY - touchStartY);
+        if (dx > TAP_THRESHOLD || dy > TAP_THRESHOLD) {
+          isTap = false;
+          card.classList.remove('touched');
+        }
+      }
+    }, { passive: true });
+
+    card.addEventListener('touchend', (e) => {
+      card.classList.remove('touched');
+      if (isTap) {
+        // Small delay to let browser finish any scroll/zoom
+        setTimeout(() => {
+          card.classList.toggle('flipped');
+        }, 10);
+      }
+    }, { passive: true });
+
+    card.addEventListener('touchcancel', () => {
+      card.classList.remove('touched');
+      isTap = false;
+    });
+
+    // ---- CLICK EVENT (Desktop) ----
+    card.addEventListener('click', (e) => {
+      // Don't flip if clicking a link/button inside the card
+      if (e.target.closest('a') || e.target.closest('button')) return;
+      card.classList.toggle('flipped');
+    });
+
+    // ---- KEYBOARD ACCESSIBILITY ----
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        card.classList.toggle('flipped');
+      }
+    });
+
+    // ---- 3D TILT (Desktop hover only) ----
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+    if (!isTouchDevice) {
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        const x = e.clientX - r.left;
+        const y = e.clientY - r.top;
+        const cx = r.width / 2;
+        const cy = r.height / 2;
+        const rx = (y - cy) / 25;
+        const ry = (cx - x) / 25;
+        const sleeve = card.querySelector('.hero-sleeve');
+        if (!card.classList.contains('flipped')) {
+          sleeve.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+        } else {
+          sleeve.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${180 + ry}deg)`;
+        }
+      });
+
+      card.addEventListener('mouseleave', () => {
+        const sleeve = card.querySelector('.hero-sleeve');
+        if (!card.classList.contains('flipped')) {
+          sleeve.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+        } else {
+          sleeve.style.transform = 'perspective(1000px) rotateX(0) rotateY(180deg)';
+        }
+        setTimeout(() => { sleeve.style.transform = ''; }, 350);
+      });
+    }
+  });
+
+  /* Animate stat bars on scroll */
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        en.target.querySelectorAll('.power-fill').forEach((bar, idx) => {
+          setTimeout(() => {
+            bar.style.width = bar.dataset.w + '%';
+          }, idx * 250);
+        });
+        obs.unobserve(en.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  cards.forEach(c => obs.observe(c));
+});
+</script>
+
+
+
+{% endblock %}

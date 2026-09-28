@@ -1,0 +1,1274 @@
+{% extends 'user/user_head.html' %} 
+{% block content %} 
+{% load static %}
+
+<div class="fm24-page">
+  <div class="fm24-bg">
+    <div class="fm24-bg-gradient"></div>
+
+    <div class="fm24-stadium-light fm24-light-one"></div>
+
+    <div class="fm24-stadium-light fm24-light-two"></div>
+
+    <div class="fm24-stadium-light fm24-light-three"></div>
+
+    <div class="fm24-particle fm24-particle-01"></div>
+    <div class="fm24-particle fm24-particle-02"></div>
+    <div class="fm24-particle fm24-particle-03"></div>
+    <div class="fm24-particle fm24-particle-04"></div>
+    <div class="fm24-particle fm24-particle-05"></div>
+    <div class="fm24-particle fm24-particle-06"></div>
+    <div class="fm24-particle fm24-particle-07"></div>
+    <div class="fm24-particle fm24-particle-08"></div>
+
+    <div class="fm24-field-lines"></div>
+  </div>
+
+  <main class="fm24-arena">
+    <div class="container-fluid px-3 px-md-4 px-xl-5">
+      <div class="fm24-content mx-auto">
+        <section class="fm24-command glass-panel fm24-reveal-up">
+          <div class="row align-items-center g-4">
+            <div class="col-12 col-lg">
+              <div class="fm24-status-label">
+                <span class="fm24-status-icon">
+                  <i class="fas fa-futbol"></i>
+                </span>
+
+                <span>
+                  {% if match_is_finished %} 
+                  MATCH ENDED 
+                  {% elif match_is_paused%} 
+                  MATCH PAUSED 
+                  {% elif match_is_live %} 
+                  LIVE ARENA 
+                  {% else %}
+                  AWAITING KICKOFF 
+                  {% endif %}
+                </span>
+              </div>
+
+              <div class="fm24-match-title">
+                <div class="fm24-team-title fm24-home-title">
+                  {{ match.match_home_team.club_name }}
+                </div>
+
+                <div class="fm24-vs-box">VS</div>
+
+                <div class="fm24-team-title fm24-away-title">
+                  {{ match.match_away_team.club_name }}
+                </div>
+              </div>
+
+              <div class="fm24-command-subtitle">
+                <i class="fas fa-bolt"></i>
+
+                MATCH CONTROL CENTER
+              </div>
+            </div>
+
+            {% if is_manager or is_tournament_host %}
+
+            <div class="col-12 col-lg-auto">
+              <div class="fm24-control-zone">
+                <!-- START MATCH  -->
+
+                {% if can_start_match %} 
+                {% if not match.tournament %} 
+                {% if is_home_manager %}
+
+                <a
+                  href="{% url 'start_match' match.match_id %}"
+                  class="fm24-control-btn fm24-start-btn"
+                  onclick="return confirm('Start match?');"
+                >
+                  <span class="fm24-control-icon">
+                    <i class="fas fa-play"></i>
+                  </span>
+
+                  Start Match
+                </a>
+
+                {% endif %} 
+                {% else %} 
+                {% if is_tournament_host %}
+
+                <a
+                  href="{% url 'start_match' match.match_id %}"
+                  class="fm24-control-btn fm24-start-btn"
+                  onclick="return confirm('Start tournament match?');"
+                >
+                  <span class="fm24-control-icon">
+                    <i class="fas fa-play"></i>
+                  </span>
+
+                  Start Match
+                </a>
+
+                {% endif %} 
+                {% endif %}
+                {% endif %}
+
+                <!-- PAUSE MATCH -->
+
+                {% if match_is_live and not match_is_paused %} 
+                {% if not match.tournament %} 
+                {% if is_home_manager %}
+
+                <form
+                  method="POST"
+                  action="{% url 'pause_match' match.match_id %}"
+                  style="display: inline"
+                >
+                  {% csrf_token %}
+
+                  <button
+                    type="submit"
+                    class="fm24-control-btn fm24-pause-btn"
+                    onclick="return confirm('Pause this match?');"
+                  >
+                    <span class="fm24-control-icon">
+                      <i class="fas fa-pause"></i>
+                    </span>
+
+                    Pause
+                  </button>
+                </form>
+
+                {% endif %} 
+                {% else %} 
+                {% if is_tournament_host %}
+
+                <form
+                  method="POST"
+                  action="{% url 'pause_match' match.match_id %}"
+                  style="display: inline"
+                >
+                  {% csrf_token %}
+
+                  <button
+                    type="submit"
+                    class="fm24-control-btn fm24-pause-btn"
+                    onclick="return confirm('Pause tournament match?');"
+                  >
+                    <span class="fm24-control-icon">
+                      <i class="fas fa-pause"></i>
+                    </span>
+
+                    Pause
+                  </button>
+                </form>
+
+                {% endif %} 
+                {% endif %} 
+                {% endif %}
+
+                <!-- RESUME MATCH -->
+
+                {% if match_is_paused %} 
+                {% if not match.tournament %} 
+                {% if is_home_manager %}
+
+                <form
+                  method="POST"
+                  action="{% url 'resume_match' match.match_id %}"
+                  style="display: inline"
+                >
+                  {% csrf_token %}
+
+                  <button
+                    type="submit"
+                    class="fm24-control-btn fm24-resume-btn"
+                    onclick="return confirm('Resume this match?');"
+                  >
+                    <span class="fm24-control-icon">
+                      <i class="fas fa-play"></i>
+                    </span>
+
+                    Resume
+                  </button>
+                </form>
+
+                {% endif %} 
+                {% else %} 
+                {% if is_tournament_host %}
+
+                <form
+                  method="POST"
+                  action="{% url 'resume_match' match.match_id %}"
+                  style="display: inline"
+                >
+                  {% csrf_token %}
+
+                  <button
+                    type="submit"
+                    class="fm24-control-btn fm24-resume-btn"
+                    onclick="return confirm('Resume tournament match?');"
+                  >
+                    <span class="fm24-control-icon">
+                      <i class="fas fa-play"></i>
+                    </span>
+
+                    Resume
+                  </button>
+                </form>
+
+                {% endif %} 
+                {% endif %} 
+                {% endif %}
+
+                <!--  END FRIENDLY MATCH -->
+
+                {% if not match.tournament %} 
+                {% if match_is_live or match_is_paused %} 
+                {% if is_home_manager %}
+
+                <a
+                  href="{% url 'end_match' match.match_id %}"
+                  class="fm24-control-btn fm24-stop-btn"
+                  onclick="return confirm('End this match?');"
+                >
+                  <span class="fm24-control-icon">
+                    <i class="fas fa-stop"></i>
+                  </span>
+
+                  End Match
+                </a>
+
+                {% endif %} 
+                {% endif %} 
+                {% endif %}
+
+                <!--  ABORT FRIENDLY  -->
+
+                {% if not match.tournament and not match_is_finished %}
+
+                <a
+                  href="{% url 'cancel_match' match.match_id %}"
+                  class="fm24-control-btn fm24-abort-btn"
+                  onclick="return fm24ConfirmCancel();"
+                >
+                  <span class="fm24-control-icon">
+                    <i class="fas fa-times"></i>
+                  </span>
+
+                  Abort
+                </a>
+
+                {% endif %}
+              </div>
+            </div>
+
+            {% endif %}
+          </div>
+
+          <!-- MATCH TIMER -->
+
+          <div class="fm24-timer-panel glass-panel">
+            <div class="fm24-timer-label">MATCH TIMER</div>
+
+            <div
+              id="fm24MatchTimer"
+              class="fm24-timer {% if timer_status == 'running' %} fm24-timer-running {% elif timer_status == 'paused' %} fm24-timer-paused {% elif timer_status == 'finished' %} fm24-timer-finished {% else %} fm24-timer-waiting {% endif %}"
+            >
+              00:00:00
+            </div>
+
+            <div class="fm24-timer-status">
+              <span class="fm24-timer-dot"></span>
+
+              <span id="fm24TimerStatusText">
+                {% if timer_status == "running" %} 
+                LIVE 
+                {% elif timer_status == "paused" %} 
+                PAUSED 
+                {% elif timer_status == "finished" %}
+                FINISHED 
+                {% else %} 
+                NOT STARTED 
+                {% endif %}
+              </span>
+            </div>
+
+            <div class="fm24-progress">
+              <div id="fm24TimerProgress" class="fm24-progress-bar"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SCORE CARD -->
+
+        <section class="fm24-score-section fm24-reveal-scale">
+          <div class="fm24-score-card glass-panel">
+            <div
+              class="fm24-live-status {% if match_is_live and not match_is_paused %} fm24-status-live {% elif match_is_paused %} fm24-status-waiting {% elif match_is_finished %} fm24-status-ended {% else %} fm24-status-waiting {% endif %}"
+            >
+              {% if match_is_live and not match_is_paused %}
+
+              <span class="fm24-live-dot"></span>
+
+              LIVE {% elif match_is_paused %}
+
+              <i class="fas fa-pause"></i>
+
+              PAUSED {% elif match_is_finished %}
+
+              <i class="fas fa-flag-checkered"></i>
+
+              MATCH ENDED {% else %}
+
+              <i class="fas fa-clock"></i>
+
+              AWAITING KICKOFF {% endif %}
+            </div>
+
+            <div class="row align-items-center justify-content-center g-4">
+              <!-- HOME -->
+
+              <div class="col-12 col-md-4">
+                <div class="fm24-team-block">
+                  <div class="fm24-crest-wrap">
+                    <div class="fm24-crest-glow fm24-home-glow"></div>
+
+                    <div class="fm24-crest-ring">
+                      <img
+                        src="{% if match.match_home_team.club_logo %}{{ match.match_home_team.club_logo.url }}{% else %}{% static 'images/default_club.png' %}{% endif %}"
+                        alt="{{ match.match_home_team.club_name }}"
+                        class="fm24-crest"
+                      />
+                    </div>
+                  </div>
+
+                  <h2 class="fm24-team-name">
+                    {{ match.match_home_team.club_name }}
+                  </h2>
+
+                  <span class="fm24-team-label"> HOME </span>
+                </div>
+              </div>
+
+              <!-- SCORE -->
+
+              <div class="col-12 col-md-4">
+                <div class="fm24-score-core">
+                  <div class="fm24-score-numbers">
+                    <span
+                      class="fm24-score-number fm24-home-score"
+                      id="homeScore"
+                    >
+                      {{ result.result_home_team }}
+                    </span>
+
+                    <span class="fm24-score-colon"> : </span>
+
+                    <span
+                      class="fm24-score-number fm24-away-score"
+                      id="awayScore"
+                    >
+                      {{ result.result_away_team }}
+                    </span>
+                  </div>
+
+                  <div class="fm24-score-caption">CURRENT SCORE</div>
+                </div>
+              </div>
+
+              <!-- AWAY -->
+
+              <div class="col-12 col-md-4">
+                <div class="fm24-team-block">
+                  <div class="fm24-crest-wrap">
+                    <div class="fm24-crest-glow fm24-away-glow"></div>
+
+                    <div class="fm24-crest-ring">
+                      <img
+                        src="{% if match.match_away_team.club_logo %}{{ match.match_away_team.club_logo.url }}{% else %}{% static 'images/default_club.png' %}{% endif %}"
+                        alt="{{ match.match_away_team.club_name }}"
+                        class="fm24-crest"
+                      />
+                    </div>
+                  </div>
+
+                  <h2 class="fm24-team-name">
+                    {{ match.match_away_team.club_name }}
+                  </h2>
+
+                  <span class="fm24-team-label"> AWAY </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- META -->
+
+            <div class="fm24-meta-area">
+              <div class="row justify-content-center g-2">
+                <div class="col-auto">
+                  <span class="fm24-meta-chip">
+                    <i class="fas fa-map-marker-alt"></i>
+
+                    {{ match.match_turf.turf_name }}
+                  </span>
+                </div>
+
+                <div class="col-auto">
+                  <span class="fm24-meta-chip">
+                    <i class="fas fa-calendar-alt"></i>
+
+                    {{ match.match_date|date:"d M Y" }}
+                  </span>
+                </div>
+
+                <div class="col-auto">
+                  <span class="fm24-meta-chip">
+                    <i class="fas fa-clock"></i>
+
+                    {{ match.match_time }}
+                  </span>
+                </div>
+
+                {% if match.tournament %}
+
+                <div class="col-auto">
+                  <span class="fm24-meta-chip fm24-tournament-chip">
+                    <i class="fas fa-trophy"></i>
+
+                    {{ match.tournament.t_name }}
+                  </span>
+                </div>
+
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {% if is_tournament_host and match.tournament and match_is_live %}
+
+        <section class="fm24-host-panel glass-panel fm24-reveal-up">
+          <div class="row align-items-center g-4">
+            <div class="col-12 col-lg">
+              <div class="fm24-host-title">
+                <span class="fm24-crown-icon">
+                  <i class="fas fa-crown"></i>
+                </span>
+
+                <div>
+                  <h3>Tournament Host Control</h3>
+
+                  <p>Live tournament match administration</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-auto">
+              <div class="fm24-host-score">
+                <span class="fm24-host-score-home">
+                  {{ result.result_home_team }}
+                </span>
+
+                <span>:</span>
+
+                <span class="fm24-host-score-away">
+                  {{ result.result_away_team }}
+                </span>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-auto">
+              <form
+                method="POST"
+                action="{% url 'host_end_match' match.match_id %}"
+              >
+                {% csrf_token %}
+
+                <button
+                  type="submit"
+                  class="fm24-finish-btn"
+                  onclick="return confirm('Finish match and advance winner?');"
+                >
+                  <i class="fas fa-flag-checkered"></i>
+
+                  Finish Match
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        {% endif %} 
+        {% if match_is_live %}
+
+        <section class="fm24-action-section">
+          <div class="fm24-section-heading">
+            <div>
+              <span class="fm24-section-kicker"> MATCH OPERATIONS </span>
+
+              <h2>Action Center</h2>
+            </div>
+
+            <span class="fm24-section-live">
+              <span></span>
+
+              {% if match_is_paused %} 
+              PAUSED 
+              {% else %} 
+              LIVE 
+              {% endif %}
+            </span>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-12 col-xl-6">
+              <div class="fm24-action-card fm24-home-action glass-panel">
+                <div class="fm24-action-header">
+                  <div class="fm24-action-team">
+                    <div class="fm24-action-icon">
+                      <i class="fas fa-shield-alt"></i>
+                    </div>
+
+                    <div>
+                      <span>HOME SIDE</span>
+
+                      <h3>{{ match.match_home_team.club_name }}</h3>
+                    </div>
+                  </div>
+
+                  <span class="fm24-side-badge fm24-home-badge"> HOME </span>
+                </div>
+
+                {% if can_record_home %} 
+                {% if match.tournament and is_tournament_host %}
+
+                <form
+                  method="POST"
+                  action="{% url 'host_record_action' match.match_id %}"
+                  class="fm24-action-form"
+                >
+                  {% csrf_token %}
+
+                  <input
+                    type="hidden"
+                    name="match_id"
+                    value="{{ match.match_id }}"
+                  />
+
+                  <input type="hidden" name="team_side" value="home" />
+
+                  <div class="fm24-player-selector">
+                    <label>
+                      <i class="fas fa-user"></i>
+
+                      Select Player
+                    </label>
+
+                 <select
+    name="player_id"
+    class="form-select fm24-glass-select text-white"
+    required
+>
+    <option value="">-- Choose Player --</option>
+
+    {% for player in home_players %}
+        <option value="{{ player.player_id }}" class="text-white">
+            {{ player.player_card_name }} - {{ player.player_position.position_code }}
+        </option>
+    {% endfor %}
+</select>
+                  </div>
+
+                  <div class="fm24-action-buttons">
+                    <button
+                      type="submit"
+                      name="action"
+                      value="goal"
+                      class="fm24-action-btn fm24-goal-btn"
+                    >
+                      <i class="fas fa-bullseye"></i>
+
+                      Goal
+                    </button>
+
+                    <button
+                      type="submit"
+                      name="action"
+                      value="assist"
+                      class="fm24-action-btn fm24-assist-btn"
+                    >
+                      <i class="fas fa-project-diagram"></i>
+
+                      Assist
+                    </button>
+
+                    <button
+                      type="submit"
+                      name="action"
+                      value="save"
+                      class="fm24-action-btn fm24-save-btn"
+                    >
+                      <i class="fas fa-hand-paper"></i>
+
+                      Save
+                    </button>
+                  </div>
+                </form>
+
+                {% else %}
+
+                <form
+                  method="POST"
+                  action="{% url 'home_score_recorder' match.match_id %}"
+                  class="fm24-action-form"
+                >
+                  {% csrf_token %}
+
+                  <input
+                    type="hidden"
+                    name="match_id"
+                    value="{{ match.match_id }}"
+                  />
+
+                  <div class="fm24-player-selector">
+                    <label>
+                      <i class="fas fa-user"></i>
+
+                      Select Player
+                    </label>
+
+                    <select
+                      name="home_player"
+                      class="form-select fm24-glass-select"
+                      required
+                    >
+                      <option value="">-- Choose Player --</option>
+
+                      {% for player in home_players %}
+
+                      <option value="{{ player.player_id }}">
+                        {{ player.player_card_name }} [{{player.player_position.position_code }}]
+                      </option>
+
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                  <div class="fm24-action-buttons">
+                    <button
+                      type="submit"
+                      name="action"
+                      value="goal"
+                      class="fm24-action-btn fm24-goal-btn"
+                    >
+                      <i class="fas fa-bullseye"></i>
+
+                      Goal
+                    </button>
+
+                    <button
+                      type="submit"
+                      name="action"
+                      value="assist"
+                      class="fm24-action-btn fm24-assist-btn"
+                    >
+                      <i class="fas fa-project-diagram"></i>
+
+                      Assist
+                    </button>
+
+                    <button
+                      type="submit"
+                      name="action"
+                      value="save"
+                      class="fm24-action-btn fm24-save-btn"
+                    >
+                      <i class="fas fa-hand-paper"></i>
+
+                      Save
+                    </button>
+                  </div>
+                </form>
+
+                {% endif %} 
+                {% else %}
+
+                <div class="fm24-locked-box">
+                  <i class="fas fa-lock"></i>
+
+                  <p>
+                    Only the home team manager or tournament host can record
+                    home actions.
+                  </p>
+                </div>
+
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="col-12 col-xl-6">
+              <div class="fm24-action-card fm24-away-action glass-panel">
+                <div class="fm24-action-header">
+                  <div class="fm24-action-team">
+                    <div class="fm24-action-icon">
+                      <i class="fas fa-plane-departure"></i>
+                    </div>
+
+                    <div>
+                      <span>AWAY SIDE</span>
+
+                      <h3>{{ match.match_away_team.club_name }}</h3>
+                    </div>
+                  </div>
+
+                  <span class="fm24-side-badge fm24-away-badge"> AWAY </span>
+                </div>
+
+                {% if can_record_away %} 
+                {% if match.tournament and is_tournament_host %}
+
+                <form
+                  method="POST"
+                  action="{% url 'host_record_action' match.match_id %}"
+                  class="fm24-action-form"
+                >
+                  {% csrf_token %}
+
+                  <input
+                    type="hidden"
+                    name="match_id"
+                    value="{{ match.match_id }}"
+                  />
+
+                  <input type="hidden" name="team_side" value="away" />
+
+                  <div class="fm24-player-selector">
+                    <label>
+                      <i class="fas fa-user"></i>
+
+                      Select Player
+                    </label>
+
+                    <select
+                      name="player_id"
+                      class="form-select fm24-glass-select"
+                      required
+                    >
+                      <option value="">-- Choose Player --</option>
+
+                      {% for player in away_players %}
+
+                      <option value="{{ player.player_id }}">
+                        {{ player.player_card_name }} [{{player.player_position.position_code }}]
+                      </option>
+
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                  <div class="fm24-action-buttons">
+                    <button
+                      type="submit"
+                      name="action"
+                      value="goal"
+                      class="fm24-action-btn fm24-goal-btn"
+                    >
+                      <i class="fas fa-bullseye"></i>
+
+                      Goal
+                    </button>
+
+                    <button
+                      type="submit"
+                      name="action"
+                      value="assist"
+                      class="fm24-action-btn fm24-assist-btn"
+                    >
+                      <i class="fas fa-project-diagram"></i>
+
+                      Assist
+                    </button>
+
+                    <button
+                      type="submit"
+                      name="action"
+                      value="save"
+                      class="fm24-action-btn fm24-save-btn"
+                    >
+                      <i class="fas fa-hand-paper"></i>
+
+                      Save
+                    </button>
+                  </div>
+                </form>
+
+                {% else %}
+
+                <form
+                  method="POST"
+                  action="{% url 'away_score_recorder' match.match_id %}"
+                  class="fm24-action-form"
+                >
+                  {% csrf_token %}
+
+                  <input
+                    type="hidden"
+                    name="match_id"
+                    value="{{ match.match_id }}"
+                  />
+
+                  <div class="fm24-player-selector">
+                    <label>
+                      <i class="fas fa-user"></i>
+
+                      Select Player
+                    </label>
+
+                    <select
+                      name="away_player"
+                      class="form-select fm24-glass-select"
+                      required
+                    >
+                      <option value="">-- Choose Player --</option>
+
+                      {% for player in away_players %}
+
+                      <option value="{{ player.player_id }}">
+                        {{ player.player_card_name }} [{{player.player_position.position_code }}]
+                      </option>
+
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                  <div class="fm24-action-buttons">
+                    <button
+                      type="submit"
+                      name="action"
+                      value="goal"
+                      class="fm24-action-btn fm24-goal-btn"
+                    >
+                      <i class="fas fa-bullseye"></i>
+
+                      Goal
+                    </button>
+
+                    <button
+                      type="submit"
+                      name="action"
+                      value="assist"
+                      class="fm24-action-btn fm24-assist-btn"
+                    >
+                      <i class="fas fa-project-diagram"></i>
+
+                      Assist
+                    </button>
+
+                    <button
+                      type="submit"
+                      name="action"
+                      value="save"
+                      class="fm24-action-btn fm24-save-btn"
+                    >
+                      <i class="fas fa-hand-paper"></i>
+
+                      Save
+                    </button>
+                  </div>
+                </form>
+
+                {% endif %} 
+                {% else %}
+
+                <div class="fm24-locked-box">
+                  <i class="fas fa-lock"></i>
+
+                  <p>
+                    Only the away team manager or tournament host can record
+                    away actions.
+                  </p>
+                </div>
+
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {% endif %}
+
+        <section class="fm24-bottom-section">
+          <div class="row g-4">
+            <div class="col-12 col-xl-7">
+              <div class="fm24-battle-log glass-panel fm24-reveal-up">
+                <div class="fm24-panel-header">
+                  <div class="fm24-panel-title">
+                    <span class="fm24-panel-icon">
+                      <i class="fas fa-stream"></i>
+                    </span>
+
+                    <div>
+                      <span>LIVE FEED</span>
+
+                      <h2>Battle Log</h2>
+                    </div>
+                  </div>
+
+                  <span class="fm24-event-count">
+                    {{ achievements|length }} Events
+                  </span>
+                </div>
+
+                <div class="fm24-event-stream">
+                  {% for achievement in achievements %}
+
+                  <div
+                    class="fm24-event"
+                    style="animation-delay: {{ forloop.counter }}00ms"
+                  >
+                    <div
+                      class="fm24-event-marker {% if achievement.achievement_type == 'goal' %} fm24-event-goal {% elif achievement.achievement_type == 'assist' %} fm24-event-assist {% else %} fm24-event-save {% endif %}"
+                    >
+                      {% if achievement.achievement_type == 'goal' %}
+
+                      <i class="fas fa-bullseye"></i>
+
+                      {% elif achievement.achievement_type == 'assist' %}
+
+                      <i class="fas fa-link"></i>
+
+                      {% else %}
+
+                      <i class="fas fa-hand-paper"></i>
+
+                      {% endif %}
+                    </div>
+
+                    <div class="fm24-event-info">
+                      <strong>
+                        {{ achievement.player.player_card_name }}
+                      </strong>
+
+                      <span>
+                        {{ achievement.achievement_type|upper }}
+
+                        <small>
+                          for {{ achievement.for_club.club_name }}
+                        </small>
+                      </span>
+                    </div>
+
+                    <div class="fm24-event-time">
+                      {% if achievement.match_minute %} {{
+                      achievement.match_minute }} 
+                      {% else %} 
+                      {{ achievement.time }} 
+                      {% endif %}
+
+                      <small>MIN</small>
+                    </div>
+                  </div>
+
+                  {% empty %}
+
+                  <div class="fm24-empty-state">
+                    <div class="fm24-empty-icon">
+                      <i class="fas fa-satellite-dish"></i>
+                    </div>
+
+                    <h4>Awaiting first contact...</h4>
+
+                    <p>No events recorded in this match</p>
+                  </div>
+
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-xl-5">
+              <div class="fm24-roster glass-panel fm24-reveal-up">
+                <div class="fm24-panel-header">
+                  <div class="fm24-panel-title">
+                    <span class="fm24-panel-icon">
+                      <i class="fas fa-users"></i>
+                    </span>
+
+                    <div>
+                      <span>SQUAD STATUS</span>
+
+                      <h2>Active Roster</h2>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- HOME -->
+
+                <div class="fm24-roster-group">
+                  <div class="fm24-roster-team-title fm24-roster-home">
+                    <i class="fas fa-chess-king"></i>
+
+                    {{ match.match_home_team.club_name }}
+                  </div>
+
+                  <div class="row g-2">
+                    {% for player in match.home_squad.all %}
+
+                    <div class="col-6">
+                      <div class="fm24-player-card">
+                        <div class="fm24-player-image">
+                          {% if player.player_image %}
+
+                          <img
+                            src="{{ player.player_image.url }}"
+                            alt="{{ player.player_card_name }}"
+                          />
+
+                          {% else %}
+
+                          <img
+                            src="{% static 'images/default_player.png' %}"
+                            alt="{{ player.player_card_name }}"
+                          />
+
+                          {% endif %}
+
+                          <span class="fm24-player-ring fm24-ring-home"></span>
+                        </div>
+
+                        <div class="fm24-player-data">
+                          <strong> {{ player.player_card_name }} </strong>
+
+                          <span>
+                            {{ player.player_position.position_code }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {% empty %}
+
+                    <div class="col-12">
+                      <small class="text-muted">
+                        No starting players selected.
+                      </small>
+                    </div>
+
+                    {% endfor %}
+                  </div>
+                </div>
+
+                <!-- AWAY -->
+
+                <div class="fm24-roster-group">
+                  <div class="fm24-roster-team-title fm24-roster-away">
+                    <i class="fas fa-chess-knight"></i>
+
+                    {{ match.match_away_team.club_name }}
+                  </div>
+
+                  <div class="row g-2">
+                    {% for player in match.away_squad.all %}
+
+                    <div class="col-6">
+                      <div class="fm24-player-card">
+                        <div class="fm24-player-image">
+                          {% if player.player_image %}
+
+                          <img
+                            src="{{ player.player_image.url }}"
+                            alt="{{ player.player_card_name }}"
+                          />
+
+                          {% else %}
+
+                          <img
+                            src="{% static 'images/default_player.png' %}"
+                            alt="{{ player.player_card_name }}"
+                          />
+
+                          {% endif %}
+
+                          <span class="fm24-player-ring fm24-ring-away"></span>
+                        </div>
+
+                        <div class="fm24-player-data">
+                          <strong> {{ player.player_card_name }} </strong>
+
+                          <span>
+                            {{ player.player_position.position_code }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {% empty %}
+
+                    <div class="col-12">
+                      <small class="text-muted">
+                        No starting players selected.
+                      </small>
+                    </div>
+
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const fm24Observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("fm24-animated");
+
+            fm24Observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "0px 0px -40px 0px",
+      },
+    );
+
+    document
+      .querySelectorAll(
+        ".fm24-reveal-up, " +
+          ".fm24-reveal-left, " +
+          ".fm24-reveal-right, " +
+          ".fm24-reveal-scale",
+      )
+      .forEach(function (element) {
+        fm24Observer.observe(element);
+      });
+
+    const fm24HomeScore = document.getElementById("homeScore");
+
+    const fm24AwayScore = document.getElementById("awayScore");
+
+    if (fm24HomeScore && fm24AwayScore) {
+      const fm24HomeTarget = parseInt(fm24HomeScore.textContent.trim()) || 0;
+
+      const fm24AwayTarget = parseInt(fm24AwayScore.textContent.trim()) || 0;
+
+      fm24AnimateScore(fm24HomeScore, 0, fm24HomeTarget, 700);
+
+      fm24AnimateScore(fm24AwayScore, 0, fm24AwayTarget, 700);
+    }
+
+    function fm24AnimateScore(element, start, end, duration) {
+      let startTime = null;
+
+      function fm24Step(timestamp) {
+        if (!startTime) {
+          startTime = timestamp;
+        }
+
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+
+        const currentValue = Math.floor(progress * (end - start) + start);
+
+        element.textContent = currentValue;
+
+        if (progress < 1) {
+          window.requestAnimationFrame(fm24Step);
+        }
+      }
+
+      window.requestAnimationFrame(fm24Step);
+    }
+
+    const fm24TimerElement = document.getElementById("fm24MatchTimer");
+
+    const fm24ProgressElement = document.getElementById("fm24TimerProgress");
+
+    const fm24StatusElement = document.getElementById("fm24TimerStatusText");
+
+    let fm24ElapsedSeconds = Number("{{ elapsed_seconds|default:0 }}");
+
+    const fm24MatchDuration = Number("{{ match_duration|default:5400 }}");
+
+    const fm24TimerStatus = "{{ timer_status|default:'not_started' }}";
+
+    let fm24LastTick = Date.now();
+
+    function fm24FormatTime(totalSeconds) {
+      totalSeconds = Math.max(0, Math.floor(totalSeconds));
+
+      const hours = Math.floor(totalSeconds / 3600);
+
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+      const seconds = totalSeconds % 60;
+
+      return (
+        String(hours).padStart(2, "0") +
+        ":" +
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(seconds).padStart(2, "0")
+      );
+    }
+
+    function fm24UpdateTimer() {
+      const now = Date.now();
+
+      const delta = (now - fm24LastTick) / 1000;
+
+      fm24LastTick = now;
+
+      if (
+        fm24TimerStatus === "running" &&
+        fm24ElapsedSeconds < fm24MatchDuration
+      ) {
+        fm24ElapsedSeconds += delta;
+      }
+
+      fm24ElapsedSeconds = Math.min(fm24ElapsedSeconds, fm24MatchDuration);
+
+      if (fm24TimerElement) {
+        fm24TimerElement.textContent = fm24FormatTime(fm24ElapsedSeconds);
+      }
+
+      if (fm24ProgressElement) {
+        const percentage =
+          fm24MatchDuration > 0
+            ? (fm24ElapsedSeconds / fm24MatchDuration) * 100
+            : 0;
+
+        fm24ProgressElement.style.width = Math.min(percentage, 100) + "%";
+      }
+    }
+
+    fm24UpdateTimer();
+
+    if (fm24TimerStatus === "running") {
+      setInterval(fm24UpdateTimer, 250);
+    }
+
+    document.querySelectorAll(".fm24-action-btn").forEach(function (button) {
+      button.addEventListener("click", function () {
+        button.style.transform = "scale(0.96)";
+
+        setTimeout(function () {
+          button.style.transform = "";
+        }, 180);
+      });
+    });
+  });
+
+  function fm24ConfirmCancel() {
+    return confirm(
+      "Are you sure you want to cancel this match? " +
+        "This action cannot be undone.",
+    );
+  }
+</script>
+
+{% endblock %}

@@ -1,0 +1,1352 @@
+
+:root {
+--pay26-green: #00ff88;
+--pay26-green-dark: #00c96b;
+--pay26-cyan: #00eaff;
+--pay26-yellow: #ffe600;
+--pay26-bg: #050b08;
+--pay26-bg-secondary: #091711;
+--pay26-card: rgba(8, 30, 19, 0.68);
+--pay26-border: rgba(0, 255, 136, 0.22);
+--pay26-border-light: rgba(255, 255, 255, 0.08);
+--pay26-text: #edfff4;
+--pay26-text-secondary: #a2c8b0;
+--pay26-text-muted: #62836f;
+}
+
+.pay26-page {
+min-height: 100vh;
+position: relative;
+overflow: hidden;
+
+background:
+radial-gradient(
+circle at 15% 20%,
+rgba(0, 255, 136, 0.1),
+transparent 30%
+),
+radial-gradient(
+circle at 85% 75%,
+rgba(0, 234, 255, 0.08),
+transparent 30%
+),
+linear-gradient(
+135deg,
+var(--pay26-bg),
+var(--pay26-bg-secondary)
+);
+
+color: var(--pay26-text);
+
+font-family:
+"Segoe UI",
+system-ui,
+-apple-system,
+sans-serif;
+
+isolation: isolate;
+}
+
+.pay26-bg-grid {
+position: absolute;
+inset: 0;
+z-index: -5;
+
+opacity: 0.28;
+
+background-image:
+linear-gradient(
+rgba(0, 255, 136, 0.045) 1px,
+transparent 1px
+),
+linear-gradient(
+90deg,
+rgba(0, 255, 136, 0.045) 1px,
+transparent 1px
+);
+
+background-size: 55px 55px;
+
+transform:
+perspective(500px)
+rotateX(55deg)
+scale(1.5);
+
+transform-origin: center bottom;
+
+animation: pay26-gridMove 12s linear infinite;
+}
+
+.pay26-scan-line {
+position: fixed;
+top: -5px;
+left: 0;
+
+width: 100%;
+height: 2px;
+
+z-index: 100;
+
+pointer-events: none;
+
+background:
+linear-gradient(
+90deg,
+transparent,
+var(--pay26-green),
+transparent
+);
+
+opacity: 0.5;
+
+box-shadow:
+0 0 15px
+var(--pay26-green);
+
+animation: pay26-scan 6s linear infinite;
+}
+
+.pay26-glow {
+position: absolute;
+
+border-radius: 50%;
+
+pointer-events: none;
+
+filter: blur(2px);
+
+z-index: -3;
+}
+
+
+.pay26-glow-one {
+width: 280px;
+height: 280px;
+
+top: 10%;
+left: -120px;
+
+background:
+rgba(0, 255, 136, 0.08);
+
+box-shadow:
+0 0 100px
+rgba(0, 255, 136, 0.15);
+
+animation:
+pay26-glowFloat
+8s ease-in-out infinite;
+}
+
+
+.pay26-glow-two {
+width: 350px;
+height: 350px;
+
+top: 40%;
+right: -160px;
+
+background:
+rgba(0, 234, 255, 0.06);
+
+box-shadow:
+0 0 120px
+rgba(0, 234, 255, 0.1);
+
+animation:
+pay26-glowFloat
+10s ease-in-out
+infinite reverse;
+}
+
+
+.pay26-glow-three {
+width: 200px;
+height: 200px;
+
+bottom: -80px;
+left: 45%;
+
+background:
+rgba(0, 255, 136, 0.05);
+
+box-shadow:
+0 0 100px
+rgba(0, 255, 136, 0.12);
+}
+
+.pay26-ball {
+position: fixed;
+
+z-index: -1;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+color:
+rgba(0, 255, 136, 0.25);
+
+pointer-events: none;
+
+font-size: 1.4rem;
+
+filter:
+drop-shadow(
+0 0 12px
+rgba(0, 255, 136, 0.45)
+);
+}
+
+
+.pay26-ball-one {
+top: 17%;
+left: 7%;
+
+animation:
+pay26-ballFloat
+7s ease-in-out infinite;
+}
+
+
+.pay26-ball-two {
+top: 65%;
+right: 8%;
+
+font-size: 1rem;
+
+animation:
+pay26-ballFloat
+9s ease-in-out
+1s infinite reverse;
+}
+
+
+.pay26-ball-three {
+bottom: 12%;
+left: 20%;
+
+font-size: 0.8rem;
+
+animation:
+pay26-ballFloat
+6s ease-in-out
+2s infinite;
+}
+
+.pay26-content {
+position: relative;
+z-index: 2;
+}
+
+.pay26-header {
+animation:
+pay26-headerIn
+0.8s ease-out both;
+}
+
+
+.pay26-badge {
+display: inline-flex;
+
+align-items: center;
+gap: 0.55rem;
+
+padding:
+0.55rem
+1rem;
+
+border:
+1px solid
+var(--pay26-border);
+
+border-radius: 999px;
+
+background:
+rgba(0, 255, 136, 0.08);
+
+color:
+var(--pay26-green);
+
+font-size: 0.75rem;
+font-weight: 700;
+
+letter-spacing: 0.12em;
+
+text-transform: uppercase;
+
+backdrop-filter: blur(15px);
+
+box-shadow:
+0 0 25px
+rgba(0, 255, 136, 0.08);
+}
+
+
+.pay26-badge i {
+filter:
+drop-shadow(
+0 0 6px
+var(--pay26-green)
+);
+}
+
+
+.pay26-title {
+margin: 0;
+
+font-size:
+clamp(
+2.2rem,
+6vw,
+4rem
+);
+
+font-weight: 900;
+
+line-height: 1.05;
+
+letter-spacing: -0.04em;
+
+color:
+var(--pay26-text);
+
+text-shadow:
+0 0 30px
+rgba(0, 255, 136, 0.16);
+}
+
+
+.pay26-subtitle {
+max-width: 620px;
+
+margin-top: 0.8rem;
+margin-right: auto;
+margin-left: auto;
+
+color:
+var(--pay26-text-secondary);
+
+font-size:
+clamp(
+0.9rem,
+2vw,
+1.05rem
+);
+}
+
+
+.pay26-title-line {
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+gap: 0.7rem;
+
+margin-top: 1.25rem;
+}
+
+
+.pay26-title-line span {
+width:
+clamp(
+40px,
+10vw,
+90px
+);
+
+height: 1px;
+
+background:
+linear-gradient(
+90deg,
+transparent,
+var(--pay26-green)
+);
+
+box-shadow:
+0 0 8px
+rgba(0, 255, 136, 0.35);
+}
+
+
+.pay26-title-line span:last-child {
+background:
+linear-gradient(
+90deg,
+var(--pay26-green),
+transparent
+);
+}
+
+
+.pay26-title-line i {
+color:
+var(--pay26-green);
+
+font-size: 0.9rem;
+
+filter:
+drop-shadow(
+0 0 8px
+var(--pay26-green)
+);
+
+animation:
+pay26-spin
+5s linear infinite;
+}
+
+.pay26-card {
+position: relative;
+
+overflow: hidden;
+
+padding:
+clamp(
+1.25rem,
+3vw,
+2rem
+);
+
+border:
+1px solid
+var(--pay26-border);
+
+border-radius: 24px;
+
+background:
+linear-gradient(
+145deg,
+rgba(14, 49, 31, 0.72),
+rgba(5, 19, 12, 0.7)
+);
+
+backdrop-filter: blur(22px);
+
+-webkit-backdrop-filter: blur(22px);
+
+box-shadow:
+0 20px 60px
+rgba(0, 0, 0, 0.35),
+inset 0 1px 0
+rgba(255, 255, 255, 0.06);
+
+animation:
+pay26-cardIn
+0.8s ease-out both;
+
+transition:
+transform 0.35s ease,
+border-color 0.35s ease,
+box-shadow 0.35s ease;
+}
+
+
+.pay26-card::before {
+content: "";
+
+position: absolute;
+
+top: -100px;
+right: -70px;
+
+width: 180px;
+height: 180px;
+
+border-radius: 50%;
+
+background:
+rgba(0, 255, 136, 0.08);
+
+filter: blur(10px);
+
+pointer-events: none;
+}
+
+
+.pay26-card::after {
+content: "";
+
+position: absolute;
+
+top: 0;
+left: -100%;
+
+width: 60%;
+height: 1px;
+
+background:
+linear-gradient(
+90deg,
+transparent,
+var(--pay26-green),
+transparent
+);
+
+opacity: 0.7;
+
+animation:
+pay26-cardShine
+6s linear infinite;
+
+pointer-events: none;
+}
+
+
+.pay26-card:hover {
+transform:
+translateY(-5px);
+
+border-color:
+rgba(0, 255, 136, 0.4);
+
+box-shadow:
+0 25px 70px
+rgba(0, 0, 0, 0.42),
+0 0 35px
+rgba(0, 255, 136, 0.08);
+}
+
+.pay26-card-top {
+display: flex;
+
+align-items: center;
+
+gap: 1rem;
+
+position: relative;
+
+z-index: 2;
+}
+
+
+.pay26-card-icon {
+flex-shrink: 0;
+
+width: 52px;
+height: 52px;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+border-radius: 15px;
+
+background:
+linear-gradient(
+135deg,
+rgba(0, 255, 136, 0.18),
+rgba(0, 255, 136, 0.04)
+);
+
+border:
+1px solid
+rgba(0, 255, 136, 0.25);
+
+color:
+var(--pay26-green);
+
+font-size: 1.25rem;
+
+box-shadow:
+0 0 20px
+rgba(0, 255, 136, 0.08);
+}
+
+
+.pay26-payment-icon {
+color:
+var(--pay26-cyan);
+
+background:
+linear-gradient(
+135deg,
+rgba(0, 234, 255, 0.16),
+rgba(0, 234, 255, 0.03)
+);
+
+border-color:
+rgba(0, 234, 255, 0.25);
+}
+
+
+.pay26-card-label {
+display: block;
+
+margin-bottom: 0.2rem;
+
+color:
+var(--pay26-text-muted);
+
+font-size: 0.7rem;
+
+font-weight: 700;
+
+letter-spacing: 0.12em;
+
+text-transform: uppercase;
+}
+
+
+.pay26-card-title {
+margin: 0;
+
+color:
+var(--pay26-text);
+
+font-size:
+clamp(
+1.15rem,
+3vw,
+1.4rem
+);
+
+font-weight: 800;
+}
+
+
+.pay26-divider {
+width: 100%;
+height: 1px;
+
+margin: 1.4rem 0;
+
+background:
+linear-gradient(
+90deg,
+rgba(0, 255, 136, 0.2),
+rgba(0, 255, 136, 0.04),
+transparent
+);
+}
+
+.pay26-info-row {
+display: flex;
+
+align-items: center;
+justify-content: space-between;
+
+gap: 1rem;
+
+padding: 0.9rem 0;
+
+border-bottom:
+1px solid
+rgba(0, 255, 136, 0.07);
+}
+
+
+.pay26-info-row:last-of-type {
+border-bottom: none;
+}
+
+
+.pay26-info-left {
+display: flex;
+
+align-items: center;
+
+gap: 0.75rem;
+
+min-width: 0;
+}
+
+
+.pay26-info-icon {
+flex-shrink: 0;
+
+width: 38px;
+height: 38px;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+border-radius: 11px;
+
+background:
+rgba(0, 255, 136, 0.06);
+
+color:
+var(--pay26-green);
+
+font-size: 0.85rem;
+}
+
+
+.pay26-info-label {
+display: block;
+
+color:
+var(--pay26-text-secondary);
+
+font-size: 0.78rem;
+
+font-weight: 600;
+}
+
+
+.pay26-info-small {
+display: block;
+
+margin-top: 0.1rem;
+
+color:
+var(--pay26-text-muted);
+
+font-size: 0.65rem;
+}
+
+
+.pay26-info-value {
+max-width: 55%;
+
+overflow-wrap: anywhere;
+
+text-align: right;
+
+color:
+var(--pay26-text);
+
+font-size: 0.9rem;
+
+font-weight: 700;
+}
+
+.pay26-total-box {
+display: flex;
+
+align-items: center;
+justify-content: space-between;
+
+gap: 1rem;
+
+margin-top: 1.25rem;
+
+padding: 1rem;
+
+border:
+1px solid
+rgba(0, 255, 136, 0.2);
+
+border-radius: 16px;
+
+background:
+linear-gradient(
+135deg,
+rgba(0, 255, 136, 0.1),
+rgba(0, 255, 136, 0.025)
+);
+
+box-shadow:
+inset 0 1px 0
+rgba(255, 255, 255, 0.03);
+}
+
+
+.pay26-total-content {
+display: flex;
+
+align-items: center;
+
+gap: 0.7rem;
+}
+
+
+.pay26-total-icon {
+width: 40px;
+height: 40px;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+border-radius: 12px;
+
+background:
+rgba(0, 255, 136, 0.14);
+
+color:
+var(--pay26-green);
+}
+
+
+.pay26-total-label {
+display: block;
+
+color:
+var(--pay26-text-secondary);
+
+font-size: 0.75rem;
+
+font-weight: 700;
+}
+
+
+.pay26-total-note {
+display: block;
+
+margin-top: 0.1rem;
+
+color:
+var(--pay26-text-muted);
+
+font-size: 0.62rem;
+}
+
+
+.pay26-total-price {
+color:
+var(--pay26-green);
+
+font-size:
+clamp(
+1.25rem,
+4vw,
+1.7rem
+);
+
+font-weight: 900;
+
+text-shadow:
+0 0 18px
+rgba(0, 255, 136, 0.35);
+
+white-space: nowrap;
+}
+
+.pay26-payment-content {
+position: relative;
+
+z-index: 2;
+
+text-align: center;
+}
+
+
+.pay26-payment-ball {
+width: 75px;
+height: 75px;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+margin:
+0 auto 1rem;
+
+border-radius: 50%;
+
+background:
+radial-gradient(
+circle,
+rgba(0, 255, 136, 0.15),
+rgba(0, 255, 136, 0.02)
+);
+
+border:
+1px solid
+rgba(0, 255, 136, 0.22);
+
+color:
+var(--pay26-green);
+
+font-size: 1.8rem;
+
+box-shadow:
+0 0 0 8px
+rgba(0, 255, 136, 0.025),
+0 0 40px
+rgba(0, 255, 136, 0.13);
+
+animation:
+pay26-ballPulse
+3s ease-in-out infinite;
+}
+
+
+.pay26-payment-heading {
+margin:
+0 0 0.45rem;
+
+color:
+var(--pay26-text);
+
+font-size: 1.3rem;
+
+font-weight: 800;
+}
+
+
+.pay26-payment-text {
+max-width: 380px;
+
+margin:
+0 auto 1.5rem;
+
+color:
+var(--pay26-text-secondary);
+
+font-size: 0.85rem;
+
+line-height: 1.6;
+}
+
+.pay26-pay-button {
+position: relative;
+
+width: 100%;
+min-height: 58px;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+gap: 0.75rem;
+
+overflow: hidden;
+
+padding:
+0.9rem
+1.1rem;
+
+border: none;
+
+border-radius: 15px;
+
+background:
+linear-gradient(
+135deg,
+var(--pay26-green),
+var(--pay26-green-dark)
+);
+
+color: #001b0d;
+
+font-size: 0.95rem;
+
+font-weight: 900;
+
+letter-spacing: 0.02em;
+
+text-transform: uppercase;
+
+cursor: pointer;
+
+box-shadow:
+0 8px 28px
+rgba(0, 255, 136, 0.22);
+
+transition:
+transform 0.25s ease,
+box-shadow 0.25s ease;
+}
+
+
+.pay26-pay-button::before {
+content: "";
+
+position: absolute;
+
+top: 0;
+left: -120%;
+
+width: 70%;
+height: 100%;
+
+transform: skewX(-25deg);
+
+background:
+linear-gradient(
+90deg,
+transparent,
+rgba(255, 255, 255, 0.35),
+transparent
+);
+
+transition:
+left 0.55s ease;
+}
+
+
+.pay26-pay-button:hover::before {
+left: 140%;
+}
+
+
+.pay26-pay-button:hover {
+transform:
+translateY(-2px);
+
+box-shadow:
+0 12px 38px
+rgba(0, 255, 136, 0.38);
+}
+
+
+.pay26-pay-button:active {
+transform:
+translateY(1px)
+scale(0.99);
+}
+
+
+.pay26-pay-button.pay26-opening {
+transform:
+scale(0.98);
+
+opacity: 0.75;
+}
+
+
+.pay26-pay-icon {
+width: 30px;
+height: 30px;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+border-radius: 9px;
+
+background:
+rgba(0, 30, 15, 0.12);
+}
+
+
+.pay26-pay-arrow {
+margin-left: auto;
+
+transition:
+transform 0.25s ease;
+}
+
+
+.pay26-pay-button:hover
+.pay26-pay-arrow {
+transform:
+translateX(4px);
+}
+
+.pay26-security {
+display: flex;
+
+align-items: center;
+
+gap: 0.7rem;
+
+margin-top: 1.25rem;
+
+padding: 0.85rem;
+
+text-align: left;
+
+border:
+1px solid
+rgba(0, 255, 136, 0.08);
+
+border-radius: 14px;
+
+background:
+rgba(0, 0, 0, 0.12);
+}
+
+
+.pay26-security-icon {
+flex-shrink: 0;
+
+width: 35px;
+height: 35px;
+
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+border-radius: 10px;
+
+background:
+rgba(0, 255, 136, 0.08);
+
+color:
+var(--pay26-green);
+}
+
+
+.pay26-security strong {
+display: block;
+
+color:
+var(--pay26-text-secondary);
+
+font-size: 0.72rem;
+}
+
+
+.pay26-security span {
+display: block;
+
+margin-top: 0.1rem;
+
+color:
+var(--pay26-text-muted);
+
+font-size: 0.62rem;
+}
+
+
+.pay26-security-check {
+margin-left: auto;
+
+color:
+var(--pay26-green);
+
+font-size: 0.9rem;
+}
+
+.pay26-trust-bar {
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+gap: 1rem;
+
+padding:
+0.9rem
+1rem;
+
+border:
+1px solid
+rgba(0, 255, 136, 0.1);
+
+border-radius: 16px;
+
+background:
+rgba(8, 30, 19, 0.45);
+
+backdrop-filter: blur(15px);
+}
+
+
+.pay26-trust-item {
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+gap: 0.4rem;
+
+color:
+var(--pay26-text-muted);
+
+font-size: 0.68rem;
+
+font-weight: 600;
+
+text-align: center;
+}
+
+
+.pay26-trust-item i {
+color:
+var(--pay26-green);
+}
+
+
+.pay26-trust-separator {
+width: 1px;
+height: 20px;
+
+background:
+rgba(0, 255, 136, 0.12);
+}
+
+@keyframes pay26-headerIn {
+from {
+opacity: 0;
+transform: translateY(-25px);
+}
+
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+
+@keyframes pay26-cardIn {
+from {
+opacity: 0;
+transform: translateY(35px);
+}
+
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+
+@keyframes pay26-gridMove {
+from {
+background-position: 0 0;
+}
+
+to {
+background-position: 0 55px;
+}
+}
+
+
+@keyframes pay26-scan {
+from {
+transform: translateY(-10px);
+}
+
+to {
+transform: translateY(100vh);
+}
+}
+
+
+@keyframes pay26-glowFloat {
+0%,
+100% {
+transform: translate(0, 0);
+}
+
+50% {
+transform: translate(25px, -30px);
+}
+}
+
+
+@keyframes pay26-ballFloat {
+0%,
+100% {
+transform:
+translate(0, 0)
+rotate(0deg);
+}
+
+25% {
+transform:
+translate(18px, -25px)
+rotate(90deg);
+}
+
+50% {
+transform:
+translate(-12px, -45px)
+rotate(180deg);
+}
+
+75% {
+transform:
+translate(25px, -20px)
+rotate(270deg);
+}
+}
+
+
+@keyframes pay26-ballPulse {
+0%,
+100% {
+transform:
+scale(1)
+rotate(0deg);
+}
+
+50% {
+transform:
+scale(1.05)
+rotate(8deg);
+}
+}
+
+
+@keyframes pay26-spin {
+from {
+transform: rotate(0deg);
+}
+
+to {
+transform: rotate(360deg);
+}
+}
+
+
+@keyframes pay26-cardShine {
+0% {
+left: -100%;
+}
+
+25%,
+100% {
+left: 150%;
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+.pay26-bg-grid,
+.pay26-scan-line,
+.pay26-glow,
+.pay26-ball,
+.pay26-payment-ball,
+.pay26-title-line i,
+.pay26-card::after {
+animation: none;
+}
+}
+
+
+@media (max-width: 575.98px) {
+.pay26-card {
+border-radius: 20px;
+}
+
+.pay26-card-icon {
+width: 46px;
+height: 46px;
+}
+
+.pay26-info-row {
+align-items: flex-start;
+}
+
+.pay26-info-value {
+max-width: 48%;
+font-size: 0.82rem;
+}
+
+.pay26-total-box {
+align-items: flex-start;
+}
+
+.pay26-trust-bar {
+flex-wrap: wrap;
+gap: 0.7rem;
+}
+
+.pay26-trust-separator {
+display: none;
+}
+
+.pay26-trust-item {
+flex: 1 1 30%;
+min-width: 85px;
+}
+
+.pay26-ball {
+display: none;
+}
+}  

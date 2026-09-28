@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Football Arena Admin{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+    <link rel="stylesheet" href="{% static 'admin_panel/css/admin_style.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_panel/css/admin_tournament.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_panel/css/admin_tournament_match.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_panel/css/admin_style_operations.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_panel/css/admin_style_times.css' %}">
+</head>
+<body>
+
+    <!-- Stadium Atmosphere -->
+    <div class="stadium-atmosphere"></div>
+    <div class="pitch-stripes"></div>
+    <div class="floodlights"></div>
+    <div class="match-particles"></div>
+    <div class="broadcast-scanlines"></div>
+
+    <!-- Mobile Overlay -->
+    <div class="pitch-overlay-mobile" id="pitchOverlay"></div>
+
+    <!-- Whistle Toggle (Mobile) -->
+    <button class="whistle-toggle-btn d-lg-none" id="whistleToggle" aria-label="Toggle dugout">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Dugout Sidebar -->
+    <aside class="dugout-sidebar" id="dugout">
+        <div class="club-crest">
+            <div class="crest-emblem">⚽</div>
+            <div class="crest-club-name">UNFA</div>
+            <div class="crest-tagline">Football Arena Admin</div>
+        </div>
+
+        <nav class="playbook-nav">
+            <div class="formation-group">
+                <div class="formation-title">Dashboard</div>
+                <a href="{% url 'admin_home' %}" class="tactic-link {% if request.resolver_match.url_name == 'admin_home' %}active{% endif %}">
+                    <span class="tactic-icon"><i class="bi bi-house-door"></i></span>
+                    <span class="tactic-label">Home</span>
+                </a>
+            </div>
+
+            <div class="formation-group">
+                <div class="formation-title">Management</div>
+                <a href="{% url 'admin_view_normal_users' %}" class="tactic-link {% if request.resolver_match.url_name == 'admin_view_normal_users' %}active{% endif %}">
+                    <span class="tactic-icon"><i class="bi bi-people"></i></span>
+                    <span class="tactic-label">Users</span>
+                </a>
+                <a href="{% url 'admin_view_players' %}" class="tactic-link {% if request.resolver_match.url_name == 'admin_view_players' %}active{% endif %}">
+                    <span class="tactic-icon"><i class="bi bi-person"></i></span>
+                    <span class="tactic-label">Players</span>
+                </a>
+                <a href="{% url 'admin_view_clubs' %}" class="tactic-link {% if request.resolver_match.url_name == 'admin_view_clubs' %}active{% endif %}">
+                    <span class="tactic-icon"><i class="bi bi-building"></i></span>
+                    <span class="tactic-label">Clubs</span>
+                </a>
+                <a href="{% url 'admin_view_turfs' %}" class="tactic-link {% if request.resolver_match.url_name == 'admin_view_turfs' %}active{% endif %}">
+                    <span class="tactic-icon"><i class="bi bi-grid-3x3"></i></span>
+                    <span class="tactic-label">Turfs</span>
+                </a>
+                <a href="{% url 'admin_view_matches' %}" class="tactic-link {% if request.resolver_match.url_name == 'admin_view_matches' %}active{% endif %}">
+                    <span class="tactic-icon"><i class="bi bi-lightning"></i></span>
+                    <span class="tactic-label">Matches</span>
+                </a>
+                <a href="{% url 'admin_view_tournaments' %}" class="tactic-link {% if request.resolver_match.url_name == 'admin_view_tournaments' %}active{% endif %}">
+                    <span class="tactic-icon"><i class="bi bi-trophy"></i></span>
+                    <span class="tactic-label">Tournaments</span>
+                </a>
+            </div>
+
+            <div class="formation-group">
+                <div class="formation-title">Operations</div>
+                <a href="{% url 'admin_view_bookings' %}" class="tactic-link {% if request.resolver_match.url_name == 'admin_view_bookings' %}active{% endif %}">
+                    <span class="tactic-icon"><i class="bi bi-calendar-check"></i></span>
+                    <span class="tactic-label">Bookings</span>
+                </a>
+                <a href="{% url 'admin_view_payments' %}" class="tactic-link {% if request.resolver_match.url_name == 'admin_view_payments' %}active{% endif %}">
+                    <span class="tactic-icon"><i class="bi bi-cash-stack"></i></span>
+                    <span class="tactic-label">Payments</span>
+                </a>
+                <a href="{% url 'admin_view_notifications' %}" class="tactic-link {% if request.resolver_match.url_name == 'admin_view_notifications' %}active{% endif %}">
+                    <span class="tactic-icon"><i class="bi bi-bell"></i></span>
+                    <span class="tactic-label">Notifications</span>
+                    {% if unread_notifications > 0 %}
+                    <span class="tactic-badge">{{ unread_notifications }}</span>
+                    {% endif %}
+                </a>
+            </div>
+
+            <div class="formation-group">
+                <div class="formation-title">System</div>
+                <a href="{% url 'admin_view_time_schedules' %}" class="tactic-link {% if request.resolver_match.url_name == 'admin_view_time_schedules' %}active{% endif %}">
+                    <span class="tactic-icon"><i class="bi bi-clock"></i></span>
+                    <span class="tactic-label">Time Schedules</span>
+                </a>
+                <a href="{% url 'admin_view_turf_time_maps' %}" class="tactic-link {% if request.resolver_match.url_name == 'admin_view_turf_time_maps' %}active{% endif %}">
+                    <span class="tactic-icon"><i class="bi bi-map"></i></span>
+                    <span class="tactic-label">Turf Time Maps</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="team-bench">
+            <div class="captain-profile">
+                <div class="captain-jersey">{{ request.user.username|first|upper }}</div>
+                <div>
+                    <div class="captain-name">{{ request.user.username }}</div>
+                    <div class="captain-role">Super Admin</div>
+                </div>
+            </div>
+            <a href="{% url 'admin_logout' %}" class="substitution-btn">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Pitch Content -->
+    <main class="main-pitch" id="pitchContent">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Match Alerts (Django Messages) -->
+    {% if messages %}
+    <div class="match-alerts" id="matchAlerts">
+        {% for message in messages %}
+        <div class="match-alert">
+            <div class="alert-flag {% if message.tags == 'success' %}green{% elif message.tags == 'warning' %}yellow{% else %}red{% endif %}">
+                {% if message.tags == 'success' %}<i class="bi bi-check-lg"></i>{% elif message.tags == 'warning' %}<i class="bi bi-exclamation-triangle"></i>{% else %}<i class="bi bi-x-lg"></i>{% endif %}
+            </div>
+            <div class="alert-message">{{ message }}</div>
+            <button class="alert-close">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Whistle Toggle (Mobile Sidebar)
+        const whistle = document.getElementById('whistleToggle');
+        const dugout = document.getElementById('dugout');
+        const overlay = document.getElementById('pitchOverlay');
+
+        function toggleDugout() {
+            const isOpen = dugout.classList.toggle('open');
+            whistle.classList.toggle('active', isOpen);
+            overlay.classList.toggle('active', isOpen);
+            whistle.innerHTML = isOpen ? '<i class="bi bi-x-lg"></i>' : '<i class="bi bi-list"></i>';
+        }
+
+        whistle?.addEventListener('click', toggleDugout);
+        overlay?.addEventListener('click', toggleDugout);
+
+        // Close sidebar when clicking a link (mobile)
+        document.querySelectorAll('.tactic-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 992) toggleDugout();
+            });
+        });
+
+        // Alert dismiss
+        document.querySelectorAll('.alert-close').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.match-alert').style.animation = 'alertSlide 0.4s ease reverse';
+                setTimeout(() => this.closest('.match-alert').remove(), 400);
+            });
+        });
+
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(() => {
+            document.querySelectorAll('.match-alert').forEach((alert, index) => {
+                setTimeout(() => {
+                    alert.style.animation = 'alertSlide 0.4s ease reverse';
+                    setTimeout(() => alert.remove(), 400);
+                }, index * 500);
+            });
+        }, 5000);
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 992) {
+                dugout.classList.remove('open');
+                whistle.classList.remove('active');
+                overlay.classList.remove('active');
+                whistle.innerHTML = '<i class="bi bi-list"></i>';
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,984 @@
+{% extends 'user/user_head.html' %} 
+{% load static %} 
+{% block content %}
+
+<div class="pc24-page">
+
+  <div class="pc24-ball pc24-ball-one"></div>
+  <div class="pc24-ball pc24-ball-two"></div>
+  <div class="pc24-ball pc24-ball-three"></div>
+
+  <div class="container pc24-container">
+
+    <header class="pc24-header">
+      <div class="pc24-kicker">
+        <i class="fas fa-futbol"></i>
+
+        <span>Player Career Mode</span>
+      </div>
+
+      <h1 class="pc24-title">
+        {% if player_card %} UPDATE PLAYER {% else %} CREATE PLAYER {% endif %}
+      </h1>
+
+      <p class="pc24-subtitle">
+        Build your football identity, customize your player profile and preview
+        your card in real time.
+      </p>
+    </header>
+
+    <div class="row g-4 align-items-start">
+
+      <div class="col-12 col-xl-7">
+        <section class="pc24-glass-panel pc24-form-panel">
+          <!-- Section Heading -->
+
+          <div class="pc24-section-heading">
+            <div class="pc24-heading-icon">
+              <i class="fas fa-sliders-h"></i>
+            </div>
+
+            <div class="pc24-heading-content">
+              <h2>Player Attributes</h2>
+
+              <span> Configure your football profile </span>
+            </div>
+          </div>
+
+          <!-- Player Form -->
+
+          <form
+            method="POST"
+            action="{% url 'register_player_card' %}"
+            enctype="multipart/form-data"
+          >
+            {% csrf_token %}
+
+            <div class="row g-3">
+              <!-- Display Name -->
+
+              <div class="col-12">
+                <div class="pc24-field">
+                  <label for="nameDropdown" class="pc24-label">
+                    <i class="fas fa-signature"></i>
+                    Display Name
+                  </label>
+
+                  {% if suggestions %}
+
+                  <select
+                    name="card_name"
+                    id="nameDropdown"
+                    class="form-select pc24-control"
+                  >
+                    <option value="">-- Select Display Name --</option>
+
+                    {% for name in suggestions %}
+
+                    <option
+                      value="{{ name }}"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_card_name=""
+                      ="name"
+                      %}
+                      selected
+                      {%
+                      endif
+                      %}
+                    >
+                      {{ name }}
+                    </option>
+
+                    {% endfor %}
+                  </select>
+
+                  {% else %}
+
+                  <input
+                    type="text"
+                    class="form-control pc24-control"
+                    value="{{ user.user_name }}"
+                    readonly
+                  />
+
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Age -->
+
+              <div class="col-12 col-md-6">
+                <div class="pc24-field">
+                  <label for="ageInput" class="pc24-label">
+                    <i class="fas fa-birthday-cake"></i>
+                    Age
+                  </label>
+
+                  <input
+                    type="number"
+                    name="user_age"
+                    id="ageInput"
+                    class="form-control pc24-control"
+                    value="{{ user.user_age }}"
+                    required
+                    min="16"
+                    max="60"
+                  />
+                </div>
+              </div>
+
+              <!-- Position -->
+
+              <div class="col-12 col-md-6">
+                <div class="pc24-field">
+                  <label for="positionSelect" class="pc24-label">
+                    <i class="fas fa-running"></i>
+                    Position
+                  </label>
+
+                  <select
+                    name="player_position"
+                    id="positionSelect"
+                    class="form-select pc24-control"
+                    required
+                  >
+                    <option value="">Select Position</option>
+
+                    {% for position in positions %}
+
+                    <option
+                      value="{{ position.position_id }}"
+                      data-code="{{ position.position_code }}"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_position.position_id=""
+                      ="position.position_id"
+                      %}
+                      selected
+                      {%
+                      endif
+                      %}
+                    >
+                      {{ position.position_name }}
+                    </option>
+
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <!-- Strong Foot -->
+
+              <div class="col-12 col-md-6">
+                <div class="pc24-field">
+                  <label for="footSelect" class="pc24-label">
+                    <i class="fas fa-shoe-prints"></i>
+                    Strong Foot
+                  </label>
+
+                  <select
+                    name="player_foot"
+                    id="footSelect"
+                    class="form-select pc24-control"
+                    required
+                  >
+                    <option value="">Select Foot</option>
+
+                    <option
+                      value="Left"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_strong_foot=""
+                      ="Left"
+                      %}
+                      selected
+                      {%
+                      endif
+                      %}
+                    >
+                      Left
+                    </option>
+
+                    <option
+                      value="Right"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_strong_foot=""
+                      ="Right"
+                      %}
+                      selected
+                      {%
+                      endif
+                      %}
+                    >
+                      Right
+                    </option>
+
+                    <option
+                      value="Both"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_strong_foot=""
+                      ="Both"
+                      %}
+                      selected
+                      {%
+                      endif
+                      %}
+                    >
+                      Both
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Height -->
+
+              <div class="col-12 col-md-6">
+                <div class="pc24-field">
+                  <label for="heightInput" class="pc24-label">
+                    <i class="fas fa-ruler-vertical"></i>
+                    Height (cm)
+                  </label>
+
+                  <input
+                    type="number"
+                    name="player_height"
+                    id="heightInput"
+                    class="form-control pc24-control"
+                    value="{{ player_card.player_height|default:'' }}"
+                    required
+                    min="140"
+                    max="220"
+                  />
+                </div>
+              </div>
+
+              <!-- Weight -->
+
+              <div class="col-12 col-md-6">
+                <div class="pc24-field">
+                  <label for="weightInput" class="pc24-label">
+                    <i class="fas fa-weight"></i>
+                    Weight (kg)
+                  </label>
+
+                  <input
+                    type="number"
+                    name="player_weight"
+                    id="weightInput"
+                    class="form-control pc24-control"
+                    value="{{ player_card.player_weight|default:'' }}"
+                    required
+                    min="40"
+                    max="150"
+                  />
+                </div>
+              </div>
+
+              <!-- District -->
+
+              <div class="col-12 col-md-6">
+                <div class="pc24-field">
+                  <label for="districtSelect" class="pc24-label">
+                    <i class="fas fa-map-marked-alt"></i>
+                    District
+                  </label>
+
+                  <select
+                    name="player_district"
+                    id="districtSelect"
+                    class="form-select pc24-control"
+                    required
+                  >
+                    <option value="">Select District</option>
+
+                    <option
+                      value="Thiruvananthapuram"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_district=""
+                      ="Thiruvananthapuram"
+                      %}selected{%
+                      endif
+                      %}
+                    >
+                      Thiruvananthapuram
+                    </option>
+
+                    <option
+                      value="Kollam"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_district=""
+                      ="Kollam"
+                      %}selected{%
+                      endif
+                      %}
+                    >
+                      Kollam
+                    </option>
+
+                    <option
+                      value="Pathanamthitta"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_district=""
+                      ="Pathanamthitta"
+                      %}selected{%
+                      endif
+                      %}
+                    >
+                      Pathanamthitta
+                    </option>
+
+                    <option
+                      value="Alappuzha"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_district=""
+                      ="Alappuzha"
+                      %}selected{%
+                      endif
+                      %}
+                    >
+                      Alappuzha
+                    </option>
+
+                    <option
+                      value="Kottayam"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_district=""
+                      ="Kottayam"
+                      %}selected{%
+                      endif
+                      %}
+                    >
+                      Kottayam
+                    </option>
+
+                    <option
+                      value="Idukki"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_district=""
+                      ="Idukki"
+                      %}selected{%
+                      endif
+                      %}
+                    >
+                      Idukki
+                    </option>
+
+                    <option
+                      value="Ernakulam"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_district=""
+                      ="Ernakulam"
+                      %}selected{%
+                      endif
+                      %}
+                    >
+                      Ernakulam
+                    </option>
+
+                    <option
+                      value="Thrissur"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_district=""
+                      ="Thrissur"
+                      %}selected{%
+                      endif
+                      %}
+                    >
+                      Thrissur
+                    </option>
+
+                    <option
+                      value="Palakkad"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_district=""
+                      ="Palakkad"
+                      %}selected{%
+                      endif
+                      %}
+                    >
+                      Palakkad
+                    </option>
+
+                    <option
+                      value="Malappuram"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_district=""
+                      ="Malappuram"
+                      %}selected{%
+                      endif
+                      %}
+                    >
+                      Malappuram
+                    </option>
+
+                    <option
+                      value="Kozhikode"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_district=""
+                      ="Kozhikode"
+                      %}selected{%
+                      endif
+                      %}
+                    >
+                      Kozhikode
+                    </option>
+
+                    <option
+                      value="Wayanad"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_district=""
+                      ="Wayanad"
+                      %}selected{%
+                      endif
+                      %}
+                    >
+                      Wayanad
+                    </option>
+
+                    <option
+                      value="Kannur"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_district=""
+                      ="Kannur"
+                      %}selected{%
+                      endif
+                      %}
+                    >
+                      Kannur
+                    </option>
+
+                    <option
+                      value="Kasaragod"
+                      {%
+                      if
+                      player_card
+                      and
+                      player_card.player_district=""
+                      ="Kasaragod"
+                      %}selected{%
+                      endif
+                      %}
+                    >
+                      Kasaragod
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Location -->
+
+              <div class="col-12 col-md-6">
+                <div class="pc24-field">
+                  <label for="locationInput" class="pc24-label">
+                    <i class="fas fa-city"></i>
+                    Location
+                  </label>
+
+                  <input
+                    type="text"
+                    name="player_location"
+                    id="locationInput"
+                    class="form-control pc24-control"
+                    value="{{ player_card.player_location|default:'' }}"
+                    required
+                    placeholder="Your city/town"
+                  />
+                </div>
+              </div>
+
+              <!-- Image -->
+
+              <div class="col-12">
+                <div class="pc24-field">
+                  <label for="imageInput" class="pc24-label">
+                    <i class="fas fa-camera"></i>
+                    Upload Player Image
+                  </label>
+
+                  <input
+                    type="file"
+                    name="player_image"
+                    id="imageInput"
+                    class="form-control pc24-control pc24-file-control"
+                    accept="image/*"
+                  />
+                </div>
+              </div>
+
+              <!-- Submit -->
+
+              <div class="col-12">
+                <button type="submit" class="pc24-submit">
+                  <i
+                    class="fas fa-{% if player_card %}save{% else %}plus-circle{% endif %}"
+                  ></i>
+
+                  <span>
+                    {% if player_card %} Save Changes {% else %} Create Card {%
+                    endif %}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <div class="col-12 col-xl-5 pc24-preview-column">
+      
+        <section class="pc24-player-card">
+          <div class="pc24-image-frame">
+            <img
+              src="{% if player_card %}{{ player_card.player_image.url }}{% else %}{% static 'player_card/messi.jpg' %}{% endif %}"
+              id="previewImage"
+              class="pc24-player-image"
+              alt="Player preview"
+            />
+
+            <!-- Card Top -->
+
+            <div class="pc24-card-topline">
+              <div class="pc24-live-badge">
+                <span class="pc24-live-dot"></span>
+
+                PLAYER CARD
+              </div>
+
+              <div class="pc24-rating-large" id="previewRating">
+                {% if player_card %} {{ player_card.player_rating }} {% else %}
+                10 {% endif %}
+              </div>
+            </div>
+
+            <!-- Card Bottom -->
+
+            <div class="pc24-card-overlay">
+              <div class="pc24-player-name" id="previewName">
+                {{ player_card.player_card_name|default:user.user_name }}
+              </div>
+
+              <div class="pc24-position-badge" id="previewPosition">
+                {% if player_card %} {{
+                player_card.player_position.position_code }} {% else %} POS {%
+                endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Player Statistics -->
+
+          <div class="pc24-stats">
+            <!-- Age -->
+
+            <div class="pc24-stat">
+              <span class="pc24-stat-label">
+                <i class="fas fa-birthday-cake"></i>
+
+                Age
+              </span>
+
+              <strong class="pc24-stat-value" id="previewAge">
+                {{ user.user_age }}
+              </strong>
+            </div>
+
+            <!-- Gender -->
+
+            <div class="pc24-stat">
+              <span class="pc24-stat-label">
+                <i class="fas fa-venus-mars"></i>
+
+                Gender
+              </span>
+
+              <strong class="pc24-stat-value"> {{ user.user_gender }} </strong>
+            </div>
+
+            <!-- Strong Foot -->
+
+            <div class="pc24-stat">
+              <span class="pc24-stat-label">
+                <i class="fas fa-shoe-prints"></i>
+
+                Strong Foot
+              </span>
+
+              <strong class="pc24-stat-value" id="previewFoot">
+                {% if player_card %} {{ player_card.player_strong_foot }} {%
+                else %} - {% endif %}
+              </strong>
+            </div>
+
+            <!-- Height -->
+
+            <div class="pc24-stat">
+              <span class="pc24-stat-label">
+                <i class="fas fa-ruler-vertical"></i>
+
+                Height
+              </span>
+
+              <strong class="pc24-stat-value" id="previewHeight">
+                {{ player_card.player_height|default:'-' }} cm
+              </strong>
+            </div>
+
+            <!-- Weight -->
+
+            <div class="pc24-stat">
+              <span class="pc24-stat-label">
+                <i class="fas fa-weight"></i>
+
+                Weight
+              </span>
+
+              <strong class="pc24-stat-value" id="previewWeight">
+                {{ player_card.player_weight|default:'-' }} kg
+              </strong>
+            </div>
+
+            <!-- District -->
+
+            <div class="pc24-stat">
+              <span class="pc24-stat-label">
+                <i class="fas fa-map-marked-alt"></i>
+
+                District
+              </span>
+
+              <strong class="pc24-stat-value" id="previewDistrict">
+                {{ player_card.player_district|default:'-' }}
+              </strong>
+            </div>
+
+            <!-- Location -->
+
+            <div class="pc24-stat">
+              <span class="pc24-stat-label">
+                <i class="fas fa-city"></i>
+
+                Location
+              </span>
+
+              <strong class="pc24-stat-value" id="previewLocation">
+                {{ player_card.player_location|default:'-' }}
+              </strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================
+                     CLUB PANEL
+                ================================================== -->
+
+        {% if club %}
+
+        <section class="pc24-glass-panel pc24-club-panel">
+          <div class="pc24-club-head">
+            <div class="pc24-club-brand">
+              <img
+                src="{{ club.club_logo.url }}"
+                alt="{{ club.club_name }} logo"
+                class="pc24-club-logo"
+              />
+
+              <a
+                href="{% url 'club_details' club.club_id %}"
+                class="pc24-club-name"
+              >
+                {{ club.club_name }}
+              </a>
+            </div>
+
+            <form
+              method="POST"
+              action="{% url 'quit_club' %}"
+              onsubmit="return confirmQuit();"
+            >
+              {% csrf_token %}
+
+              <button type="submit" class="pc24-quit">
+                <i class="fas fa-sign-out-alt"></i>
+
+                <span>Quit</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Club Statistics -->
+
+          <div class="row g-2">
+            <!-- Strength -->
+
+            <div class="col-6">
+              <div class="pc24-club-stat">
+                <div class="pc24-club-stat-label">
+                  <i class="fas fa-dumbbell"></i>
+
+                  Strength
+                </div>
+
+                <div class="pc24-club-stat-value">{{ club.club_weight }}</div>
+              </div>
+            </div>
+
+            <!-- Matches -->
+
+            <div class="col-6">
+              <div class="pc24-club-stat">
+                <div class="pc24-club-stat-label">
+                  <i class="fas fa-gamepad"></i>
+
+                  Matches
+                </div>
+
+                <div class="pc24-club-stat-value">
+                  {{ current_club_matches }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     PC24 - JAVASCRIPT
+========================================================= -->
+
+<script>
+  (function () {
+    "use strict";
+
+    const inputs = {
+      name: document.getElementById("nameDropdown"),
+
+      age: document.getElementById("ageInput"),
+
+      position: document.getElementById("positionSelect"),
+
+      foot: document.getElementById("footSelect"),
+
+      height: document.getElementById("heightInput"),
+
+      weight: document.getElementById("weightInput"),
+
+      district: document.getElementById("districtSelect"),
+
+      location: document.getElementById("locationInput"),
+
+      image: document.getElementById("imageInput"),
+    };
+
+    const previews = {
+      name: document.getElementById("previewName"),
+
+      position: document.getElementById("previewPosition"),
+
+      rating: document.getElementById("previewRating"),
+
+      age: document.getElementById("previewAge"),
+
+      foot: document.getElementById("previewFoot"),
+
+      height: document.getElementById("previewHeight"),
+
+      weight: document.getElementById("previewWeight"),
+
+      district: document.getElementById("previewDistrict"),
+
+      location: document.getElementById("previewLocation"),
+
+      image: document.getElementById("previewImage"),
+    };
+
+
+    function updatePreview(key, input) {
+      const preview = previews[key];
+
+      if (!preview || !input) {
+        return;
+      }
+
+      switch (key) {
+        case "name":
+          if (input.tagName === "SELECT") {
+            const selectedOption = input.options[input.selectedIndex];
+
+            preview.textContent =
+              input.value || selectedOption?.text || "{{ user.user_name }}";
+          } else {
+            preview.textContent = "{{ user.user_name }}";
+          }
+
+          break;
+
+        case "position":
+          if (input.tagName === "SELECT") {
+            const selectedPosition = input.options[input.selectedIndex];
+
+            preview.textContent = selectedPosition?.dataset?.code || "POS";
+          }
+
+          break;
+
+        case "age":
+          preview.textContent = input.value || "{{ user.user_age }}";
+
+          break;
+
+        case "foot":
+          preview.textContent = input.value || "-";
+
+          break;
+
+        case "height":
+          preview.textContent = input.value ? input.value + " cm" : "-";
+
+          break;
+
+        case "weight":
+          preview.textContent = input.value ? input.value + " kg" : "-";
+
+          break;
+
+        case "district":
+
+        case "location":
+          preview.textContent = input.value || "-";
+
+          break;
+      }
+    }
+
+
+    Object.keys(inputs).forEach(function (key) {
+      const input = inputs[key];
+
+      if (!input) {
+        return;
+      }
+
+      input.addEventListener("change", function () {
+        updatePreview(key, input);
+      });
+
+      input.addEventListener("input", function () {
+        updatePreview(key, input);
+      });
+    });
+
+
+    if (inputs.image && previews.image) {
+      inputs.image.addEventListener("change", function (event) {
+        const file = event.target.files[0];
+
+        if (!file) {
+          return;
+        }
+
+        if (!file.type.startsWith("image/")) {
+          return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (readerEvent) {
+          previews.image.src = readerEvent.target.result;
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    window.confirmQuit = function () {
+      return confirm("Are you sure you want to leave this club?");
+    };
+
+    document.querySelectorAll(".pc24-stat-value").forEach(function (element, index) {
+        element.style.opacity = "0";
+
+        element.style.transform = "translateX(-8px)";
+
+        setTimeout(
+          function () {
+            element.style.transition = "opacity 0.4s ease, transform 0.4s ease";
+
+            element.style.opacity = "1";
+
+            element.style.transform = "translateX(0)";
+          },
+          120 + index * 70,
+        );
+      });
+
+  
+    Object.keys(inputs).forEach(function (key) {
+      const input = inputs[key];
+
+      if (!input || key === "image") {
+        return;
+      }
+
+      updatePreview(key, input);
+    });
+  })();
+</script>
+
+{% endblock %}

@@ -1,0 +1,291 @@
+{% extends 'user/user_head.html' %}
+{% block content %}
+{% load static %}
+
+
+<div class="mc-arena-lobby">
+  <div class="mc-particle" style="left: 10%; width: 4px; height: 4px; animation-delay: 0s;"></div>
+  <div class="mc-particle" style="left: 30%; width: 6px; height: 6px; animation-delay: 2s;"></div>
+  <div class="mc-particle" style="left: 50%; width: 3px; height: 3px; animation-delay: 4s;"></div>
+  <div class="mc-particle" style="left: 70%; width: 5px; height: 5px; animation-delay: 6s;"></div>
+  <div class="mc-particle" style="left: 90%; width: 4px; height: 4px; animation-delay: 8s;"></div>
+
+  <div class="mc-pitch-container container">
+
+    <header class="mc-match-banner mc-reveal-fx text-center">
+      <span class="mc-kicker"><i class="fas fa-futbol"></i> Match Setup</span>
+      <h1 class="mc-page-title">Create Fixture</h1>
+      <p class="mc-subtitle">Configure your squad's next challenge and dominate the pitch</p>
+    </header>
+
+    <div class="mc-face-off-arena mc-hud-panel mc-reveal-scale mc-delay-1 d-flex flex-column flex-md-row align-items-center justify-content-center">
+      <div class="mc-squad-card mc-home-squad">
+        <div class="mc-crest-frame">
+          <img src="{{ club.club_logo.url }}" alt="{{ club.club_name }}">
+        </div>
+        <h4 class="mc-squad-name text-center">{{ club.club_name }}</h4>
+      </div>
+      <div class="mc-versus-badge">VS</div>
+
+
+      <div class="mc-squad-card mc-away-squad">
+        <div class="mc-crest-frame" style="background: linear-gradient(135deg, var(--neon-amber), var(--danger)); box-shadow: 0 0 25px rgba(255, 43, 43, 0.2);">
+          
+        </div>
+        <h4 class="mc-squad-name text-center">Opponent TBD</h4>
+
+      </div>
+    </div>
+
+    <div class="mc-tactics-hud mc-hud-panel mc-reveal-fx mc-delay-2 col-12 col-lg-8 mx-auto">
+      <div class="mc-hud-header">
+        <i class="fas fa-sliders-h"></i>
+        <h3>Match Parameters</h3>
+      </div>
+
+      <form method="post" action="{% url 'create_match' %}" id="matchForm">
+        {% csrf_token %}
+        <input type="hidden" name="club_id" value="{{ club.club_id }}">
+
+        <!-- ═══ NEW: Squad Size Selector ═══ -->
+        <div class="mc-hud-field mc-squad-size-field mc-reveal-fx mc-delay-2">
+          <label><i class="fas fa-users"></i> Match Format <span class="mc-required-star">*</span></label>
+          <div class="mc-squad-size-grid row row-cols-2 row-cols-sm-3 row-cols-md-5 g-2">
+            <label class="mc-size-card col">
+              <input type="radio" name="squad_size" value="5" checked>
+              <div class="mc-size-content">
+                <span class="mc-size-number">5</span>
+                <span class="mc-size-label">5-a-side</span>
+                <span class="mc-size-desc">Small sided</span>
+              </div>
+            </label>
+            <label class="mc-size-card col">
+              <input type="radio" name="squad_size" value="7">
+              <div class="mc-size-content">
+                <span class="mc-size-number">7</span>
+                <span class="mc-size-label">7-a-side</span>
+                <span class="mc-size-desc">Mid format</span>
+              </div>
+            </label>
+            <label class="mc-size-card col">
+              <input type="radio" name="squad_size" value="9">
+              <div class="mc-size-content">
+                <span class="mc-size-number">9</span>
+                <span class="mc-size-label">9-a-side</span>
+                <span class="mc-size-desc">Large field</span>
+              </div>
+            </label>
+            <label class="mc-size-card col">
+              <input type="radio" name="squad_size" value="11">
+              <div class="mc-size-content">
+                <span class="mc-size-number">11</span>
+                <span class="mc-size-label">11-a-side</span>
+                <span class="mc-size-desc">Full match</span>
+              </div>
+            </label>
+            <label class="mc-size-card col">
+              <input type="radio" name="squad_size" value="12">
+              <div class="mc-size-content">
+                <span class="mc-size-number">12</span>
+                <span class="mc-size-label">12-a-side</span>
+                <span class="mc-size-desc">Extended</span>
+              </div>
+            </label>
+          </div>
+          <div class="mc-helper-text">Choose starting players per team. Remaining club players become substitutes.</div>
+        </div>
+
+        <div class="mc-hud-field" id="searchField">
+          <label for="turfSearch"><i class="fas fa-search"></i> Search Turf</label>
+          <input type="text" id="turfSearch" class="mc-hud-input" placeholder="Filter by name, district, location…" autocomplete="off">
+        </div>
+
+        <div class="mc-hud-field">
+          <label for="district"><i class="fas fa-map-marker-alt"></i> Select Arena <span class="mc-required-star">*</span></label>
+          <select class="mc-hud-select" id="district" name="turf" required>
+            <option value="">— Choose turf —</option>
+            {% for turf in turfs %}
+            <option value="{{ turf.turf_id }}" data-home="{% if turf == club.club_home_ground %}1{% else %}0{% endif %}" data-rate="{{ turf.turf_rate }}" data-search="{{ turf.turf_name|lower }} {{ turf.turf_district|lower }} {{ turf.turf_location|lower }}">
+              {{ turf.turf_name }} • {{ turf.turf_district }} • {{ turf.turf_location }}
+            </option>
+            {% endfor %}
+          </select>
+          <div class="mc-turf-note" id="turfNote"></div>
+        </div>
+
+        <div class="row g-3">
+          <div class="mc-hud-field col-md-6">
+            <label for="match_date"><i class="fas fa-calendar-alt"></i> Match Date <span class="mc-required-star">*</span></label>
+            <input type="date" class="mc-hud-input" id="match_date" name="match_date" required min="{{ tomorrow }}">
+          </div>
+
+          <div class="mc-hud-field col-md-6">
+            <label for="match_time"><i class="fas fa-clock"></i> Time Slot <span class="mc-required-star">*</span></label>
+            <select id="match_time" name="match_time" class="mc-hud-select" required>
+              <option value="">— Select slot —</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="mc-execute-btn">
+          <i class="fas fa-check-circle"></i> Confirm Fixture
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+    // ─── Intersection Observer for scroll animations ───
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('mc-visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.mc-reveal-fx, .mc-reveal-scale').forEach(el => observer.observe(el));
+
+    // ─── Turf Search Filter ───
+    const searchInput = document.getElementById('turfSearch');
+    const turfSelect = document.getElementById('district');
+    const searchField = document.getElementById('searchField');
+    const turfNote = document.getElementById('turfNote');
+    const options = Array.from(turfSelect.options).slice(1);
+
+    searchInput.addEventListener('input', function() {
+      const query = this.value.toLowerCase().trim();
+      searchField.classList.toggle('mc-search-active', query.length > 0);
+
+      let hasMatch = false;
+      let firstMatch = null;
+
+      options.forEach(opt => {
+        const data = opt.getAttribute('data-search') || '';
+        const match = data.includes(query);
+        opt.style.display = match ? '' : 'none';
+        if (match) {
+          hasMatch = true;
+          if (!firstMatch) firstMatch = opt;
+        }
+      });
+
+      if (query.length > 2 && firstMatch) {
+        turfSelect.value = firstMatch.value;
+        updateTurfNote();
+        loadSlots();
+      } else if (!hasMatch) {
+        turfSelect.value = '';
+        turfNote.className = 'mc-turf-note';
+      }
+    });
+
+    // ─── Turf Note Updater ───
+    function updateTurfNote() {
+      const selected = turfSelect.options[turfSelect.selectedIndex];
+      if (!selected || !selected.value) {
+        turfNote.className = 'mc-turf-note';
+        return;
+      }
+      const isHome = selected.getAttribute('data-home') === '1';
+      const rate = selected.getAttribute('data-rate');
+      turfNote.className = 'mc-turf-note mc-show ' + (isHome ? 'mc-free' : 'mc-paid');
+      if (isHome) {
+        turfNote.innerHTML = '<i class="fas fa-home"></i> <strong>Home Ground</strong> — No payment required. Match created instantly with squad selection.';
+      } else {
+        turfNote.innerHTML = '<i class="fas fa-credit-card"></i> <strong>Away Turf</strong> — Payment of Rs.' + rate + ' required before match is created.';
+      }
+    }
+
+    turfSelect.addEventListener('change', function() {
+      updateTurfNote();
+      loadSlots();
+    });
+
+    // ─── Slot Loader ───
+    var dateInput = document.getElementById('match_date');
+    var timeSelect = document.getElementById('match_time');
+
+    function loadSlots() {
+        var turfId = turfSelect.value;
+        var matchDate = dateInput.value;
+
+        console.log("Loading slots for turf=" + turfId + ", date=" + matchDate);
+
+        if (!turfId || !matchDate) {
+            timeSelect.innerHTML = '<option value="">— Select slot —</option>';
+            return;
+        }
+
+        timeSelect.innerHTML = '<option value="">Loading slots...</option>';
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "{% url 'get_available_slots' %}", true);
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                console.log("AJAX status:", xhr.status);
+                if (xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        timeSelect.innerHTML = '<option value="">— Select slot —</option>';
+                        if (data.slots && data.slots.length > 0) {
+                            data.slots.forEach(function(slot) {
+                                var opt = document.createElement('option');
+                                opt.value = slot;
+                                opt.textContent = slot;
+                                timeSelect.appendChild(opt);
+                            });
+                        } else {
+                            timeSelect.innerHTML = '<option value="">No slots available</option>';
+                        }
+                    } catch (e) {
+                        console.error("Parse error:", e);
+                        timeSelect.innerHTML = '<option value="">Error parsing response</option>';
+                    }
+                } else {
+                    timeSelect.innerHTML = '<option value="">Server error (' + xhr.status + ')</option>';
+                }
+            }
+        };
+
+        xhr.onerror = function() {
+            console.error("Network error");
+            timeSelect.innerHTML = '<option value="">Network error</option>';
+        };
+
+        xhr.send("turf_id=" + encodeURIComponent(turfId) + "&match_date=" + encodeURIComponent(matchDate));
+    }
+
+    dateInput.addEventListener('change', loadSlots);
+
+    // ─── Form Validation ───
+    const form = document.getElementById('matchForm');
+    form.addEventListener('submit', function(e) {
+      const required = form.querySelectorAll('[required]');
+      let valid = true;
+
+      required.forEach(field => {
+        if (!field.value) {
+          valid = false;
+          field.style.borderColor = 'var(--danger)';
+          field.style.boxShadow = '0 0 0 3px rgba(255, 42, 42, 0.2)';
+          setTimeout(() => {
+            field.style.borderColor = '';
+            field.style.boxShadow = '';
+          }, 2000);
+        }
+      });
+
+      if (!valid) e.preventDefault();
+    });
+
+    console.log("Match page JS fully loaded with squad size selector");
+})();
+</script>
+
+{% endblock %}

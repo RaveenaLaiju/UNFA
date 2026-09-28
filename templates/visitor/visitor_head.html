@@ -1,0 +1,379 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>{% block title %}UNFA - Local Football Platform{% endblock %}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css">
+
+  <!-- Theme CSS -->
+  <link rel="stylesheet" href="{% static 'visitor_panel/css/visitor_style.css' %}">
+  <link rel="stylesheet" href="{% static 'visitor_panel/css/visitor_sign.css' %}">
+
+</head>
+<body>
+  <div class="site-wrap">
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar navbar-expand-lg gaming-navbar">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'visitor_home' %}">
+          <img src="{% static 'common_img/unfa_logo.png' %}" alt="UNFA">
+          <span>UNFA</span>
+        </a>
+
+        <!-- Mobile Toggle + Right Actions -->
+        <div class="d-flex align-items-center gap-2 d-lg-none">
+          {% if is_authenticated %}
+            <a class="notif-bell" href="#" data-bs-toggle="modal" data-bs-target="#notifModal" aria-label="Notifications">
+              <i class="fas fa-bell"></i>
+              {% if unread_count > 0 %}
+              <span class="notif-badge">{{ unread_count }}</span>
+              {% endif %}
+            </a>
+          {% else %}
+            <a href="{% url 'visitor_sign' %}" class="btn-signin">
+              <i class="fas fa-sign-in-alt"></i>
+            </a>
+          {% endif %}
+
+          <button class="navbar-toggler-gaming" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-label="Toggle menu">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarNav">
+          <ul class="navbar-nav mx-auto">
+            <li class="nav-item">
+              {% if is_authenticated %}
+            <a href="{% url 'user_home' %}" class="nav-link {% if request.resolver_match.url_name == 'user_home' %}active{% endif %}">
+                <i class="fas fa-home"></i> Home
+              </a>
+            {% else %}
+            <a href="{% url 'visitor_home' %}" class="nav-link {% if request.resolver_match.url_name == 'visitor_home' %}active{% endif %}">
+                <i class="fas fa-home"></i> Home
+              </a>
+            {% endif %}
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'watch_matches' %}" class="nav-link {% if request.resolver_match.url_name == 'watch_matches' %}active{% endif %}">
+                <i class="fas fa-futbol"></i> Fixtures
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'tournament_list' %}" class="nav-link {% if request.resolver_match.url_name == 'tournament_list' %}active{% endif %}">
+                <i class="fas fa-trophy"></i> Tournaments
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'user_clubs' %}" class="nav-link {% if request.resolver_match.url_name == 'user_clubs' %}active{% endif %}">
+                <i class="fas fa-shield-alt"></i> Clubs
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'user_players' %}" class="nav-link {% if request.resolver_match.url_name == 'user_players' %}active{% endif %}">
+                <i class="fas fa-users"></i> Players
+              </a>
+            </li>
+            {% if is_turf_owner %}
+            <li class="nav-item">
+             <a href="{% url 'turf_owner_home' %}" 
+   class="nav-link {% if request.resolver_match.url_name == 'turf_owner_home' %}active{% endif %}"
+                <i class="fas fa-map-marker-alt"></i> My Turfs
+                <span class="role-badge role-owner">Owner</span>
+              </a>
+            </li>
+            {% endif %}
+            {% if is_manager %}
+            <li class="nav-item">
+              <a href="{% url 'club_matches' %}" class="nav-link {% if request.resolver_match.url_name == 'club_matches' %}active{% endif %}">
+                <i class="fas fa-trophy"></i> My Club
+                <span class="role-badge role-manager">Manager</span>
+              </a>
+            </li>
+            {% endif %}
+            {% if is_authenticated and is_player %}
+           <li class="nav-item">
+  <a href="{% url 'view_player_profile' player_id %}" class="nav-link {% if request.resolver_match.url_name == 'view_player_profile' %}active{% endif %}">
+    <i class="fas fa-id-card"></i> My Profile
+    <span class="role-badge role-player">Player</span>
+  </a>
+</li>
+            {% endif %}
+          </ul>
+
+          <!-- Desktop Right Actions -->
+          <div class="d-flex align-items-center gap-3">
+            {% if is_authenticated %}
+              <a class="notif-bell" href="#" data-bs-toggle="modal" data-bs-target="#notifModal" aria-label="Notifications">
+                <i class="fas fa-bell"></i>
+                {% if unread_count > 0 %}
+                <span class="notif-badge">{{ unread_count }}</span>
+                {% endif %}
+              </a>
+
+              <div class="dropdown">
+                <button class="user-dropdown dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border: none; background: transparent;">
+                  <div class="user-avatar">{{ user.user_name|slice:":1"|upper }}</div>
+                  <span class="d-none d-xl-inline">{{ user.user_name|truncatechars:12 }}</span>
+                  <i class="fas fa-chevron-down" style="font-size:0.7rem; color: var(--text-muted);"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+                  {% if is_player %}
+                  <li><a class="dropdown-item" href="{% url 'view_player_profile' player_id %}"><i class="fas fa-id-card"></i> My Profile</a></li>
+                  {% endif %}
+                  {% if is_manager %}
+                  <li><a class="dropdown-item" href="{% url 'club_matches' %}"><i class="fas fa-trophy"></i> My Club</a></li>
+                  <li><a class="dropdown-item" href="{% url 'my_clubs' %}"><i class="fas fa-shield-alt"></i> My Clubs</a></li>
+                  {% endif %}
+                  {% if is_turf_owner %}
+                  <li><a class="dropdown-item" href="{% url 'turf_booking_requests' %}"><i class="fas fa-map-marker-alt"></i> My Turfs</a></li>
+                  {% endif %}
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'user_logout' %}" onclick="return confirm('Sign out?');" style="color: var(--secondary);">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
+                </ul>
+              </div>
+            {% else %}
+              <a href="{% url 'visitor_sign' %}" class="btn-signin">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ===== MOBILE OFFCANVAS MENU ===== -->
+    <div class="offcanvas offcanvas-end offcanvas-gaming" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+      <div class="offcanvas-header">
+        <div class="offcanvas-title" id="mobileMenuLabel">
+          <img src="{% static 'common_img/unfa_logo.png' %}" alt="UNFA">
+          <span>UNFA</span>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="mobile-nav-list">
+          <li>
+            {% if is_authenticated %}
+            <a href="{% url 'user_home' %}" class="nav-link {% if request.resolver_match.url_name == 'user_home' %}active{% endif %}">
+              <i class="fas fa-home"></i> Home
+            </a>
+            {% else %}
+            <a href="{% url 'visitor_home' %}" class="nav-link {% if request.resolver_match.url_name == 'visitor_home' %}active{% endif %}">
+              <i class="fas fa-home"></i> Home
+            </a>
+            {% endif %}
+          </li>
+          <li>
+            <a href="{% url 'watch_matches' %}" class="nav-link {% if request.resolver_match.url_name == 'watch_matches' %}active{% endif %}">
+              <i class="fas fa-futbol"></i> Fixtures
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'tournament_list' %}" class="nav-link {% if request.resolver_match.url_name == 'tournament_list' %}active{% endif %}">
+              <i class="fas fa-trophy"></i> Tournaments
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'user_clubs' %}" class="nav-link {% if request.resolver_match.url_name == 'user_clubs' %}active{% endif %}">
+              <i class="fas fa-shield-alt"></i> Clubs
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'user_players' %}" class="nav-link {% if request.resolver_match.url_name == 'user_players' %}active{% endif %}">
+              <i class="fas fa-users"></i> Players
+            </a>
+          </li>
+          {% if is_turf_owner %}
+          <li>
+            <a href="{% url 'turf_owner_home' %}" 
+   class="nav-link {% if request.resolver_match.url_name == 'turf_owner_home' %}active{% endif %}"
+              <i class="fas fa-map-marker-alt"></i> My Turfs
+              <span class="role-badge role-owner">Owner</span>
+            </a>
+          </li>
+          {% endif %}
+          {% if is_manager and not is_turf_owner %}
+          <li>
+            <a href="{% url 'club_matches' %}" class="nav-link {% if request.resolver_match.url_name == 'club_matches' %}active{% endif %}">
+              <i class="fas fa-trophy"></i> My Club
+              <span class="role-badge role-manager">Manager</span>
+            </a>
+          </li>
+          {% endif %}
+          {% if is_player and not is_turf_owner %}
+          <li>
+  <a href="{% url 'view_player_profile' player_id %}" class="nav-link {% if request.resolver_match.url_name == 'view_player_profile' %}active{% endif %}">
+    <i class="fas fa-id-card"></i> My Profile
+    <span class="role-badge role-player">Player</span>
+  </a>
+</li>
+          {% endif %}
+        </ul>
+
+        {% if is_authenticated %}
+        <div class="mobile-user-section">
+          <div class="user-info">
+            <div class="user-avatar">{{ user.user_name|slice:":1"|upper }}</div>
+            <span>{{ user.user_name }}</span>
+          </div>
+          <ul class="mobile-nav-list">
+            {% if is_player %}
+           <li><a href="{% url 'view_player_profile' player_id %}" class="nav-link"><i class="fas fa-id-card"></i> My Profile</a></li>
+            {% endif %}
+            {% if is_manager %}
+            <li><a href="{% url 'club_matches' %}" class="nav-link"><i class="fas fa-trophy"></i> My Club</a></li>
+            <li><a href="{% url 'my_clubs' %}" class="nav-link"><i class="fas fa-shield-alt"></i> My Clubs</a></li>
+            {% endif %}
+            {% if is_turf_owner %}
+            <li><a href="{% url 'turf_booking_requests' %}" class="nav-link"><i class="fas fa-map-marker-alt"></i> My Turfs</a></li>
+            {% endif %}
+            <li><a href="{% url 'user_logout' %}" class="nav-link logout" onclick="return confirm('Sign out?');">
+              <i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- ===== RIGHT SIDE NOTIFICATION MODAL ===== -->
+    <div class="modal right fade modal-gaming" id="notifModal" tabindex="-1" aria-labelledby="notifModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="notifModalLabel">
+              <i class="fas fa-bell" style="color: var(--accent); margin-right: 0.5rem;"></i> Notifications
+              {% if unread_count > 0 %}
+              <span class="badge" style="background: var(--secondary); color: white; font-size: 0.7rem; margin-left: 0.5rem; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center;">{{ unread_count }}</span>
+              {% endif %}
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {% if notifications %}
+            <ul class="notif-list">
+              {% for note in notifications %}
+              <li class="notif-item {% if not note.is_read %}unread{% endif %}">
+                <div class="notif-icon {{ note.notification_type|default:'info' }}">
+                  {% if note.notification_type == 'success' %}
+                    <i class="fas fa-check"></i>
+                  {% elif note.notification_type == 'error' %}
+                    <i class="fas fa-times"></i>
+                  {% else %}
+                    <i class="fas fa-info"></i>
+                  {% endif %}
+                </div>
+                <div class="notif-content">
+                  <span style="color: var(--text-primary); font-size: 0.9rem;">{{ note.message }}</span>
+                  <small>{{ note.created_at|date:"d M Y H:i" }}</small>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <div class="empty-state">
+              <i class="fas fa-bell-slash"></i>
+              <p>No notifications yet</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer-gaming">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-lg-4 col-md-6">
+            <div class="footer-logo">
+              <img src="{% static 'common_img/unfa_logo.png' %}" alt="UNFA">
+              <span>UNFA</span>
+            </div>
+            <p>United Neighbors Football Association connects clubs, players, tournaments and turf bookings in your community.</p>
+            <div class="footer-social">
+              <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+              <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+              <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-6">
+            <h3>Platform</h3>
+            <ul>
+              {% if is_authenticated %}
+              <li><a href="{% url 'user_home' %}"><i class="fas fa-home"></i> Home</a></li>
+              {% else %}
+              <li><a href="{% url 'visitor_home' %}"><i class="fas fa-home"></i> Home</a></li>
+              {% endif %}
+              <li><a href="{% url 'watch_matches' %}"><i class="fas fa-futbol"></i> Fixtures</a></li>
+              <li><a href="{% url 'tournament_list' %}"><i class="fas fa-trophy"></i> Tournaments</a></li>
+              <li><a href="{% url 'user_clubs' %}"><i class="fas fa-shield-alt"></i> Clubs</a></li>
+              <li><a href="{% url 'user_players' %}"><i class="fas fa-users"></i> Players</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <h3>For Users</h3>
+            <ul>
+              {% if is_authenticated %}
+                {% if is_manager %}
+                <li><a href="{% url 'club_matches' %}"><i class="fas fa-trophy"></i> Club Manager</a></li>
+                <li><a href="{% url 'my_clubs' %}"><i class="fas fa-shield-alt"></i> My Clubs</a></li>
+                {% endif %}
+                {% if is_turf_owner %}
+                <li><a href="{% url 'turf_booking_requests' %}"><i class="fas fa-map-marker-alt"></i> Turf Owner</a></li>
+                {% endif %}
+                {% if is_player %}
+                <li><a href="{% url 'view_player_profile' player_id %}"><i class="fas fa-id-card"></i> My Profile</a></li>
+                {% endif %}
+                <li><a href="{% url 'user_logout' %}" onclick="return confirm('Sign out?');"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
+              {% else %}
+                <li><a href="{% url 'visitor_sign' %}"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+                <li><a href="{% url 'visitor_sign' %}"><i class="fas fa-user-plus"></i> Register</a></li>
+              {% endif %}
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <h3>Contact</h3>
+            <ul>
+              <li><a href="mailto:support@unfa.local"><i class="fas fa-envelope"></i> support@unfa.local</a></li>
+              <li><a href="tel:+15551234567"><i class="fas fa-phone"></i> +1 (555) 123-4567</a></li>
+              <li><a href="#"><i class="fas fa-map-marker-alt"></i> Community Center</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>Made with <span class="heart">❤️</span> for football lovers | Raveena&copy;2026 UNFA. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+  <script src="{% static 'visitor_panel/js/visitor_script.js' %}"></script>
+  <script src="{% static 'visitor_panel/js/visitor_login.js' %}"></script>
+
+</body>
+</html>

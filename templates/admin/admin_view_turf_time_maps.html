@@ -1,0 +1,115 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+{% block title %}Turf Time Maps - Football Arena Admin{% endblock %}
+
+{% block content %}
+
+
+<div class="ttm-05-arena-wrapper container-fluid container-xl">
+
+    <header class="ttm-06-arena-header">
+        <div class="row align-items-end g-3">
+            <div class="col-12 col-md-8">
+                <h1 class="ttm-07-page-title mb-0">
+                    <span class="ttm-08-title-icon">&#128506;</span>
+                    Turf Time Maps
+                </h1>
+                <p class="ttm-09-page-subtitle mt-2">
+                 
+                    <span>View time slot mappings for each turf</span>
+                </p>
+            </div>
+           
+        </div>
+    </header>
+
+    <div class="ttm-14-table-wrapper">
+
+        <div class="d-none d-lg-block">
+            <div class="ttm-15-table-scroll">
+                <table class="ttm-16-arena-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 38%;">Map ID</th>
+                            <th style="width: 38%;">Turf</th>
+                            <th style="width: 35%;">Time Slot</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for map in maps %}
+                        <tr class="ttm-23-row-enter ttm-24-delay-{{ forloop.counter }}">
+                            <td>
+                                <span class="ttm-17-id-badge">#{{ map.tt_id }}</span>
+                            </td>
+                            <td>
+                                <div class="ttm-18-turf-display">
+                                    <div class="ttm-19-turf-icon-box">&#127793;</div>
+                                    <span class="ttm-20-turf-name">{{ map.tt_turf.turf_name }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="ttm-21-time-slot-badge">
+                                    &#9200; {{ map.tt_time.time_range }}
+                                </span>
+                            </td>
+                           
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">
+                                <div class="ttm-25-empty-state">
+                                    <div class="ttm-26-empty-icon">&#128506;</div>
+                                    <div class="ttm-27-empty-title">No Turf Time Maps</div>
+                                    <p class="ttm-28-empty-text">Map time slots to turfs for booking availability.</p>
+                                    <a href="#" class="ttm-12-btn-arena ttm-13-btn-primary mt-3">
+                                        <span>&#10133;</span> Add First Map
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-lg-none">
+            {% for map in maps %}
+            <div class="ttm-29-mobile-card ttm-23-row-enter ttm-24-delay-{{ forloop.counter }}">
+                <div class="ttm-30-mobile-header">
+                    <span class="ttm-17-id-badge">#{{ map.tt_id }}</span>
+                    <span class="ttm-21-time-slot-badge">&#9200; {{ map.tt_time.time_range }}</span>
+                </div>
+                <div class="ttm-31-mobile-body">
+                    <div class="ttm-32-mobile-field">
+                        <span class="ttm-33-mobile-label">Turf</span>
+                        <span class="ttm-34-mobile-value">
+                            <div class="ttm-18-turf-display">
+                                <div class="ttm-19-turf-icon-box">&#127793;</div>
+                                <span class="ttm-20-turf-name">{{ map.tt_turf.turf_name }}</span>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+                
+                
+            </div>
+            {% empty %}
+            <div class="ttm-25-empty-state">
+                <div class="ttm-26-empty-icon">&#128506;</div>
+                <div class="ttm-27-empty-title">No Turf Time Maps</div>
+                <p class="ttm-28-empty-text">Map time slots to turfs for booking availability.</p>
+                <a href="#" class="ttm-12-btn-arena ttm-13-btn-primary mt-3">
+                    <span>&#10133;</span> Add First Map
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

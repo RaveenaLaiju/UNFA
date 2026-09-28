@@ -1,0 +1,2029 @@
+{% load static %}
+
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <title>{% block title %}UNFA - Local Football Platform{% endblock %}</title>
+
+<meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
+
+<!-- Bootstrap -->
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
+
+<!-- Icons -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+/>
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+/>
+
+<!-- Swiper -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+
+<!-- Fancybox -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"
+/>
+
+<!-- Theme CSS -->
+<link
+  rel="stylesheet"
+  href="{% static 'user_panel/css/user_home_style.css' %}"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'user_panel/css/club_manager.css' %}"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'user_panel/css/players_style.css' %}"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'user_panel/css/tournament_style.css' %}"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'user_panel/css/match_style.css' %}"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'user_panel/css/turf_style.css' %}"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'user_panel/css/match_op_style.css' %}"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'user_panel/css/register_turf.css' %}"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'user_panel/css/player_card.css' %}"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'user_panel/css/register_club.css' %}"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'user_panel/css/payment.css' %}"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'user_panel/css/tournament_host.css' %}"
+/>
+
+<link
+  rel="stylesheet"
+  href="{% static 'user_panel/css/club_details.css' %}"
+/>
+
+<!-- =========================================================
+     NOTIFICATION MODAL FIX
+     ========================================================= -->
+<style>
+ .unfa901-notification-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 10050 !important;
+    pointer-events: none;
+}
+
+.unfa901-notification-modal.show {
+    pointer-events: auto;
+}
+
+.unfa901-notification-modal + .modal-backdrop,
+.modal-backdrop {
+    z-index: 10040 !important;
+}
+
+.unfa901-notification-modal .unfa901-notification-dialog {
+    position: fixed;
+    top: 88px;                 /* navbar height */
+    right: 24px;
+    width: 560px;
+    max-width: calc(100vw - 48px);
+    margin: 0 !important;
+
+    transform: translateY(-10px);
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.unfa901-notification-modal.show
+.unfa901-notification-dialog {
+    transform: translateY(0);
+}
+
+/* Panel */
+.unfa901-notification-modal .modal-content {
+    max-height: calc(100vh - 108px);
+    overflow: hidden;
+
+    border: 0 !important;
+    border-radius: 18px !important;
+
+    background: #ffffff !important;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.35),
+        0 8px 25px rgba(0, 0, 0, 0.18) !important;
+}
+
+  /* Header */
+  .unfa901-notification-header {
+    position: relative;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 72px;
+    padding: 18px 22px !important;
+
+    border: 0 !important;
+
+    background:
+      linear-gradient(
+        135deg,
+        #071a12 0%,
+        #0b3d27 55%,
+        #087f4f 100%
+      ) !important;
+
+    color: #ffffff !important;
+  }
+
+  .unfa901-notification-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin: 0 !important;
+
+    color: #ffffff !important;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 19px !important;
+    font-weight: 800 !important;
+    line-height: 1.2;
+  }
+.unfa901-notification-body {
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+}
+  .unfa901-notification-title > i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.14);
+
+    font-size: 15px;
+  }
+
+  .unfa901-notification-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 24px;
+    height: 24px;
+    padding: 0 7px;
+
+    border-radius: 999px;
+
+    background: #ff4757;
+    color: #ffffff;
+
+    font-family: "Inter", sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .unfa901-notification-header .btn-close {
+    flex-shrink: 0;
+
+    width: 34px;
+    height: 34px;
+    padding: 0;
+
+    margin: 0 !important;
+
+    border-radius: 50%;
+
+    opacity: 0.9;
+
+    background-size: 12px;
+    transition:
+      background-color 0.2s ease,
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .unfa901-notification-header .btn-close:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.14);
+    transform: rotate(90deg);
+  }
+
+
+  /* Better scrollbar */
+  .unfa901-notification-body::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .unfa901-notification-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .unfa901-notification-body::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.18);
+  }
+
+  .unfa901-notification-list {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+
+    margin: 0 !important;
+    padding: 8px 0 !important;
+
+    list-style: none;
+  }
+
+  .unfa901-notification-item {
+    position: relative;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    width: 100%;
+
+    margin: 0;
+    padding: 17px 20px;
+
+    border: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.055);
+
+    background: #ffffff;
+
+    transition:
+      background-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .unfa901-notification-item:last-child {
+    border-bottom: 0;
+  }
+
+  .unfa901-notification-item:hover {
+    background: #f3f8f5;
+  }
+
+  /* Unread notification */
+  .unfa901-notification-item.unread {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(8, 127, 79, 0.075),
+        rgba(8, 127, 79, 0.015)
+      );
+  }
+
+  .unfa901-notification-item.unread::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+
+    width: 3px;
+
+    border-radius: 0 5px 5px 0;
+
+    background: #087f4f;
+  }
+
+  /* Notification icon */
+  .unfa901-notification-icon {
+    flex: 0 0 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: #edf2ef;
+    color: #087f4f;
+
+    font-size: 14px;
+  }
+
+  .unfa901-notification-icon.success {
+    background: rgba(25, 135, 84, 0.12);
+    color: #198754;
+  }
+
+  .unfa901-notification-icon.error {
+    background: rgba(220, 53, 69, 0.12);
+    color: #dc3545;
+  }
+
+  .unfa901-notification-icon.info {
+    background: rgba(13, 110, 253, 0.10);
+    color: #0d6efd;
+  }
+
+  /* Content */
+  .unfa901-notification-content {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .unfa901-notification-message {
+    display: block;
+
+    margin: 0;
+
+    color: #17211c;
+
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.55;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .unfa901-notification-item.unread
+    .unfa901-notification-message {
+    font-weight: 700;
+    color: #101813;
+  }
+
+  .unfa901-notification-time {
+    display: block;
+
+    margin-top: 6px;
+
+    color: #89938e !important;
+
+    font-family: "Inter", sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  /* Empty state */
+  .unfa901-empty-notifications {
+    min-height: 260px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px 20px;
+
+    text-align: center;
+  }
+
+  .unfa901-empty-notifications i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 70px;
+    height: 70px;
+
+    margin-bottom: 16px;
+
+    border-radius: 50%;
+
+    background: #edf2ef;
+    color: #84918a;
+
+    font-size: 25px;
+  }
+
+  .unfa901-empty-notifications p {
+    margin: 0;
+
+    color: #66716b;
+
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+ @media (max-width: 991.98px) {
+    .unfa901-notification-modal .unfa901-notification-dialog {
+        top: 70px;
+        right: 12px;
+        width: 500px;
+        max-width: calc(100vw - 24px);
+    }
+}
+
+/* Mobile */
+@media (max-width: 575.98px) {
+    .unfa901-notification-modal .unfa901-notification-dialog {
+        top: 64px;
+        right: 8px;
+        width: calc(100vw - 16px);
+        max-width: none;
+    }
+
+    .unfa901-notification-modal .modal-content {
+        max-height: calc(100vh - 74px);
+        border-radius: 16px !important;
+    }
+
+    .unfa901-notification-body {
+        max-height: calc(100vh - 138px);
+    }
+}
+</style>
+
+  </head>
+
+  <body>
+    <div class="unfa901-site">
+
+  <!-- Decorative background -->
+  <div
+    class="unfa901-arena-lights"
+    aria-hidden="true"
+  >
+    <div class="unfa901-light"></div>
+    <div class="unfa901-light"></div>
+    <div class="unfa901-light"></div>
+  </div>
+
+  <div
+    class="unfa901-pitch-overlay"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="unfa901-particles"
+    aria-hidden="true"
+  >
+    <span class="unfa901-particle"></span>
+    <span class="unfa901-particle"></span>
+    <span class="unfa901-particle"></span>
+    <span class="unfa901-particle"></span>
+    <span class="unfa901-particle"></span>
+    <span class="unfa901-particle"></span>
+    <span class="unfa901-particle"></span>
+  </div>
+
+
+  <!-- =====================================================
+       NAVBAR
+       ===================================================== -->
+
+  <nav class="navbar navbar-expand-lg unfa901-navbar">
+
+    <div
+      class="container-fluid container-xxl unfa901-navbar-container"
+    >
+
+      <a
+        class="unfa901-brand"
+        href="{% url 'visitor_home' %}"
+        aria-label="UNFA Home"
+      >
+        <img
+          src="{% static 'common_img/unfa_logo.png' %}"
+          alt="UNFA"
+          class="unfa901-brand-logo"
+        >
+
+        <span class="unfa901-brand-text">
+          UNFA<span>.</span>
+        </span>
+      </a>
+
+
+      <!-- MOBILE CONTROLS -->
+
+      <div class="d-flex align-items-center gap-2 d-lg-none">
+
+        {% if is_authenticated %}
+
+          <a
+            class="unfa901-notification"
+            href="#"
+            data-bs-toggle="modal"
+            data-bs-target="#unfa901NotifModal"
+            aria-label="Notifications"
+          >
+            <i class="fas fa-bell"></i>
+
+            {% if unread_count > 0 %}
+              <span class="unfa901-notification-badge">
+                {{ unread_count }}
+              </span>
+            {% endif %}
+          </a>
+
+        {% else %}
+
+          <a
+            href="{% url 'visitor_sign' %}"
+            class="unfa901-signin"
+            aria-label="Sign In"
+          >
+            <i class="fas fa-sign-in-alt"></i>
+          </a>
+
+        {% endif %}
+
+
+        <button
+          class="unfa901-menu-button"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#unfa901MobileMenu"
+          aria-controls="unfa901MobileMenu"
+          aria-label="Toggle navigation"
+        >
+          <i class="fas fa-bars"></i>
+        </button>
+
+      </div>
+
+
+      <!-- DESKTOP NAV -->
+
+      <div
+        class="collapse navbar-collapse d-none d-lg-flex"
+        id="unfa901Navbar"
+      >
+
+        <ul
+          class="navbar-nav mx-auto align-items-center unfa901-nav-list"
+        >
+
+          <!-- HOME -->
+
+          <li class="nav-item unfa901-nav-item">
+
+            {% if is_authenticated %}
+
+              <a
+                href="{% url 'user_home' %}"
+                class="nav-link unfa901-nav-link {% if request.resolver_match.url_name == 'user_home' %}active{% endif %}"
+              >
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+              </a>
+
+            {% else %}
+
+              <a
+                href="{% url 'visitor_home' %}"
+                class="nav-link unfa901-nav-link {% if request.resolver_match.url_name == 'visitor_home' %}active{% endif %}"
+              >
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+              </a>
+
+            {% endif %}
+
+          </li>
+
+
+          <!-- FIXTURES -->
+
+          <li class="nav-item unfa901-nav-item">
+
+            <a
+              href="{% url 'watch_matches' %}"
+              class="nav-link unfa901-nav-link {% if request.resolver_match.url_name == 'watch_matches' %}active{% endif %}"
+            >
+              <i class="fas fa-futbol"></i>
+              <span>Fixtures</span>
+            </a>
+
+          </li>
+
+
+          <!-- TOURNAMENTS -->
+
+          <li class="nav-item unfa901-nav-item">
+
+            <a
+              href="{% url 'tournament_list' %}"
+              class="nav-link unfa901-nav-link {% if request.resolver_match.url_name == 'tournament_list' %}active{% endif %}"
+            >
+              <i class="fas fa-trophy"></i>
+              <span>Tournaments</span>
+            </a>
+
+          </li>
+
+
+          <!-- CLUBS -->
+
+          <li class="nav-item unfa901-nav-item">
+
+            <a
+              href="{% url 'user_clubs' %}"
+              class="nav-link unfa901-nav-link {% if request.resolver_match.url_name == 'user_clubs' %}active{% endif %}"
+            >
+              <i class="fas fa-shield-alt"></i>
+              <span>Clubs</span>
+            </a>
+
+          </li>
+
+
+          <!-- PLAYERS -->
+
+          <li class="nav-item unfa901-nav-item">
+
+            <a
+              href="{% url 'user_players' %}"
+              class="nav-link unfa901-nav-link {% if request.resolver_match.url_name == 'user_players' %}active{% endif %}"
+            >
+              <i class="fas fa-users"></i>
+              <span>Players</span>
+            </a>
+
+          </li>
+
+
+          <!-- TURF OWNER -->
+
+          {% if is_turf_owner %}
+
+            <li class="nav-item unfa901-nav-item">
+
+              <a
+                href="{% url 'turf_owner_home' %}"
+                class="nav-link unfa901-nav-link {% if request.resolver_match.url_name == 'turf_owner_home' %}active{% endif %}"
+              >
+                <i class="fas fa-map-marker-alt"></i>
+
+                <span>My Turfs</span>
+
+                <span class="unfa901-role-badge unfa901-role-owner">
+                  Owner
+                </span>
+              </a>
+
+            </li>
+
+          {% endif %}
+
+
+          <!-- CLUB MANAGER -->
+
+          {% if is_manager and my_club %}
+
+            <li class="nav-item unfa901-nav-item">
+
+              <a
+                href="{% url 'club_interface' my_club.club_id %}"
+                class="nav-link unfa901-nav-link {% if request.resolver_match.url_name == 'club_interface' %}active{% endif %}"
+              >
+                <i class="fas fa-flag"></i>
+
+                <span>My Club</span>
+
+                <span class="unfa901-role-badge unfa901-role-manager">
+                  Manager
+                </span>
+              </a>
+
+            </li>
+
+          {% endif %}
+
+
+          <!-- PLAYER -->
+
+          {% if is_player %}
+
+            <li class="nav-item unfa901-nav-item">
+
+              <a
+                href="{% url 'view_player_profile' player_id %}"
+                class="nav-link unfa901-nav-link {% if request.resolver_match.url_name == 'view_player_profile' %}active{% endif %}"
+              >
+                <i class="fas fa-id-card"></i>
+
+                <span>My Profile</span>
+
+                <span class="unfa901-role-badge unfa901-role-player">
+                  Player
+                </span>
+              </a>
+
+            </li>
+
+          {% endif %}
+
+        </ul>
+
+
+        <!-- RIGHT SIDE -->
+
+        <div class="d-flex align-items-center gap-2">
+
+          {% if is_authenticated %}
+
+            <!-- NOTIFICATIONS -->
+
+            <a
+              class="unfa901-notification"
+              href="#"
+              data-bs-toggle="modal"
+              data-bs-target="#unfa901NotifModal"
+              aria-label="Notifications"
+            >
+              <i class="fas fa-bell"></i>
+
+              {% if unread_count > 0 %}
+                <span class="unfa901-notification-badge">
+                  {{ unread_count }}
+                </span>
+              {% endif %}
+            </a>
+
+
+            <!-- USER -->
+
+            <div class="dropdown">
+
+              <button
+                class="btn unfa901-user-trigger dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+
+                <div class="unfa901-user-avatar">
+                  {{ user.user_name|slice:":1"|upper }}
+                </div>
+
+                <span
+                  class="unfa901-user-name d-none d-xl-inline"
+                >
+                  {{ user.user_name|truncatechars:12 }}
+                </span>
+
+                <i
+                  class="fas fa-chevron-down unfa901-user-chevron"
+                ></i>
+
+              </button>
+
+
+              <ul
+                class="dropdown-menu dropdown-menu-end unfa901-dropdown-menu"
+              >
+
+                {% if is_player %}
+
+                  <li>
+                    <a
+                      class="dropdown-item unfa901-dropdown-item"
+                      href="{% url 'view_player_profile' player_id %}"
+                    >
+                      <i class="fas fa-id-card"></i>
+                      <span>My Profile</span>
+                    </a>
+                  </li>
+
+                {% endif %}
+
+
+                {% if is_manager and my_club %}
+
+                  <li>
+                    <a
+                      class="dropdown-item unfa901-dropdown-item"
+                      href="{% url 'club_interface' my_club.club_id %}"
+                    >
+                      <i class="fas fa-flag"></i>
+                      <span>My Club</span>
+                    </a>
+                  </li>
+
+                {% endif %}
+
+
+                {% if is_turf_owner %}
+
+                  <li>
+                    <a
+                      class="dropdown-item unfa901-dropdown-item"
+                      href="{% url 'turf_owner_home' %}"
+                    >
+                      <i class="fas fa-map-marker-alt"></i>
+                      <span>My Turfs</span>
+                    </a>
+                  </li>
+
+                  <li>
+                    <a
+                      class="dropdown-item unfa901-dropdown-item"
+                      href="{% url 'turf_booking_requests' %}"
+                    >
+                      <i class="fas fa-clipboard-list"></i>
+                      <span>Booking Requests</span>
+                    </a>
+                  </li>
+
+                {% endif %}
+
+
+                <li>
+                  <hr class="dropdown-divider unfa901-dropdown-divider">
+                </li>
+
+
+                <li>
+
+                  <a
+                    class="dropdown-item unfa901-dropdown-item unfa901-dropdown-logout"
+                    href="{% url 'user_logout' %}"
+                    onclick="return confirm('Sign out?');"
+                  >
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sign Out</span>
+                  </a>
+
+                </li>
+
+              </ul>
+
+            </div>
+
+          {% else %}
+
+            <a
+              href="{% url 'visitor_sign' %}"
+              class="unfa901-signin"
+            >
+              <i class="fas fa-sign-in-alt"></i>
+              <span>Sign In</span>
+            </a>
+
+          {% endif %}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </nav>
+
+
+  <!-- =====================================================
+       MOBILE OFFCANVAS
+       ===================================================== -->
+
+  <div
+    class="offcanvas offcanvas-end unfa901-offcanvas"
+    tabindex="-1"
+    id="unfa901MobileMenu"
+    aria-labelledby="unfa901MobileMenuLabel"
+  >
+
+    <div class="offcanvas-header unfa901-offcanvas-header">
+
+      <div
+        class="offcanvas-title unfa901-offcanvas-title"
+        id="unfa901MobileMenuLabel"
+      >
+
+        <img
+          src="{% static 'common_img/unfa_logo.png' %}"
+          alt="UNFA"
+        >
+
+        <span>UNFA</span>
+
+      </div>
+
+      <button
+        type="button"
+        class="btn-close unfa901-offcanvas-close"
+        data-bs-dismiss="offcanvas"
+        aria-label="Close"
+      ></button>
+
+    </div>
+
+
+    <div class="offcanvas-body unfa901-offcanvas-body">
+
+      <ul class="unfa901-mobile-list">
+
+        <!-- HOME -->
+
+        <li>
+
+          {% if is_authenticated %}
+
+            <a
+              href="{% url 'user_home' %}"
+              class="nav-link unfa901-mobile-link {% if request.resolver_match.url_name == 'user_home' %}active{% endif %}"
+            >
+              <i class="fas fa-home"></i>
+              <span>Home</span>
+            </a>
+
+          {% else %}
+
+            <a
+              href="{% url 'visitor_home' %}"
+              class="nav-link unfa901-mobile-link {% if request.resolver_match.url_name == 'visitor_home' %}active{% endif %}"
+            >
+              <i class="fas fa-home"></i>
+              <span>Home</span>
+            </a>
+
+          {% endif %}
+
+        </li>
+
+
+        <!-- FIXTURES -->
+
+        <li>
+
+          <a
+            href="{% url 'watch_matches' %}"
+            class="nav-link unfa901-mobile-link {% if request.resolver_match.url_name == 'watch_matches' %}active{% endif %}"
+          >
+            <i class="fas fa-futbol"></i>
+            <span>Fixtures</span>
+          </a>
+
+        </li>
+
+
+        <!-- TOURNAMENTS -->
+
+        <li>
+
+          <a
+            href="{% url 'tournament_list' %}"
+            class="nav-link unfa901-mobile-link {% if request.resolver_match.url_name == 'tournament_list' %}active{% endif %}"
+          >
+            <i class="fas fa-trophy"></i>
+            <span>Tournaments</span>
+          </a>
+
+        </li>
+
+
+        <!-- CLUBS -->
+
+        <li>
+
+          <a
+            href="{% url 'user_clubs' %}"
+            class="nav-link unfa901-mobile-link {% if request.resolver_match.url_name == 'user_clubs' %}active{% endif %}"
+          >
+            <i class="fas fa-shield-alt"></i>
+            <span>Clubs</span>
+          </a>
+
+        </li>
+
+
+        <!-- PLAYERS -->
+
+        <li>
+
+          <a
+            href="{% url 'user_players' %}"
+            class="nav-link unfa901-mobile-link {% if request.resolver_match.url_name == 'user_players' %}active{% endif %}"
+          >
+            <i class="fas fa-users"></i>
+            <span>Players</span>
+          </a>
+
+        </li>
+
+
+        <!-- TURF OWNER -->
+
+        {% if is_turf_owner %}
+
+          <li>
+
+            <a
+              href="{% url 'turf_owner_home' %}"
+              class="nav-link unfa901-mobile-link {% if request.resolver_match.url_name == 'turf_owner_home' %}active{% endif %}"
+            >
+              <i class="fas fa-map-marker-alt"></i>
+
+              <span>My Turfs</span>
+
+              <span class="ms-auto unfa901-role-badge unfa901-role-owner">
+                Owner
+              </span>
+            </a>
+
+          </li>
+
+        {% endif %}
+
+
+        <!-- MANAGER -->
+
+        {% if is_manager and my_club %}
+
+          <li>
+
+            <a
+              href="{% url 'club_interface' my_club.club_id %}"
+              class="nav-link unfa901-mobile-link {% if request.resolver_match.url_name == 'club_interface' %}active{% endif %}"
+            >
+              <i class="fas fa-flag"></i>
+
+              <span>My Club</span>
+
+              <span class="ms-auto unfa901-role-badge unfa901-role-manager">
+                Manager
+              </span>
+            </a>
+
+          </li>
+
+        {% endif %}
+
+
+        <!-- PLAYER -->
+
+        {% if is_player %}
+
+          <li>
+
+            <a
+              href="{% url 'view_player_profile' player_id %}"
+              class="nav-link unfa901-mobile-link {% if request.resolver_match.url_name == 'view_player_profile' %}active{% endif %}"
+            >
+              <i class="fas fa-id-card"></i>
+
+              <span>My Profile</span>
+
+              <span class="ms-auto unfa901-role-badge unfa901-role-player">
+                Player
+              </span>
+            </a>
+
+          </li>
+
+        {% endif %}
+
+      </ul>
+
+
+      {% if is_authenticated %}
+
+        <div class="unfa901-mobile-user">
+
+          <div class="unfa901-mobile-user-card">
+
+            <div class="unfa901-user-avatar">
+              {{ user.user_name|slice:":1"|upper }}
+            </div>
+
+            <div>
+              <strong>{{ user.user_name }}</strong>
+              <small>UNFA Member</small>
+            </div>
+
+          </div>
+
+
+          <ul class="unfa901-mobile-list">
+
+            {% if is_player %}
+
+              <li>
+                <a
+                  href="{% url 'view_player_profile' player_id %}"
+                  class="nav-link unfa901-mobile-link"
+                >
+                  <i class="fas fa-id-card"></i>
+                  <span>My Profile</span>
+                </a>
+              </li>
+
+            {% endif %}
+
+
+            {% if is_manager and my_club %}
+
+              <li>
+                <a
+                  href="{% url 'club_interface' my_club.club_id %}"
+                  class="nav-link unfa901-mobile-link"
+                >
+                  <i class="fas fa-flag"></i>
+                  <span>My Club</span>
+                </a>
+              </li>
+
+            {% endif %}
+
+
+            {% if is_turf_owner %}
+
+              <li>
+                <a
+                  href="{% url 'turf_owner_home' %}"
+                  class="nav-link unfa901-mobile-link"
+                >
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>My Turfs</span>
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="{% url 'turf_booking_requests' %}"
+                  class="nav-link unfa901-mobile-link"
+                >
+                  <i class="fas fa-clipboard-list"></i>
+                  <span>Booking Requests</span>
+                </a>
+              </li>
+
+            {% endif %}
+
+
+            <li>
+              <a
+                href="{% url 'user_logout' %}"
+                class="nav-link unfa901-mobile-link unfa901-mobile-logout"
+                onclick="return confirm('Sign out?');"
+              >
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sign Out</span>
+              </a>
+            </li>
+
+          </ul>
+
+        </div>
+
+      {% endif %}
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       NOTIFICATION MODAL
+       ===================================================== -->
+
+  <div
+    class="modal fade unfa901-notification-modal"
+    id="unfa901NotifModal"
+    tabindex="-1"
+    aria-labelledby="unfa901NotifModalLabel"
+    aria-hidden="true"
+  >
+
+    <div
+      class="modal-dialog unfa901-notification-dialog"
+    >
+
+      <div class="modal-content">
+
+        <!-- HEADER -->
+
+        <div class="modal-header unfa901-notification-header">
+
+          <h5
+            class="modal-title unfa901-notification-title"
+            id="unfa901NotifModalLabel"
+          >
+
+            <i class="fas fa-bell"></i>
+
+            <span>Notifications</span>
+
+            {% if unread_count > 0 %}
+
+              <span class="unfa901-notification-count">
+                {{ unread_count }}
+              </span>
+
+            {% endif %}
+
+          </h5>
+
+
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+
+        </div>
+
+
+        <!-- BODY -->
+
+        <div class="modal-body unfa901-notification-body">
+
+          {% if notifications %}
+
+            <ul class="unfa901-notification-list">
+
+              {% for note in notifications %}
+
+                <li
+                  class="unfa901-notification-item {% if not note.is_read %}unread{% endif %}"
+                >
+
+                  <div
+                    class="unfa901-notification-icon {{ note.notification_type|default:'info' }}"
+                  >
+
+                    {% if note.notification_type == 'success' %}
+
+                      <i class="fas fa-check"></i>
+
+                    {% elif note.notification_type == 'error' %}
+
+                      <i class="fas fa-times"></i>
+
+                    {% else %}
+
+                      <i class="fas fa-info"></i>
+
+                    {% endif %}
+
+                  </div>
+
+
+                  <div class="unfa901-notification-content">
+
+                    <span class="unfa901-notification-message">
+                      {{ note.message }}
+                    </span>
+
+                    <small class="unfa901-notification-time">
+                      {{ note.created_at|date:"d M Y H:i" }}
+                    </small>
+
+                  </div>
+
+                </li>
+
+              {% endfor %}
+
+            </ul>
+
+          {% else %}
+
+            <div class="unfa901-empty-notifications">
+
+              <i class="fas fa-bell-slash"></i>
+
+              <p>No notifications yet</p>
+
+            </div>
+
+          {% endif %}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       PAGE CONTENT
+       ===================================================== -->
+
+  <main class="unfa901-page-content">
+    {% block content %}{% endblock %}
+  </main>
+
+
+  <!-- =====================================================
+       FOOTER
+       ===================================================== -->
+
+  <footer class="unfa901-footer">
+
+    <div class="container">
+
+      <div class="row g-4 g-lg-5">
+
+        <div class="col-lg-4 col-md-6">
+
+          <div class="unfa901-footer-brand">
+
+            <img
+              src="{% static 'common_img/unfa_logo.png' %}"
+              alt="UNFA"
+              class="unfa901-footer-logo"
+            >
+
+            <span class="unfa901-footer-brand-name">
+              UNFA<span>.</span>
+            </span>
+
+          </div>
+
+
+          <p class="unfa901-footer-description">
+            United Neighbors Football Association connects
+            clubs, players, tournaments and turf bookings
+            in your community.
+          </p>
+
+
+          <div class="unfa901-socials">
+
+            <a
+              href="#"
+              class="unfa901-social"
+              aria-label="Facebook"
+            >
+              <i class="fab fa-facebook-f"></i>
+            </a>
+
+            <a
+              href="#"
+              class="unfa901-social"
+              aria-label="Twitter"
+            >
+              <i class="fab fa-twitter"></i>
+            </a>
+
+            <a
+              href="#"
+              class="unfa901-social"
+              aria-label="Instagram"
+            >
+              <i class="fab fa-instagram"></i>
+            </a>
+
+            <a
+              href="#"
+              class="unfa901-social"
+              aria-label="YouTube"
+            >
+              <i class="fab fa-youtube"></i>
+            </a>
+
+          </div>
+
+        </div>
+
+
+        <div class="col-lg-2 col-md-6">
+
+          <h3 class="unfa901-footer-heading">
+            Platform
+          </h3>
+
+          <ul class="unfa901-footer-list">
+
+            <li>
+
+              {% if is_authenticated %}
+
+                <a
+                  href="{% url 'user_home' %}"
+                  class="unfa901-footer-link"
+                >
+                  <i class="fas fa-home"></i>
+                  <span>Home</span>
+                </a>
+
+              {% else %}
+
+                <a
+                  href="{% url 'visitor_home' %}"
+                  class="unfa901-footer-link"
+                >
+                  <i class="fas fa-home"></i>
+                  <span>Home</span>
+                </a>
+
+              {% endif %}
+
+            </li>
+
+
+            <li>
+              <a
+                href="{% url 'watch_matches' %}"
+                class="unfa901-footer-link"
+              >
+                <i class="fas fa-futbol"></i>
+                <span>Fixtures</span>
+              </a>
+            </li>
+
+
+            <li>
+              <a
+                href="{% url 'tournament_list' %}"
+                class="unfa901-footer-link"
+              >
+                <i class="fas fa-trophy"></i>
+                <span>Tournaments</span>
+              </a>
+            </li>
+
+
+            <li>
+              <a
+                href="{% url 'user_clubs' %}"
+                class="unfa901-footer-link"
+              >
+                <i class="fas fa-shield-alt"></i>
+                <span>Clubs</span>
+              </a>
+            </li>
+
+
+            <li>
+              <a
+                href="{% url 'user_players' %}"
+                class="unfa901-footer-link"
+              >
+                <i class="fas fa-users"></i>
+                <span>Players</span>
+              </a>
+            </li>
+
+          </ul>
+
+        </div>
+
+
+        <div class="col-lg-3 col-md-6">
+
+          <h3 class="unfa901-footer-heading">
+            For Users
+          </h3>
+
+          <ul class="unfa901-footer-list">
+
+            {% if is_authenticated %}
+
+              {% if is_manager and my_club %}
+
+                <li>
+                  <a
+                    href="{% url 'club_interface' my_club.club_id %}"
+                    class="unfa901-footer-link"
+                  >
+                    <i class="fas fa-flag"></i>
+                    <span>My Club</span>
+                  </a>
+                </li>
+
+              {% endif %}
+
+
+              {% if is_turf_owner %}
+
+                <li>
+                  <a
+                    href="{% url 'turf_owner_home' %}"
+                    class="unfa901-footer-link"
+                  >
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>My Turfs</span>
+                  </a>
+                </li>
+
+              {% endif %}
+
+
+              {% if is_player %}
+
+                <li>
+                  <a
+                    href="{% url 'view_player_profile' player_id %}"
+                    class="unfa901-footer-link"
+                  >
+                    <i class="fas fa-id-card"></i>
+                    <span>My Profile</span>
+                  </a>
+                </li>
+
+              {% endif %}
+
+
+              <li>
+                <a
+                  href="{% url 'user_logout' %}"
+                  class="unfa901-footer-link"
+                  onclick="return confirm('Sign out?');"
+                >
+                  <i class="fas fa-sign-out-alt"></i>
+                  <span>Sign Out</span>
+                </a>
+              </li>
+
+            {% else %}
+
+              <li>
+                <a
+                  href="{% url 'visitor_sign' %}"
+                  class="unfa901-footer-link"
+                >
+                  <i class="fas fa-sign-in-alt"></i>
+                  <span>Sign In</span>
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="{% url 'visitor_sign' %}"
+                  class="unfa901-footer-link"
+                >
+                  <i class="fas fa-user-plus"></i>
+                  <span>Register</span>
+                </a>
+              </li>
+
+            {% endif %}
+
+          </ul>
+
+        </div>
+
+
+        <div class="col-lg-3 col-md-6">
+
+          <h3 class="unfa901-footer-heading">
+            Contact
+          </h3>
+
+          <ul class="unfa901-footer-list">
+
+            <li>
+              <a
+                href="mailto:support@unfa.local"
+                class="unfa901-footer-link"
+              >
+                <i class="fas fa-envelope"></i>
+                <span>support@unfa.local</span>
+              </a>
+            </li>
+
+
+            <li>
+              <a
+                href="tel:+15551234567"
+                class="unfa901-footer-link"
+              >
+                <i class="fas fa-phone"></i>
+                <span>+1 (555) 123-4567</span>
+              </a>
+            </li>
+
+
+            <li>
+              <a
+                href="#"
+                class="unfa901-footer-link"
+              >
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Community Center</span>
+              </a>
+            </li>
+
+          </ul>
+
+        </div>
+
+      </div>
+
+
+      <div class="unfa901-footer-bottom">
+
+        <div class="unfa901-footer-bottom-content">
+
+          <p class="unfa901-footer-copy">
+            Made with
+            <span class="unfa901-heart">❤️</span>
+            for football lovers |
+            Raveena &copy; 2026 UNFA.
+            All rights reserved.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+</div>
+
+
+<!-- =====================================================
+     BOOTSTRAP JS
+     IMPORTANT: ONLY LOAD THIS ONCE
+     ===================================================== -->
+
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+></script>
+
+<!-- Swiper -->
+<script
+  src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"
+></script>
+
+<!-- Fancybox -->
+<script
+  src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"
+></script>
+
+
+<!-- =====================================================
+     UNFA COMMON JAVASCRIPT
+     ===================================================== -->
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    /* =====================================================
+       NAVBAR SCROLL
+       ===================================================== */
+
+    const unfa901Navbar =
+      document.querySelector(".unfa901-navbar");
+
+    if (unfa901Navbar) {
+
+      const unfa901HandleScroll = function () {
+
+        if (window.scrollY > 20) {
+
+          unfa901Navbar.classList.add("scrolled");
+
+        } else {
+
+          unfa901Navbar.classList.remove("scrolled");
+
+        }
+
+      };
+
+      unfa901HandleScroll();
+
+      window.addEventListener(
+        "scroll",
+        unfa901HandleScroll,
+        {
+          passive: true
+        }
+      );
+
+    }
+
+
+    /* =====================================================
+       USER DROPDOWN
+       ===================================================== */
+
+    if (typeof bootstrap !== "undefined") {
+
+      document
+        .querySelectorAll(
+          '.unfa901-user-trigger[data-bs-toggle="dropdown"]'
+        )
+        .forEach(function (button) {
+
+          if (
+            button.dataset.unfa901DropdownReady === "true"
+          ) {
+            return;
+          }
+
+          button.dataset.unfa901DropdownReady = "true";
+
+          bootstrap.Dropdown.getOrCreateInstance(
+            button,
+            {
+              popperConfig: {
+                strategy: "fixed"
+              }
+            }
+          );
+
+        });
+
+    }
+
+
+    /* =====================================================
+       MOBILE MENU
+       ===================================================== */
+
+    const unfa901MobileMenu =
+      document.getElementById("unfa901MobileMenu");
+
+    if (
+      unfa901MobileMenu &&
+      typeof bootstrap !== "undefined"
+    ) {
+
+      const unfa901MobileLinks =
+        unfa901MobileMenu.querySelectorAll(
+          "a.unfa901-mobile-link"
+        );
+
+      unfa901MobileLinks.forEach(function (link) {
+
+        link.addEventListener(
+          "click",
+          function () {
+
+            const instance =
+              bootstrap.Offcanvas.getInstance(
+                unfa901MobileMenu
+              );
+
+            if (instance) {
+              instance.hide();
+            }
+
+          }
+        );
+
+      });
+
+    }
+
+
+    /* =====================================================
+       NOTIFICATION MODAL
+       ===================================================== */
+
+    const unfa901NotificationModal =
+      document.getElementById(
+        "unfa901NotifModal"
+      );
+
+    if (
+      unfa901NotificationModal &&
+      typeof bootstrap !== "undefined"
+    ) {
+
+      
+const notificationModal =
+    bootstrap.Modal.getOrCreateInstance(
+        unfa901NotificationModal,
+        {
+            backdrop: false,
+            keyboard: true,
+            focus: true
+        }
+    );
+
+
+      unfa901NotificationModal.addEventListener(
+        "shown.bs.modal",
+        function () {
+
+          const items =
+            unfa901NotificationModal.querySelectorAll(
+              ".unfa901-notification-item"
+            );
+
+          items.forEach(function (item, index) {
+
+            item.style.opacity = "0";
+            item.style.transform =
+              "translateX(18px)";
+
+            setTimeout(function () {
+
+              item.style.transition =
+                "opacity 0.35s ease, transform 0.35s ease";
+
+              item.style.opacity = "1";
+              item.style.transform =
+                "translateX(0)";
+
+            }, index * 65);
+
+          });
+
+        }
+      );
+
+
+      /*
+       * Reset notification items when modal closes.
+       * This makes reopening the modal work correctly.
+       */
+
+      unfa901NotificationModal.addEventListener(
+        "hidden.bs.modal",
+        function () {
+
+          const items =
+            unfa901NotificationModal.querySelectorAll(
+              ".unfa901-notification-item"
+            );
+
+          items.forEach(function (item) {
+
+            item.style.opacity = "";
+            item.style.transform = "";
+            item.style.transition = "";
+
+          });
+
+        }
+      );
+
+
+      /*
+       * Make sure modal body is scrollable correctly.
+       */
+
+      unfa901NotificationModal.addEventListener(
+        "shown.bs.modal",
+        function () {
+
+          const body =
+            unfa901NotificationModal.querySelector(
+              ".unfa901-notification-body"
+            );
+
+          if (body) {
+            body.scrollTop = 0;
+          }
+
+        }
+      );
+
+    }
+
+
+    /* =====================================================
+       FOOTER LINK ICON ANIMATION
+       ===================================================== */
+
+    document
+      .querySelectorAll(".unfa901-footer-link")
+      .forEach(function (link) {
+
+        link.addEventListener(
+          "mouseenter",
+          function () {
+
+            const icon =
+              this.querySelector("i");
+
+            if (icon) {
+
+              icon.style.transform =
+                "translateX(2px)";
+
+            }
+
+          }
+        );
+
+
+        link.addEventListener(
+          "mouseleave",
+          function () {
+
+            const icon =
+              this.querySelector("i");
+
+            if (icon) {
+
+              icon.style.transform =
+                "translateX(0)";
+
+            }
+
+          }
+        );
+
+      });
+
+
+    /* =====================================================
+       PARTICLES
+       ===================================================== */
+
+    const particles =
+      document.querySelectorAll(
+        ".unfa901-particle"
+      );
+
+    particles.forEach(function (particle) {
+
+      const randomSize =
+        Math.random() * 3 + 2;
+
+      particle.style.width =
+        randomSize + "px";
+
+      particle.style.height =
+        randomSize + "px";
+
+    });
+
+  });
+</script>
+
+
+
+<script
+  src="{% static 'user_panel/js/user_home_script.js' %}"
+></script>
+
+<script
+  src="{% static 'user_panel/js/club_manager.js' %}"
+></script>
+
+<script
+  src="{% static 'user_panel/js/player_script.js' %}"
+></script>
+
+
+  </body>
+</html>

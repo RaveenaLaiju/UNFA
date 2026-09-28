@@ -1,0 +1,196 @@
+{% extends 'admin/admin_base.html' %}
+{% block title %}{{ tournament.t_name }} - Registrations{% endblock %}
+
+{% block content %}
+
+
+<div class="container-fluid">
+
+  <div class="row">
+    <div class="col-12">
+      <div class="arena-header-glass">
+        <div class="row align-items-center">
+          <div class="col-12 col-lg-8">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+              <ol class="bc-trail-modern">
+                <li><a href="{% url 'admin_view_tournaments' %}">Tournaments</a></li>
+                <li><span class="bc-chevron-modern">›</span></li>
+                <li><a href="{% url 'admin_view_tournament_detail' tournament.t_id %}">{{ tournament.t_name|default:"Detail" }}</a></li>
+                <li><span class="bc-chevron-modern">›</span></li>
+                <li class="bc-active">Registrations</li>
+              </ol>
+            </nav>
+
+            <!-- Title -->
+            <h1 class="d-flex align-items-center gap-2 flex-wrap justify-content-center justify-content-lg-start">
+              <span style="font-size: 2rem; animation: floatBall 3s ease-in-out infinite; display: inline-block;">⚽</span>
+              <span class="text-white fw-bold">{{ tournament.t_name }}</span>
+              <span class="d-none d-sm-inline" style="color: #475569;">|</span>
+              <span class="text-success fw-semibold" style="font-size: 1.1rem;">Registrations</span>
+            </h1>
+            <p class="mb-0 mt-2" style="color: #94a3b8;">
+              Manage registered clubs, payment status & league standings
+            </p>
+          </div>
+
+          <div class="col-12 col-lg-4 mt-3 mt-lg-0">
+            <div class="stats-grid-modern">
+              <div class="stat-card-modern stat-paid-modern">
+                <span class="stat-icon">💰</span>
+                <div class="stat-label">Paid</div>
+                <div class="stat-value">{{ paid_count }}</div>
+              </div>
+              <div class="stat-card-modern stat-unpaid-modern">
+                <span class="stat-icon">⏳</span>
+                <div class="stat-label">Unpaid</div>
+                <div class="stat-value">{{ unpaid_count }}</div>
+              </div>
+              <div class="stat-card-modern stat-total-modern">
+                <span class="stat-icon">🏟️</span>
+                <div class="stat-label">Total</div>
+                <div class="stat-value">{{ registrations|length }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="roster-glass-panel">
+        <!-- Panel Header -->
+        <div class="roster-header-modern">
+          <span class="roster-icon">🛡️</span>
+          <h3>All Registered Clubs</h3>
+          <div class="accent-line d-none d-md-block"></div>
+        </div>
+
+        <div class="table-responsive-modern" style="overflow-x: auto;">
+          <table class="squad-table-modern">
+            <thead>
+              <tr>
+                <th class="text-center" style="width: 60px;">#</th>
+                <th>Club</th>
+                <th>Manager</th>
+                <th class="text-center">Group</th>
+                <th class="text-center">P</th>
+                <th class="text-center">W</th>
+                <th class="text-center">D</th>
+                <th class="text-center">L</th>
+                <th class="text-center">Pts</th>
+                <th>Payment</th>
+                <th>Amount</th>
+                <th>Paid At</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for reg in registrations %}
+              <tr style="animation: slideIn 0.5s ease-out {{ forloop.counter0|divisibleby:1 }}s both;">
+                <!-- Rank Cell -->
+                <td class="text-center" data-label="#">
+                  <span class="rank-badge-modern">{{ forloop.counter }}</span>
+                </td>
+
+                <!-- Club Cell -->
+                <td data-label="Club">
+                  <div class="d-flex align-items-center gap-2 club-identity-modern">
+                    <div class="club-crest-modern">{{ reg.t_c_club.club_name|first|upper }}</div>
+                    <span class="club-name-modern">{{ reg.t_c_club.club_name }}</span>
+                  </div>
+                </td>
+
+                <!-- Manager Cell -->
+                <td data-label="Manager">
+                  <span class="manager-tag-modern">{{ reg.t_c_club.club_manager.user_name }}</span>
+                </td>
+
+                <!-- Group Cell -->
+                <td class="text-center" data-label="Group">
+                  {% if reg.group_name %}
+                    <span class="group-tag-modern">{{ reg.group_name }}</span>
+                  {% else %}
+                    <span class="group-empty-modern">—</span>
+                  {% endif %}
+                </td>
+
+                <!-- Stats Cells -->
+                <td class="text-center" data-label="P">{{ reg.played }}</td>
+                <td class="text-center" data-label="W">{{ reg.won }}</td>
+                <td class="text-center" data-label="D">{{ reg.drawn }}</td>
+                <td class="text-center" data-label="L">{{ reg.lost }}</td>
+
+                <!-- Points Cell -->
+                <td class="text-center" data-label="Pts">
+                  <span class="pts-badge-modern">{{ reg.points }}</span>
+                </td>
+
+                <!-- Payment Cell -->
+                <td data-label="Payment">
+                  {% if reg.is_paid %}
+                    <span class="payment-tag-modern tag-paid-modern">
+                      <span>✅</span> Paid
+                    </span>
+                  {% else %}
+                    <span class="payment-tag-modern tag-unpaid-modern">
+                      <span>⏸️</span> Unpaid
+                    </span>
+                  {% endif %}
+                </td>
+
+                <!-- Amount Cell -->
+                <td data-label="Amount">
+                  <span class="text-white fw-semibold">₹{{ reg.payment_amount }}</span>
+                </td>
+
+                <!-- Paid At Cell -->
+                <td data-label="Paid At">
+                  <span class="timestamp-modern">{{ reg.paid_at|date:"M d, H:i"|default:"—" }}</span>
+                </td>
+
+                <!-- Actions Cell -->
+                <td class="cell-actions-modern" data-label="Actions">
+                  <div class="d-flex gap-2 justify-content-end flex-wrap">
+                    <form method="post" action="{% url 'admin_update_registration_status' reg.t_c_id %}" class="m-0">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="toggle_payment">
+                      <button type="submit" class="action-btn-modern {% if reg.is_paid %}btn-unpay-modern{% else %}btn-pay-modern{% endif %}">
+                        {% if reg.is_paid %}Mark Unpaid{% else %}Mark Paid{% endif %}
+                      </button>
+                    </form>
+                    <form method="post" action="{% url 'admin_update_registration_status' reg.t_c_id %}" class="m-0" onsubmit="return confirm('Remove this club from tournament?');">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="remove">
+                      <button type="submit" class="action-btn-modern btn-remove-modern" title="Remove Club">
+                        🗑️
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="13">
+                  <div class="empty-arena-modern">
+                    <div class="empty-anim-modern">📢</div>
+                    <div class="empty-text-modern">No clubs have registered yet. The pitch is empty!</div>
+                    <div class="empty-hint-modern">Clubs will appear here once they join the tournament.</div>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+{% endblock %}

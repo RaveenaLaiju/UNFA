@@ -1,0 +1,324 @@
+{% extends 'admin/admin_base.html' %}
+{% block title %}Edit {{ tournament.t_name }} - Admin{% endblock %}
+
+
+{% block content %}
+
+  <div class="container">
+
+    <div class="row mb-4">
+      <div class="col-12">
+        <nav class="section-5-touchline-nav" aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="{% url 'admin_view_tournaments' %}">🏟️ Tournaments</a>
+            </li>
+            <li class="breadcrumb-item">
+              <a href="{% url 'admin_view_tournament_detail' tournament.t_id %}">
+                {{ tournament.t_name|default:"Detail" }}
+              </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">✏️ Edit</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <header class="section-6-center-header">
+          <span class="section-6-header-icon">✏️</span>
+          <h1>Edit Tournament</h1>
+          <p>Update tournament details, format, and configuration</p>
+        </header>
+      </div>
+    </div>
+
+    <div class="section-13-pitch-line"></div>
+
+    <div class="row g-4">
+
+      <div class="col-12 col-lg-8">
+
+        <div class="section-4-glass-card h-100">
+          
+          <!-- Card Header -->
+          <div class="section-4-glass-header">
+            <h3 class="section-12-card-title">
+              <span class="section-12-icon-glow">⚙️</span>
+              Tournament Configuration
+            </h3>
+          </div>
+
+          <!-- Card Body -->
+          <div class="card-body p-4 p-md-4">
+            
+            <form method="post" action="{% url 'admin_edit_tournament' tournament.t_id %}">
+              {% csrf_token %}
+
+              <div class="row g-3 mb-3">
+                <div class="col-12 col-md-6">
+                  <div class="mb-3">
+                    <label class="section-7-pitch-label" for="tournament_name">
+                      🏷️ Tournament Name
+                    </label>
+                    <input type="text" 
+                           id="tournament_name" 
+                           name="tournament_name" 
+                           class="form-control section-7-pitch-input"
+                           value="{{ tournament.t_name|default:'' }}" 
+                           required>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="mb-3">
+                    <label class="section-7-pitch-label" for="tournament_date">
+                      📅 Tournament Date
+                    </label>
+                    <input type="date" 
+                           id="tournament_date" 
+                           name="tournament_date" 
+                           class="form-control section-7-pitch-input"
+                           value="{{ tournament.t_date|date:'Y-m-d' }}" 
+                           required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-3 mb-3">
+                <div class="col-12 col-md-6 col-lg-4">
+                  <div class="mb-3">
+                    <label class="section-7-pitch-label" for="format">🏗️ Format</label>
+                    <select id="format" name="format" class="form-select section-7-pitch-select">
+                      {% for key, label in formats %}
+                      <option value="{{ key }}" {% if tournament.format == key %}selected{% endif %}>
+                        {{ label }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                  <div class="mb-3">
+                    <label class="section-7-pitch-label" for="squad_size">👥 Squad Size</label>
+                    <select id="squad_size" name="squad_size" class="form-select section-7-pitch-select">
+                      {% for size, label in squad_sizes %}
+                      <option value="{{ size }}" {% if tournament.squad_size == size %}selected{% endif %}>
+                        {{ label }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                  <div class="mb-3">
+                    <label class="section-7-pitch-label" for="max_teams">🎯 Max Teams</label>
+                    <input type="number" 
+                           id="max_teams" 
+                           name="max_teams" 
+                           class="form-control section-7-pitch-input"
+                           value="{{ tournament.max_teams }}" 
+                           min="2" 
+                           max="64">
+                  </div>
+                </div>
+              </div>
+
+          
+              <div class="row g-3 mb-3">
+                <div class="col-12 col-md-6 col-lg-4">
+                  <div class="mb-3">
+                    <label class="section-7-pitch-label" for="registration_fee">
+                      💰 Registration Fee (₹)
+                    </label>
+                    <input type="number" 
+                           id="registration_fee" 
+                           name="registration_fee" 
+                           class="form-control section-7-pitch-input"
+                           value="{{ tournament.registration_fee }}" 
+                           step="0.01" 
+                           min="0">
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                  <div class="mb-3">
+                    <label class="section-7-pitch-label" for="prize_pool">
+                      🏆 Prize Pool (₹)
+                    </label>
+                    <input type="number" 
+                           id="prize_pool" 
+                           name="prize_pool" 
+                           class="form-control section-7-pitch-input"
+                           value="{{ tournament.prize_pool|default:'' }}" 
+                           step="0.01" 
+                           min="0">
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                  <div class="mb-3">
+                    <label class="section-7-pitch-label" for="registration_deadline">
+                      ⏰ Registration Deadline
+                    </label>
+                    <input type="date" 
+                           id="registration_deadline" 
+                           name="registration_deadline" 
+                           class="form-control section-7-pitch-input"
+                           value="{{ tournament.registration_deadline|date:'Y-m-d'|default:'' }}">
+                  </div>
+                </div>
+              </div>
+
+         
+              <div class="row g-3 mb-3">
+                <div class="col-12 col-md-6">
+                  <div class="mb-3">
+                    <label class="section-7-pitch-label" for="teams_per_group">
+                      📊 Teams Per Group
+                    </label>
+                    <input type="number" 
+                           id="teams_per_group" 
+                           name="teams_per_group" 
+                           class="form-control section-7-pitch-input"
+                           value="{{ tournament.teams_per_group }}" 
+                           min="2" 
+                           max="16">
+                    <small class="section-7-pitch-hint">For hybrid format only</small>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="mb-3">
+                    <label class="section-7-pitch-label" for="teams_qualifying">
+                      ✅ Teams Qualifying
+                    </label>
+                    <input type="number" 
+                           id="teams_qualifying" 
+                           name="teams_qualifying" 
+                           class="form-control section-7-pitch-input"
+                           value="{{ tournament.teams_qualifying }}" 
+                           min="1" 
+                           max="8">
+                    <small class="section-7-pitch-hint">Per group (hybrid format)</small>
+                  </div>
+                </div>
+              </div>
+
+          
+              <div class="row g-3 mb-3">
+                <div class="col-12">
+                  <div class="mb-3">
+                    <label class="section-7-pitch-label" for="description">📝 Description</label>
+                    <textarea id="description" 
+                              name="description" 
+                              class="form-control section-7-pitch-textarea" 
+                              rows="4">{{ tournament.description|default:'' }}</textarea>
+                  </div>
+                </div>
+              </div>
+
+      
+              <div class="section-10-penalty-strip">
+                <label class="section-10-custom-checkbox">
+                  <input type="checkbox" 
+                         name="is_active" 
+                         id="is_active" 
+                         {% if tournament.is_active %}checked{% endif %}>
+                  <span>🟢 Tournament Active</span>
+                </label>
+                <label class="section-10-custom-checkbox">
+                  <input type="checkbox" 
+                         name="is_completed" 
+                         id="is_completed" 
+                         {% if tournament.is_completed %}checked{% endif %}>
+                  <span>✅ Mark as Completed</span>
+                </label>
+              </div>
+
+              <div class="section-11-dugout-actions">
+                <a href="{% url 'admin_view_tournament_detail' tournament.t_id %}" 
+                   class="section-11-btn-kit section-11-btn-red">
+                  <span>❌</span> Cancel
+                </a>
+                <button type="submit" class="section-11-btn-kit section-11-btn-green">
+                  <span>💾</span> Save Changes
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+
+        <div class="section-4-glass-card section-8-shield-card mb-4">
+          <div class="section-8-trophy-icon">🏆</div>
+          <div class="section-8-shield-name">
+            {{ tournament.t_name|default:"Tournament" }}
+          </div>
+          <div class="section-8-shield-id">ID: #{{ tournament.t_id }}</div>
+        </div>
+
+ 
+        <div class="section-4-glass-card">
+          <div class="section-4-glass-header">
+            <h3 class="section-12-card-title">
+              <span class="section-12-icon-glow">📊</span>
+              Quick Info
+            </h3>
+          </div>
+          <div class="card-body p-4">
+            
+            <div class="section-9-stat-row">
+              <span class="section-9-stat-label">🏗️ Format</span>
+              <span class="section-9-stat-value">
+                {{ tournament.format|default:"—" }}
+              </span>
+            </div>
+            
+            <div class="section-9-stat-row">
+              <span class="section-9-stat-label">👥 Squad Size</span>
+              <span class="section-9-stat-value">
+                {{ tournament.squad_size|default:"—" }}
+              </span>
+            </div>
+            
+            <div class="section-9-stat-row">
+              <span class="section-9-stat-label">🎯 Max Teams</span>
+              <span class="section-9-stat-value">
+                {{ tournament.max_teams|default:"—" }}
+              </span>
+            </div>
+            
+            <div class="section-9-stat-row">
+              <span class="section-9-stat-label">📡 Status</span>
+              <span class="section-9-stat-value">
+                {% if tournament.is_active %}
+                  <span class="section-9-status-dot section-9-status-active"></span>Active
+                {% else %}
+                  <span class="section-9-status-dot section-9-status-inactive"></span>Inactive
+                {% endif %}
+              </span>
+            </div>
+            
+            <div class="section-9-stat-row">
+              <span class="section-9-stat-label">🏁 Completed</span>
+              <span class="section-9-stat-value">
+                {% if tournament.is_completed %}
+                  ✅ Yes
+                {% else %}
+                  ⏳ No
+                {% endif %}
+              </span>
+            </div>
+            
+          </div>
+        </div>
+
+      </div><!-- /Right Column -->
+
+    </div><!-- /Main Row -->
+
+  </div><!-- /Bootstrap Container -->
+
+
+{% endblock %}

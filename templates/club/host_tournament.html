@@ -1,0 +1,43 @@
+{% extends 'user/user_head.html' %}
+{% block content %}
+<div class="py-5">
+  <div class="container glass-panel animate-on-scroll">
+{% load static %}
+
+<section class="match-create-page">
+  <div class="container animate-on-scroll">
+    <header class="create-hero animate-on-scroll">
+      <span class="kicker"><i class="fas fa-trophy"></i> Tournament Host</span>
+      <h1 class="page-title">Host Tournament</h1>
+      <p style="color: var(--text-secondary); margin-top: var(--space-sm);">Create and organize your own football tournament</p>
+    </header>
+
+    <div class="create-form-panel animate-on-scroll" data-delay="1" style="max-width: 600px;">
+      <div class="glass-panel mb-lg" style="background: var(--accent-dim); border-color: var(--accent);">
+        <h3 style="margin-bottom: var(--space-md); color: var(--accent);"><i class="fas fa-info-circle"></i> Hosting Info</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">As a host, you'll manage the tournament schedule, track participating clubs, and oversee the competition. Make sure your club is ready for the challenge!</p>
+      </div>
+
+      <form method="POST" action="{% url 'host_tournament' %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <label><i class="fas fa-signature"></i> Tournament Name</label>
+          <input type="text" name="tournament_name" class="form-control-hud" placeholder="e.g. Summer Cup 2026" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-calendar-alt"></i> Tournament Date</label>
+          <input type="date" name="tournament_date" class="form-control-hud" required min="{{ tomorrow }}">
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-shield-alt"></i> Host Club</label>
+          <input type="text" class="form-control-hud" value="{{ club.club_name }}" disabled style="opacity: 0.7;">
+          <small style="color: var(--text-muted); display: block; margin-top: var(--space-xs);">Your club will be the automatic host</small>
+        </div>
+        <button type="submit" class="glass-btn accent full mt-lg"><i class="fas fa-trophy"></i> Create Tournament</button>
+      </form>
+    </div>
+  </div>
+</section>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,789 @@
+{% extends 'user/user_head.html' %} 
+{% load static %} 
+{% block content %}
+
+<div class="fmx01-pitch-wrapper">
+  <div class="fmx02-pitch-lines"></div>
+  <div class="fmx03-stadium-lights"></div>
+  <div class="fmx04-pitch-overlay"></div>
+  <div class="fmx05-particles-container" id="fmxParticles"></div>
+
+  <div class="container-fluid fmx07-arena-container">
+    <header
+      class="fmx10-arena-header fmx08-glass mb-4"
+      data-fmx-animation="slide-down"
+    >
+      <div class="fmx11-header-glow"></div>
+
+      <!-- Club Crest -->
+      <div class="fmx12-club-crest">
+        <div class="fmx13-crest-ring">
+          <img
+            src="{{ club.club_logo.url }}"
+            alt="{{ club.club_name }}"
+            class="fmx14-crest-img"
+          />
+        </div>
+      </div>
+
+      <!-- Club Information -->
+
+      <div class="fmx15-club-identity">
+        <span class="fmx16-arena-kicker">
+          <i class="fas fa-crown"></i>
+          MANAGER DASHBOARD
+        </span>
+
+        <h1 class="fmx17-arena-title">{{ club.club_name }}</h1>
+
+        <div class="fmx18-club-badges">
+          <span class="fmx19-badge-tag fmx20-neon-blue">
+            <i class="fas fa-shield-alt"></i>
+            Manager
+          </span>
+
+          <span class="fmx19-badge-tag fmx21-neon-purple">
+            <i class="fas fa-trophy"></i>
+            Pro Club
+          </span>
+        </div>
+      </div>
+
+      <!-- Header Action -->
+
+      <nav class="fmx22-arena-actions">
+        <a
+          href="{% url 'check_match_requirement' club.club_id %}"
+          class="fmx23-action-btn fmx24-glow-btn"
+        >
+          <i class="fas fa-futbol"></i>
+          Create Match
+        </a>
+      </nav>
+    </header>
+
+    <div class="row g-3 g-lg-4">
+      <div class="col-lg-3 col-xl-2 d-none d-lg-block">
+        <aside class="fmx25-sidebar" data-fmx-animation="slide-right">
+          <div class="fmx26-sidebar-heading">
+            <div class="fmx27-sidebar-icon">
+              <i class="fas fa-compass"></i>
+            </div>
+
+            <div class="fmx28-sidebar-heading-text">
+              <small>CONTROL CENTER</small>
+              <h5>Tactics Board</h5>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+
+          <div class="fmx29-nav-list">
+            <a
+              href="{% url 'club_interface' club.club_id %}"
+              class="fmx30-nav-item fmx31-nav-active"
+            >
+              <span class="fmx32-nav-icon">
+                <i class="fas fa-home"></i>
+              </span>
+
+              <span>Dashboard</span>
+
+              <i class="fas fa-chevron-right fmx33-nav-arrow"></i>
+            </a>
+
+            <a href="{% url 'club_matches' %}" class="fmx30-nav-item">
+              <span class="fmx32-nav-icon">
+                <i class="fas fa-futbol"></i>
+              </span>
+
+              <span>Matches</span>
+
+              <i class="fas fa-chevron-right fmx33-nav-arrow"></i>
+            </a>
+
+            <a href="{% url 'search_matches' %}" class="fmx30-nav-item">
+              <span class="fmx32-nav-icon">
+                <i class="fas fa-search"></i>
+              </span>
+
+              <span>Find Match</span>
+
+              <i class="fas fa-chevron-right fmx33-nav-arrow"></i>
+            </a>
+
+            <a href="{% url 'user_players' %}" class="fmx30-nav-item">
+              <span class="fmx32-nav-icon">
+                <i class="fas fa-users"></i>
+              </span>
+
+              <span> Players </span>
+
+              <i class="fas fa-chevron-right fmx33-nav-arrow"></i>
+            </a>
+
+            <a href="{% url 'my_tournaments' %}" class="fmx30-nav-item">
+              <span class="fmx32-nav-icon">
+                <i class="fas fa-trophy"></i>
+              </span>
+
+              <span> Tournaments </span>
+
+              <i class="fas fa-chevron-right fmx33-nav-arrow"></i>
+            </a>
+
+            <a href="{% url 'add_position' %}" class="fmx30-nav-item">
+              <span class="fmx32-nav-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </span>
+
+              <span> Add Position </span>
+
+              <i class="fas fa-chevron-right fmx33-nav-arrow"></i>
+            </a>
+          </div>
+
+          <!-- Sidebar Footer -->
+
+          <div class="fmx34-sidebar-footer">
+            <div class="fmx35-sidebar-ball">
+              <i class="fas fa-futbol"></i>
+            </div>
+
+            <div class="fmx36-sidebar-footer-text">
+              <small> SEASON </small>
+
+              <strong> READY TO PLAY </strong>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="col-lg-9 col-xl-10">
+        <main class="d-flex flex-column gap-3 gap-lg-4">
+          <div class="fmx37-mobile-tactics d-lg-none">
+            <button
+              type="button"
+              class="fmx38-mobile-tactics-btn"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#fmxTacticsOffcanvas"
+              aria-controls="fmxTacticsOffcanvas"
+            >
+              <span class="fmx39-mobile-menu-icon">
+                <i class="fas fa-bars"></i>
+              </span>
+
+              <span class="fmx40-mobile-menu-text">
+                <small> OPEN </small>
+
+                <strong> Tactics Board </strong>
+              </span>
+
+              <span class="fmx41-mobile-menu-arrow">
+                <i class="fas fa-chevron-right"></i>
+              </span>
+            </button>
+          </div>
+
+          {% for booking in bookings %} 
+          {% if booking.status == "Accepted" and not booking.is_paid %}
+
+          <div
+            class="alert fmx55-payment-alert d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3 mb-0"
+            data-fmx-animation="fade-up"
+          >
+            <div class="fmx56-payment-content">
+              <i class="fas fa-credit-card me-2"></i>
+
+              <strong> Payment Required: </strong>
+
+              Your booking at
+
+              <strong> {{ booking.turf.turf_name }} </strong>
+
+              on
+
+              <strong> {{ booking.booking_date }} </strong>
+
+              ({{ booking.time_slot.tt_time.time_range }}) is accepted. Complete
+              payment to confirm the match.
+            </div>
+
+            <a
+              href="{% url 'initiate_payment' booking.booking_id %}"
+              class="fmx23-action-btn fmx24-glow-btn"
+            >
+              <i class="fas fa-lock"></i>
+
+              Pay Now
+            </a>
+          </div>
+
+          {% endif %} 
+          {% endfor %}
+
+          <section
+            class="fmx57-scoreboard fmx08-glass"
+            data-fmx-animation="fade-up"
+          >
+            <div class="fmx58-zone-heading">
+              <i class="fas fa-chart-bar"></i>
+
+              <h2>Club Overview</h2>
+            </div>
+
+            <div class="fmx59-stats-grid">
+              <!-- Squad -->
+
+              <article class="fmx60-stat-card fmx67-stat-green">
+                <div class="fmx61-stat-shine"></div>
+
+                <div class="fmx62-stat-icon">
+                  <i class="fas fa-users"></i>
+                </div>
+
+                <div class="fmx63-stat-number">{{ players|length }}</div>
+
+                <div class="fmx64-stat-label">Squad Size</div>
+
+                <div class="fmx65-stat-bar">
+                  <div class="fmx66-bar-fill" style="width: 75%"></div>
+                </div>
+              </article>
+
+              <!-- Matches -->
+
+              <article class="fmx60-stat-card fmx68-stat-cyan">
+                <div class="fmx61-stat-shine"></div>
+
+                <div class="fmx62-stat-icon">
+                  <i class="fas fa-futbol"></i>
+                </div>
+
+                <div class="fmx63-stat-number">{{ matches|length }}</div>
+
+                <div class="fmx64-stat-label">Fixtures</div>
+
+                <div class="fmx65-stat-bar">
+                  <div class="fmx66-bar-fill" style="width: 60%"></div>
+                </div>
+              </article>
+
+              <!-- Bookings -->
+
+              <article class="fmx60-stat-card fmx69-stat-gold">
+                <div class="fmx61-stat-shine"></div>
+
+                <div class="fmx62-stat-icon">
+                  <i class="fas fa-calendar-check"></i>
+                </div>
+
+                <div class="fmx63-stat-number">{{ bookings|length }}</div>
+
+                <div class="fmx64-stat-label">Bookings</div>
+
+                <div class="fmx65-stat-bar">
+                  <div class="fmx66-bar-fill" style="width: 45%"></div>
+                </div>
+              </article>
+
+              <!-- Strength -->
+
+              <article class="fmx60-stat-card fmx70-stat-rose">
+                <div class="fmx61-stat-shine"></div>
+
+                <div class="fmx62-stat-icon">
+                  <i class="fas fa-bolt"></i>
+                </div>
+
+                <div class="fmx63-stat-number">{{ club.club_weight }}</div>
+
+                <div class="fmx64-stat-label">Team Strength</div>
+
+                <div class="fmx65-stat-bar">
+                  <div class="fmx66-bar-fill" style="width: 85%"></div>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="fmx71-zone fmx08-glass" data-fmx-animation="fade-up">
+            <div class="fmx72-zone-header">
+              <div class="fmx73-zone-title">
+                <i class="fas fa-id-card-alt"></i>
+
+                <h2>Squad Members</h2>
+              </div>
+
+              <a href="{% url 'user_players' %}" class="fmx74-zone-link">
+                <span> View All </span>
+
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+
+            {% if players %}
+
+            <div class="fmx75-roster-grid">
+              {% for player in players|slice:":8" %}
+
+              <article class="fmx76-player-card" data-fmx-animation="zoom-in">
+                <!-- Rating -->
+
+                <div class="fmx77-player-rating">
+                  {{ player.player_rating }}
+                </div>
+
+                <!-- Remove -->
+
+                <form
+                  method="POST"
+                  action="{% url 'remove_player_from_club' club.club_id player.player_id %}"
+                  class="fmx78-remove-form"
+                  onsubmit="return confirm('Are you sure you want to remove {{ player.player_card_name }} from the squad?');"
+                >
+                  {% csrf_token %}
+
+                  <button
+                    type="submit"
+                    class="fmx79-remove-btn"
+                    title="Remove from squad"
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
+                </form>
+
+                <!-- Player -->
+
+                <a
+                  href="{% url 'player_public_profile' player.player_id %}"
+                  class="fmx80-player-link"
+                >
+                  <div class="fmx81-player-visual">
+                    <img
+                      src="{{ player.player_image.url }}"
+                      alt="{{ player.player_card_name }}"
+                      class="fmx82-player-img"
+                    />
+
+                    <div class="fmx83-player-ring"></div>
+                  </div>
+
+                  <div class="fmx84-player-info">
+                    <h4 class="fmx85-player-name">
+                      {{ player.player_card_name }}
+                    </h4>
+
+                    <div class="fmx86-player-meta">
+                      <span class="fmx87-position-badge">
+                        {{ player.player_position.position_code }}
+                      </span>
+
+                      <span class="fmx88-rating-stars">
+                        {% for i in "12345" %} 
+                        {% if forloop.counter <= player.player_rating %}
+
+                        <i class="fas fa-star"></i>
+
+                        {% else %}
+
+                        <i class="far fa-star"></i>
+
+                        {% endif %} {% endfor %}
+                      </span>
+                    </div>
+                  </div>
+                </a>
+              </article>
+
+              {% endfor %}
+            </div>
+
+            {% else %}
+
+            <div class="fmx117-empty-state">
+              <div class="fmx118-empty-icon">
+                <i class="fas fa-user-slash"></i>
+              </div>
+
+              <p class="fmx119-empty-text">No players in squad yet</p>
+
+              <a
+                href="{% url 'user_players' %}"
+                class="fmx23-action-btn fmx24-glow-btn"
+              >
+                <i class="fas fa-plus"></i>
+
+                Recruit Players
+              </a>
+            </div>
+
+            {% endif %}
+          </section>
+
+          <section class="fmx71-zone fmx08-glass" data-fmx-animation="fade-up">
+            <div class="fmx72-zone-header">
+              <div class="fmx73-zone-title">
+                <i class="fas fa-stopwatch"></i>
+
+                <h2>Upcoming Fixtures</h2>
+              </div>
+
+              <a href="{% url 'club_matches' %}" class="fmx74-zone-link">
+                <span> View All </span>
+
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+
+            {% if matches %}
+
+            <div class="fmx89-match-list">
+              {% for match in matches|slice:":5" %}
+
+              <a
+                href="{% url 'go_to_match' match.match_id %}"
+                class="fmx90-fixture-link"
+              >
+                <article class="fmx91-match-ticket">
+                  <!-- Date -->
+
+                  <div class="fmx92-ticket-date">
+                    <span class="fmx93-day-number">
+                      {{ match.match_date|date:"d" }}
+                    </span>
+
+                    <span class="fmx94-day-month">
+                      {{ match.match_date|date:"M" }}
+                    </span>
+
+                    <span class="fmx95-match-time">
+                      <i class="fas fa-clock"></i>
+
+                      {{ match.match_time }}
+                    </span>
+                  </div>
+
+                  <!-- Teams -->
+
+                  <div class="fmx96-ticket-teams">
+                    <!-- Home -->
+
+                    <div class="fmx97-team">
+                      <span
+                        class="fmx99-team-shield"
+                        style="background-image:url('{{ match.match_home_team.club_logo.url }}')"
+                      ></span>
+
+                      <span class="fmx100-team-name">
+                        {{ match.match_home_team.club_name }}
+                      </span>
+                    </div>
+
+                    <!-- VS -->
+
+                    <div class="fmx101-vs-center">
+                      <span class="fmx102-vs"> VS </span>
+
+                      {% if match.match_finished %}
+
+                      <span class="fmx103-match-status fmx104-status-finished">
+                        <i class="fas fa-flag-checkered"></i>
+
+                        FT
+                      </span>
+
+                      {% elif match.match_started %}
+
+                      <span class="fmx103-match-status fmx105-status-live">
+                        <i class="fas fa-broadcast-tower"></i>
+
+                        LIVE
+                      </span>
+
+                      {% else %}
+
+                      <span class="fmx103-match-status fmx106-status-upcoming">
+                        <i class="fas fa-hourglass-start"></i>
+
+                        SOON
+                      </span>
+
+                      {% endif %}
+                    </div>
+
+                    <!-- Away -->
+
+                    <div class="fmx97-team fmx98-team-away">
+                      <span class="fmx100-team-name">
+                        {{ match.match_away_team.club_name|default:"TBD" }}
+                      </span>
+
+                      {% if match.match_away_team.club_logo %}
+
+                      <span
+                        class="fmx99-team-shield"
+                        style="background-image:url('{{ match.match_away_team.club_logo.url }}')"
+                      ></span>
+
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <!-- QR -->
+
+                  <div class="fmx107-ticket-code">
+                    <i class="fas fa-qrcode"></i>
+                  </div>
+                </article>
+              </a>
+
+              {% endfor %}
+            </div>
+
+            {% else %}
+
+            <div class="fmx117-empty-state">
+              <div class="fmx118-empty-icon">
+                <i class="fas fa-calendar-times"></i>
+              </div>
+
+              <p class="fmx119-empty-text">No upcoming matches scheduled</p>
+
+              <a
+                href="{% url 'check_match_requirement' club.club_id %}"
+                class="fmx23-action-btn fmx24-glow-btn"
+              >
+                <i class="fas fa-plus"></i>
+
+                Schedule Match
+              </a>
+            </div>
+
+            {% endif %}
+          </section>
+
+          {% if bookings %}
+
+          <section class="fmx71-zone fmx08-glass" data-fmx-animation="fade-up">
+            <div class="fmx72-zone-header">
+              <div class="fmx73-zone-title">
+                <i class="fas fa-clipboard-list"></i>
+
+                <h2>Recent Bookings</h2>
+              </div>
+            </div>
+
+            <div class="fmx108-booking-list">
+              {% for booking in bookings|slice:":5" %}
+
+              <article class="fmx109-booking-slip">
+                <div class="fmx110-venue-icon">
+                  <i class="fas fa-map-marker-alt"></i>
+                </div>
+
+                <div class="fmx111-venue-info">
+                  <strong> {{ booking.turf.turf_name }} </strong>
+
+                  <span class="fmx112-venue-time">
+                    <i class="fas fa-calendar-day"></i>
+
+                    {{ booking.booking_date }}
+
+                    <i class="fas fa-clock"></i>
+
+                    {{ booking.time_slot.tt_time.time_range }}
+                  </span>
+                </div>
+
+                <!-- Status -->
+
+                <span
+                  class="fmx113-status-pill {% if booking.status|lower == 'accepted' %} fmx114-status-accepted {% elif booking.status|lower == 'confirmed' %} fmx114-status-confirmed {% elif booking.status|lower == 'pending' %} fmx115-status-pending {% elif booking.status|lower == 'cancelled' %} fmx116-status-cancelled {% endif %}"
+                >
+                  {% if booking.status|lower == "accepted" %}
+
+                  <i class="fas fa-check-circle"></i>
+
+                  {% elif booking.status|lower == "confirmed" %}
+
+                  <i class="fas fa-check-circle"></i>
+
+                  {% elif booking.status|lower == "pending" %}
+
+                  <i class="fas fa-hourglass-half"></i>
+
+                  {% elif booking.status|lower == "cancelled" %}
+
+                  <i class="fas fa-times-circle"></i>
+
+                  {% endif %} {{ booking.status }}
+                </span>
+
+                <!-- Payment -->
+
+                {% if booking.status == "Accepted" and not booking.is_paid %}
+
+                <a
+                  href="{% url 'initiate_payment' booking.booking_id %}"
+                  class="fmx23-action-btn fmx24-glow-btn"
+                  style="padding: 7px 10px; font-size: 9px"
+                >
+                  <i class="fas fa-credit-card"></i>
+
+                  Pay
+                </a>
+
+                {% endif %}
+              </article>
+
+              {% endfor %}
+            </div>
+          </section>
+
+          {% endif %}
+        </main>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="offcanvas offcanvas-start fmx42-tactics-offcanvas"
+  tabindex="-1"
+  id="fmxTacticsOffcanvas"
+  aria-labelledby="fmxTacticsOffcanvasLabel"
+>
+  <div class="offcanvas-header fmx43-offcanvas-header">
+    <div class="fmx44-offcanvas-title">
+      <div class="fmx45-offcanvas-icon">
+        <i class="fas fa-compass"></i>
+      </div>
+
+      <div class="fmx46-offcanvas-heading">
+        <small> CONTROL CENTER </small>
+
+        <h5 id="fmxTacticsOffcanvasLabel">Tactics Board</h5>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="btn-close fmx47-close-btn"
+      data-bs-dismiss="offcanvas"
+      aria-label="Close"
+    ></button>
+  </div>
+
+  <div class="offcanvas-body fmx48-offcanvas-body">
+    <div class="fmx49-mobile-nav">
+      <a
+        href="{% url 'club_interface' club.club_id %}"
+        class="fmx50-mobile-nav-item fmx51-mobile-active"
+      >
+        <span class="fmx52-mobile-nav-icon">
+          <i class="fas fa-home"></i>
+        </span>
+
+        <span> Dashboard </span>
+
+        <i class="fas fa-chevron-right fmx53-mobile-nav-arrow"></i>
+      </a>
+
+      <a href="{% url 'club_matches' %}" class="fmx50-mobile-nav-item">
+        <span class="fmx52-mobile-nav-icon">
+          <i class="fas fa-futbol"></i>
+        </span>
+
+        <span> Matches </span>
+
+        <i class="fas fa-chevron-right fmx53-mobile-nav-arrow"></i>
+      </a>
+
+      <a href="{% url 'search_matches' %}" class="fmx50-mobile-nav-item">
+        <span class="fmx52-mobile-nav-icon">
+          <i class="fas fa-search"></i>
+        </span>
+
+        <span> Find Match </span>
+
+        <i class="fas fa-chevron-right fmx53-mobile-nav-arrow"></i>
+      </a>
+
+      <a href="{% url 'user_players' %}" class="fmx50-mobile-nav-item">
+        <span class="fmx52-mobile-nav-icon">
+          <i class="fas fa-users"></i>
+        </span>
+
+        <span> Players </span>
+
+        <i class="fas fa-chevron-right fmx53-mobile-nav-arrow"></i>
+      </a>
+
+      <a href="{% url 'tournament_list' %}" class="fmx50-mobile-nav-item">
+        <span class="fmx52-mobile-nav-icon">
+          <i class="fas fa-trophy"></i>
+        </span>
+
+        <span> Tournaments </span>
+
+        <i class="fas fa-chevron-right fmx53-mobile-nav-arrow"></i>
+      </a>
+
+      <a href="{% url 'add_position' %}" class="fmx50-mobile-nav-item">
+        <span class="fmx52-mobile-nav-icon">
+          <i class="fas fa-map-marker-alt"></i>
+        </span>
+
+        <span> Add Position </span>
+
+        <i class="fas fa-chevron-right fmx53-mobile-nav-arrow"></i>
+      </a>
+    </div>
+
+    <!-- Mobile Footer -->
+
+    <div class="fmx54-mobile-season">
+      <div class="fmx35-sidebar-ball">
+        <i class="fas fa-futbol"></i>
+      </div>
+      <div class="fmx36-sidebar-footer-text">
+        <small> SEASON </small>
+
+        <strong> READY TO PLAY </strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const container = document.getElementById("fmxParticles");
+
+    if (!container) return;
+
+    const particleCount = 28;
+
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement("div");
+
+      particle.className = "fmx06-particle";
+
+      particle.style.left = Math.random() * 100 + "%";
+
+      particle.style.animationDuration = Math.random() * 12 + 9 + "s";
+
+      particle.style.animationDelay = Math.random() * 10 + "s";
+
+      const size = Math.random() * 3 + 2;
+
+      particle.style.width = size + "px";
+
+      particle.style.height = size + "px";
+
+      container.appendChild(particle);
+    }
+  })();
+</script>
+
+{% endblock %}

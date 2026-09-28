@@ -1,0 +1,107 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+{% block title %}Time Schedules - Football Arena Admin{% endblock %}
+
+{% block content %}
+
+<div class="fb-07-arena-wrapper container-fluid container-xl">
+    <header class="fb-09-arena-header">
+        <div class="row align-items-end g-3">
+            <div class="col-12 col-md-8">
+                <h1 class="fb-10-page-title mb-0">
+                    <span class="fb-11-title-icon">&#9200;</span>
+                    Time Schedules
+                </h1>
+                <p class="fb-12-page-subtitle mt-2">
+                    
+                    <span>Manage available time slots for turf bookings</span>
+                </p>
+            </div>
+           
+        </div>
+    </header>
+
+    <div class="fb-08-glass-panel">
+
+        <div class="d-none d-lg-block">
+            <div class="fb-20-table-wrap">
+                <table class="fb-21-arena-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 38%;">Schedule ID</th>
+                            <th style="width: 35%;">Time Range</th>
+                            <th style="width: 30%;">Turfs Mapped</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for schedule in schedules %}
+                        <tr class="fb-27-row-enter fb-28-delay-{{ forloop.counter }}">
+                            <td>
+                                <span class="fb-22-id-badge">#{{ schedule.time_id }}</span>
+                            </td>
+                            <td>
+                                <div class="fb-23-time-cell">
+                                    <span class="fb-24-time-icon">&#9200;</span>
+                                    <span>{{ schedule.time_range }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="fb-25-turf-badge">
+                                    &#127937; {{ schedule.turf_count }} Turf{{ schedule.turf_count|pluralize:"s" }}
+                                </span>
+                            </td>
+                            
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">
+                                <div class="fb-37-empty-state">
+                                    <div class="fb-38-empty-icon">&#9200;</div>
+                                    <div class="fb-39-empty-title">No Time Schedules</div>
+                                    <p class="fb-40-empty-text">Add time slots to enable turf bookings.</p>
+                                    <a href="#" class="fb-18-btn-glass fb-19-btn-gold mt-3">
+                                        <span>&#10133;</span> Add First Schedule
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="d-lg-none">
+            {% for schedule in schedules %}
+            <div class="fb-29-mobile-card fb-27-row-enter fb-28-delay-{{ forloop.counter }}">
+                <div class="fb-30-mobile-header">
+                    <span class="fb-22-id-badge">#{{ schedule.time_id }}</span>
+                    <span class="fb-25-turf-badge">&#127937; {{ schedule.turf_count }} Turf{{ schedule.turf_count|pluralize:"s" }}</span>
+                </div>
+                <div class="fb-31-mobile-body">
+                    <div class="fb-32-mobile-field">
+                        <span class="fb-33-mobile-label">Time Range</span>
+                        <span class="fb-34-mobile-value">&#9200; {{ schedule.time_range }}</span>
+                    </div>
+                </div>
+           
+                
+            </div>
+            {% empty %}
+            <div class="fb-37-empty-state">
+                <div class="fb-38-empty-icon">&#9200;</div>
+                <div class="fb-39-empty-title">No Time Schedules</div>
+                <p class="fb-40-empty-text">Add time slots to enable turf bookings.</p>
+                <a href="#" class="fb-18-btn-glass fb-19-btn-gold mt-3">
+                    <span>&#10133;</span> Add First Schedule
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

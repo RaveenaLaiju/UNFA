@@ -1,0 +1,359 @@
+{% extends 'admin/admin_base.html' %}
+{% block title %}Match #{{ match.match_id }} - Admin{% endblock %}
+{% block content %}
+
+
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-12">
+        <nav class="div-02-breadcrumb-track" aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="{% url 'admin_view_tournaments' %}">Tournaments</a>
+            </li>
+            <li class="breadcrumb-item">
+              <a href="{% url 'admin_view_tournament_detail' match.tournament.t_id %}">
+                {{ match.tournament.t_name|default:"Detail" }}
+              </a>
+            </li>
+            <li class="breadcrumb-item">
+              <a href="{% url 'admin_tournament_matches' match.tournament.t_id %}">Matches</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Match #{{ match.match_id }}</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-12">
+        <div class="div-03-scoreboard-hero">
+          <div class="div-04-scoreboard-glass">
+            <div class="row align-items-center g-3">
+
+              <!-- HOME TEAM -->
+              <div class="col-4 col-md-3">
+                <div class="div-05-team-block" data-side="home">
+                  <div class="div-06-team-crest">
+                    🏠
+                  </div>
+                  <div class="div-07-team-name">{{ match.match_home_team.club_name|default:"TBD" }}</div>
+                  <div class="div-08-team-label">Home Squad</div>
+                </div>
+              </div>
+
+              <!-- SCORE HUB -->
+              <div class="col-4 col-md-6">
+                <div class="div-09-score-hub">
+                  <div class="div-10-score-display">
+                    <span class="div-11-score-digit" data-score="{% if result %}{{ result.result_home_team }}{% else %}0{% endif %}">
+                      {% if result %}{{ result.result_home_team }}{% else %}0{% endif %}
+                    </span>
+                    <span class="div-12-score-separator">VS</span>
+                    <span class="div-11-score-digit" data-score="{% if result %}{{ result.result_away_team }}{% else %}0{% endif %}">
+                      {% if result %}{{ result.result_away_team }}{% else %}0{% endif %}
+                    </span>
+                  </div>
+                  <div class="div-13-match-pill
+                    {% if match.match_finished %}div-13-match-pill--final
+                    {% elif match.match_started %}div-13-match-pill--live
+                    {% else %}div-13-match-pill--wait{% endif %}">
+                    <span class="div-14-match-dot"></span>
+                    {% if match.match_finished %}Match Finished{% elif match.match_started %}Live Now{% else %}Kickoff Pending{% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <!-- AWAY TEAM -->
+              <div class="col-4 col-md-3">
+                <div class="div-05-team-block" data-side="away">
+                  <div class="div-06-team-crest">
+                    ✈️
+                  </div>
+                  <div class="div-07-team-name">{{ match.match_away_team.club_name|default:"TBD" }}</div>
+                  <div class="div-08-team-label">Away Squad</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+
+      <div class="col-12 col-lg-4">
+        <div class="div-15-control-deck">
+
+          <div class="glass-card div-16-glass-panel">
+            <div class="div-17-panel-header">
+              <span class="div-18-panel-icon">✏️</span>
+              <h5 class="div-19-panel-title">Score Control</h5>
+            </div>
+            <div class="div-20-panel-content">
+              <form method="post" action="{% url 'admin_update_match_score' match.match_id %}" class="div-21-score-form">
+                {% csrf_token %}
+                <div class="row g-2 align-items-center mb-3">
+                  <div class="col-5">
+                    <div class="div-22-form-group">
+                      <label>Home</label>
+                      <input type="number" name="home_score" class="form-control div-23-form-input"
+                        value="{{ result.result_home_team|default:0 }}" min="0">
+                    </div>
+                  </div>
+                  <div class="col-2">
+                    <div class="div-24-form-divider">—</div>
+                  </div>
+                  <div class="col-5">
+                    <div class="div-22-form-group">
+                      <label>Away</label>
+                      <input type="number" name="away_score" class="form-control div-23-form-input"
+                        value="{{ result.result_away_team|default:0 }}" min="0">
+                    </div>
+                  </div>
+                </div>
+                <button type="submit" class="div-25-game-btn div-25-game-btn--gold">
+                  <span class="div-26-btn-glow"></span>
+                  <span>💾</span>
+                  <span>Update Score</span>
+                </button>
+              </form>
+
+              {% if not match.match_finished %}
+              <form method="post" action="{% url 'admin_force_end_match' match.match_id %}"
+                onsubmit="return confirm('Force end this match?');" class="mt-3">
+                {% csrf_token %}
+                <button type="submit" class="div-25-game-btn div-25-game-btn--danger">
+                  <span class="div-26-btn-glow"></span>
+                  <span>⏹️</span>
+                  <span>Force End Match</span>
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="glass-card div-16-glass-panel">
+            <div class="div-17-panel-header">
+              <span class="div-18-panel-icon">ℹ️</span>
+              <h5 class="div-19-panel-title">Match Intel</h5>
+            </div>
+            <div class="div-20-panel-content">
+              <ul class="div-27-intel-grid">
+                <li class="div-28-intel-row">
+                  <span class="div-29-intel-key">🏆 Tournament</span>
+                  <span class="div-30-intel-val">{{ match.tournament.t_name }}</span>
+                </li>
+                <li class="div-28-intel-row">
+                  <span class="div-29-intel-key">🎮 Round</span>
+                  <span class="div-31-status-chip
+                    {% if match.is_knockout %}div-31-status-chip--danger{% else %}div-31-status-chip--info{% endif %}">
+                    {% if match.is_knockout %}Knockout{% else %}Group{% endif %} R{{ match.round_number }}
+                  </span>
+                </li>
+                <li class="div-28-intel-row">
+                  <span class="div-29-intel-key">🎯 Squad Size</span>
+                  <span class="div-30-intel-val">{{ match.squad_size }}</span>
+                </li>
+                <li class="div-28-intel-row">
+                  <span class="div-29-intel-key">🏠 Home Squad</span>
+                  <span class="div-31-status-chip
+                    {% if match.home_squad_selected %}div-31-status-chip--ok{% else %}div-31-status-chip--warn{% endif %}">
+                    {% if match.home_squad_selected %}Locked In{% else %}Pending{% endif %}
+                  </span>
+                </li>
+                <li class="div-28-intel-row">
+                  <span class="div-29-intel-key">✈️ Away Squad</span>
+                  <span class="div-31-status-chip
+                    {% if match.away_squad_selected %}div-31-status-chip--ok{% else %}div-31-status-chip--warn{% endif %}">
+                    {% if match.away_squad_selected %}Locked In{% else %}Pending{% endif %}
+                  </span>
+                </li>
+                <li class="div-28-intel-row">
+                  <span class="div-29-intel-key">🎥 Video</span>
+                  {% if has_video %}
+                    <a href="{{ match.result.result_video.url }}" class="div-31-status-chip div-31-status-chip--ok" target="_blank">
+                      <span>▶️</span> Available
+                    </a>
+                  {% else %}
+                    <span class="div-31-status-chip div-31-status-chip--neutral">None</span>
+                  {% endif %}
+                </li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-8">
+        <div class="div-32-main-stage">
+
+          <div class="div-33-formation-grid">
+
+            <!-- HOME SQUAD -->
+            <div class="glass-card div-34-squad-panel">
+              <div class="div-17-panel-header">
+                <span class="div-18-panel-icon">🛡️</span>
+                <h5 class="div-19-panel-title">{{ match.match_home_team.club_name }} Squad</h5>
+              </div>
+              <div class="div-20-panel-content p-0">
+                <div class="div-35-squad-scroll">
+                  <table class="div-36-player-table table table-borderless mb-0">
+                    <thead>
+                      <tr>
+                        <th>Player</th>
+                        <th>Pos</th>
+                        <th class="text-end">Rating</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for player in home_squad %}
+                      <tr class="div-37-player-row div-37-player-row--starter">
+                        <td>
+                          <span class="div-38-player-dot div-38-player-dot--starter"></span>
+                          <strong class="div-39-player-name text-black">{{ player.player_card_name }}</strong>
+                        </td>
+                        <td class="div-41-player-pos">{{ player.player_position.position_code }}</td>
+                        <td class="text-end">
+                          <span class="div-42-rating-badge div-42-rating-badge--high">{{ player.player_rating }}</span>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                      {% for player in home_subs %}
+                      <tr class="div-37-player-row">
+                        <td>
+                          <span class="div-38-player-dot div-38-player-dot--sub text-black"></span>
+                          {{ player.player_card_name }} <small class="div-40-subtag text-danger">sub</small>
+                        </td>
+                        <td class="div-41-player-pos">{{ player.player_position.position_code }}</td>
+                        <td class="text-end">
+                          <span class="div-42-rating-badge div-42-rating-badge--mid">{{ player.player_rating }}</span>
+                        </td>
+                      </tr>
+                      {% empty %}
+                      {% if not home_squad %}
+                      <tr>
+                        <td colspan="3">
+                          <div class="div-43-empty-ghost">
+                            <div class="div-44-ghost-icon">👻</div>
+                            <p class="div-45-ghost-text">No squad selected</p>
+                          </div>
+                        </td>
+                      </tr>
+                      {% endif %}
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- AWAY SQUAD -->
+            <div class="glass-card div-34-squad-panel">
+              <div class="div-17-panel-header">
+                <span class="div-18-panel-icon">🛡️</span>
+                <h5 class="div-19-panel-title">{{ match.match_away_team.club_name }} Squad</h5>
+              </div>
+              <div class="div-20-panel-content p-0">
+                <div class="div-35-squad-scroll">
+                  <table class="div-36-player-table table table-borderless mb-0">
+                    <thead>
+                      <tr>
+                        <th>Player</th>
+                        <th>Pos</th>
+                        <th class="text-end">Rating</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for player in away_squad %}
+                      <tr class="div-37-player-row div-37-player-row--starter">
+                        <td>
+                          <span class="div-38-player-dot div-38-player-dot--starter"></span>
+                          <strong class="div-39-player-name text-black">{{ player.player_card_name }}</strong>
+                        </td>
+                        <td class="div-41-player-pos">{{ player.player_position.position_code }}</td>
+                        <td class="text-end">
+                          <span class="div-42-rating-badge div-42-rating-badge--high">{{ player.player_rating }}</span>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                      {% for player in away_subs %}
+                      <tr class="div-37-player-row">
+                        <td>
+                          <span class="div-38-player-dot div-38-player-dot--sub text-black"></span>
+                          {{ player.player_card_name }} <small class="div-40-subtag text-danger">sub</small>
+                        </td>
+                        <td class="div-41-player-pos">{{ player.player_position.position_code }}</td>
+                        <td class="text-end">
+                          <span class="div-42-rating-badge div-42-rating-badge--mid">{{ player.player_rating }}</span>
+                        </td>
+                      </tr>
+                      {% empty %}
+                      {% if not away_squad %}
+                      <tr>
+                        <td colspan="3">
+                          <div class="div-43-empty-ghost">
+                            <div class="div-44-ghost-icon">👻</div>
+                            <p class="div-45-ghost-text">No squad selected</p>
+                          </div>
+                        </td>
+                      </tr>
+                      {% endif %}
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="glass-card div-46-timeline-panel">
+            <div class="div-17-panel-header">
+              <span class="div-18-panel-icon">📋</span>
+              <h5 class="div-19-panel-title">Match Timeline</h5>
+            </div>
+            <div class="div-20-panel-content">
+              {% if achievements %}
+              <div class="div-47-timeline-rail">
+                {% for ach in achievements %}
+                <div class="div-48-timeline-event
+                  {% if ach.achievement_type == 'goal' %}div-48-timeline-event--goal
+                  {% elif ach.achievement_type == 'assist' %}div-48-timeline-event--assist
+                  {% else %}div-48-timeline-event--save{% endif %}">
+                  <div class="div-49-timeline-pin">
+                    {% if ach.achievement_type == 'goal' %}⚽{% elif ach.achievement_type == 'assist' %}🤝{% else %}🧤{% endif %}
+                  </div>
+                  <div class="div-50-timeline-card">
+                    <div class="div-51-timeline-header">
+                      <span class="div-52-timeline-player">{{ ach.player.player_card_name }}</span>
+                      <span class="div-53-timeline-minute">{{ ach.match_minute }}'</span>
+                    </div>
+                    <div class="div-54-timeline-meta">
+                      {% if ach.achievement_type == 'goal' %}Goal{% elif ach.achievement_type == 'assist' %}Assist{% else %}Save{% endif %}
+                      for {{ ach.for_club.club_name }}
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+              {% else %}
+              <div class="div-43-empty-ghost py-5">
+                <div class="div-44-ghost-icon">📋</div>
+                <p class="div-45-ghost-text">No events recorded yet.</p>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+{% endblock %}

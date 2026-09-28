@@ -1,0 +1,61 @@
+
+{% extends 'user/user_head.html' %}
+{% block content %}
+<div class="py-5">
+  <div class="container glass-panel animate-on-scroll">
+{% load static %}
+
+<section class="turf-page">
+  <div class="container animate-on-scroll">
+    <header class="stadium-hero animate-on-scroll">
+      <div>
+        <span class="kicker"><i class="fas fa-clipboard-list"></i> Booking Management</span>
+        <h1 class="clubs-title">Booking Requests</h1>
+        <p class="clubs-intro">Review and manage pending turf booking requests.</p>
+      </div>
+      <div class="live-badge animate-scale" aria-label="Pending requests">
+        <i class="fas fa-clock" style="font-size: 1.5rem; color: var(--accent);"></i>
+        <strong>{{ requests|length }}</strong>
+        <span>Pending</span>
+      </div>
+    </header>
+
+    <div class="dashboard-card animate-on-scroll">
+      {% if requests %}
+        <div class="match-scroll">
+          <table class="booking-table">
+            <thead>
+              <tr><th>Turf</th><th>Customer</th><th>Date</th><th>Time Slot</th><th>Amount</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              {% for request in requests %}
+              <tr class="animate-on-scroll" data-delay="{{ forloop.counter }}">
+                <td><strong>{{ request.turf.turf_name }}</strong></td>
+                <td>{{ request.customer.user_name }}</td>
+                <td>{{ request.booking_date }}</td>
+                <td>{{ request.time_slot.tt_time.time_range }}</td>
+                <td style="color: var(--primary); font-weight: 700;">₹{{ request.turf.turf_rate }}</td>
+                <td>
+                  <div class="flex-between gap-sm">
+                    <a href="{% url 'approve_booking' request.booking_id %}" class="glass-btn" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="return confirm('Approve this booking?');"><i class="fas fa-check"></i> Approve</a>
+                    <a href="{% url 'reject_booking' request.booking_id %}" class="glass-btn secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="return confirm('Reject this booking?');"><i class="fas fa-times"></i> Reject</a>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <i class="fas fa-clipboard-check"></i>
+          <p>No pending booking requests.</p>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: var(--space-sm);">All caught up! New requests will appear here.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+  </div>
+</div>
+{% endblock %}

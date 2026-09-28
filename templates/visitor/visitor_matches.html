@@ -1,0 +1,68 @@
+
+{% extends 'user/user_head.html' %}
+{% block content %}
+<div class="py-5">
+  <div class="container glass-panel animate-on-scroll">
+{% load static %}
+
+<section class="clubs-page">
+  <div class="container animate-on-scroll">
+    <header class="stadium-hero animate-on-scroll">
+      <div>
+        <span class="kicker"><i class="fas fa-broadcast-tower"></i> Match Center</span>
+        <h1 class="clubs-title">Matches</h1>
+        <p class="clubs-intro">Watch live scores, check upcoming fixtures, and review completed matches.</p>
+      </div>
+      <div class="live-badge animate-scale" aria-label="Live matches">
+        <i class="fas fa-futbol" style="font-size: 1.5rem; color: var(--primary);"></i>
+        <strong>{{ upcoming_matches|length }}</strong>
+        <span>Upcoming</span>
+      </div>
+    </header>
+
+    <div class="dashboard-card animate-on-scroll">
+      <h3 class="section-title"><i class="fas fa-calendar-alt"></i> Upcoming Fixtures</h3>
+      {% if upcoming_matches %}
+        <div class="match-scroll">
+          {% for match in upcoming_matches %}
+          <a href="{% url 'watch_live_score' match.match_id %}" class="match-link animate-on-scroll" data-delay="{{ forloop.counter }}">
+            <article class="match-row">
+              <span class="match-date">{{ match.match_date|date:"d M" }} • {{ match.match_time }}</span>
+              <div class="team"><span class="team-logo" style="background-image:url('{{ match.match_home_team.club_logo.url }}')"></span><span class="team-name">{{ match.match_home_team.club_name }}</span></div>
+              <span class="score" style="color: var(--text-muted);">VS</span>
+              <div class="team"><span class="team-logo" style="background-image:url('{{ match.match_away_team.club_logo.url }}')"></span><span class="team-name">{{ match.match_away_team.club_name|default:"TBD" }}</span></div>
+              <span class="text-center"><span class="result-tag" style="background: var(--info-dim); color: var(--info); border-color: var(--info);">UP</span></span>
+            </article>
+          </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state"><i class="fas fa-calendar-times"></i><p>No upcoming matches scheduled.</p></div>
+      {% endif %}
+    </div>
+
+    <div class="dashboard-card animate-on-scroll">
+      <h3 class="section-title"><i class="fas fa-history"></i> Finished Matches</h3>
+      {% if finished_matches %}
+        <div class="match-scroll">
+          {% for match in finished_matches %}
+          <a href="{% url 'watch_live_score' match.match_id %}" class="match-link animate-on-scroll" data-delay="{{ forloop.counter }}">
+            <article class="match-row">
+              <span class="match-date">{{ match.match_date|date:"d M Y" }}</span>
+              <div class="team"><span class="team-logo" style="background-image:url('{{ match.match_home_team.club_logo.url }}')"></span><span class="team-name">{{ match.match_home_team.club_name }}</span></div>
+              <span class="score">{% if match.result %}{{ match.result.result_home_team }} — {{ match.result.result_away_team }}{% else %}- — -{% endif %}</span>
+              <div class="team"><span class="team-logo" style="background-image:url('{{ match.match_away_team.club_logo.url }}')"></span><span class="team-name">{{ match.match_away_team.club_name|default:"TBD" }}</span></div>
+              <span class="text-center"><span class="result-tag draw">F</span></span>
+            </article>
+          </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state"><i class="fas fa-flag-checkered"></i><p>No finished matches yet.</p></div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+  </div>
+</div>
+{% endblock %}

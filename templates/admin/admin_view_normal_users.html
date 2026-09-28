@@ -1,0 +1,235 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+{% block title %}Squad Management - Football Arena{% endblock %}
+
+
+{% block content %}
+
+  <!-- Animated Background -->
+  
+
+  <!-- Stadium Hero Header -->
+  <header class="glass-header">
+  
+    
+    <div class="container position-relative">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-8 col-md-7 col-12">
+          <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-start gap-3 mb-2 text-center text-sm-start">
+            <span class="display-4 animate-enter">🏟️</span>
+            <div class="animate-enter delay-1">
+              <h1 class="display-5 fw-bold text-white mb-1 stadium-title">Squad Management</h1>
+              <p class="lead text-white-50 mb-0 fs-6 fs-md-5">Manage your team roster, club managers, and turf owners.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-5 col-12">
+          <div class="row g-3">
+            <div class="col-6 animate-enter delay-2">
+              <div class="scoreboard-glass">
+                <div class="scoreboard-number">{{ users|length }}</div>
+                <div class="scoreboard-label">Total Squad</div>
+              </div>
+            </div>
+            <div class="col-6 animate-enter delay-3">
+              <div class="scoreboard-glass">
+                <div class="scoreboard-number" style="color: #ff9a00; text-shadow: 0 0 20px rgba(255,154,0,0.4);">
+                  {% if role_filter == 'all' %}ALL{% elif role_filter == 'visitor' %}VIS{% elif role_filter == 'player' %}PLY{% elif role_filter == 'club_manager' %}MGR{% else %}OWN{% endif %}
+                </div>
+                <div class="scoreboard-label">Formation</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Formation Tactics Board -->
+  <nav class="formation-bar">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <span class="text-white-50 fw-bold me-2 d-none d-sm-flex align-items-center gap-2">
+          <span>⚙️</span> Formation:
+        </span>
+        
+        <div class="d-flex flex-wrap gap-2 w-100 w-sm-auto justify-content-center justify-content-sm-start">
+          <a href="?role=all" class="formation-chip {% if role_filter == 'all' %}active{% endif %}">
+            <span class="chip-icon">👥</span>
+            <span class="d-none d-md-inline">All Squad</span>
+            <span class="d-md-none">All</span>
+          </a>
+          <a href="?role=visitor" class="formation-chip {% if role_filter == 'visitor' %}active{% endif %}">
+            <span class="chip-icon">🚶</span>
+            <span class="d-none d-md-inline">Visitors</span>
+            <span class="d-md-none">VIS</span>
+          </a>
+          <a href="?role=player" class="formation-chip {% if role_filter == 'player' %}active{% endif %}">
+            <span class="chip-icon">⚽</span>
+            <span class="d-none d-md-inline">Players</span>
+            <span class="d-md-none">PLY</span>
+          </a>
+          <a href="?role=club_manager" class="formation-chip {% if role_filter == 'club_manager' %}active{% endif %}">
+            <span class="chip-icon">📋</span>
+            <span class="d-none d-md-inline">Managers</span>
+            <span class="d-md-none">MGR</span>
+          </a>
+          <a href="?role=turf_owner" class="formation-chip {% if role_filter == 'turf_owner' %}active{% endif %}">
+            <span class="chip-icon">🌱</span>
+            <span class="d-none d-md-inline">Owners</span>
+            <span class="d-md-none">OWN</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dressing Room / Squad Roster -->
+  <section class="roster-section py-4">
+    <div class="container">
+      <div class="roster-header animate-enter delay-2">
+        <div class="section-badge">
+          <span>🎽</span>
+          <span>Team Roster</span>
+        </div>
+        <div class="kit-legend d-none d-md-flex">
+          <span class="kit-badge kit-striker">⚽ Striker</span>
+          <span class="kit-badge kit-midfielder">📋 Manager</span>
+          <span class="kit-badge kit-defender">🌱 Owner</span>
+          <span class="kit-badge kit-sub">🚶 Visitor</span>
+        </div>
+      </div>
+
+      <div class="table-glass-wrapper animate-enter delay-3">
+        <div class="table-responsive">
+          <table class="squad-table table" id="squadTable">
+            <thead>
+              <tr>
+                <th scope="col">Squad #</th>
+                <th scope="col">Player</th>
+                <th scope="col">Contact</th>
+                <th scope="col" class="d-none d-lg-table-cell">Gender</th>
+                <th scope="col" class="d-none d-md-table-cell">Age</th>
+                <th scope="col">Position</th>
+                <th scope="col">Match Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in users %}
+              <tr class="animate-enter" style="animation-delay: {{ forloop.counter|add:3 }}00ms;">
+                <td data-label="Squad #">
+                  <span class="squad-number">
+                    <span class="squad-hash">#</span>{{ user.user_id }}
+                  </span>
+                </td>
+                <td data-label="Player">
+                  <div class="player-card">
+                    <div class="player-avatar">
+                      {{ user.user_name|first|upper }}
+                    </div>
+                    <span class="player-name">{{ user.user_name }}</span>
+                  </div>
+                </td>
+                <td data-label="Contact">
+                  <span class="text-white-75">{{ user.user_email }}</span>
+                </td>
+                <td data-label="Gender" class="d-none d-lg-table-cell">
+                  <span class="text-white-75">
+                    {% if user.user_gender == 'Male' %}♂️{% elif user.user_gender == 'Female' %}♀️{% else %}⚧{% endif %}
+                    {{ user.user_gender }}
+                  </span>
+                </td>
+                <td data-label="Age" class="d-none d-md-table-cell">
+                  <span class="text-white-75">{{ user.user_age }} <small class="text-white-50">yrs</small></span>
+                </td>
+                <td data-label="Position">
+                  <div class="position-stack">
+                    {% if user.is_player %}
+                    <span class="position-badge pos-striker">⚽ Striker</span>
+                    {% endif %}
+                    {% if user.is_club_manager %}
+                    <span class="position-badge pos-midfielder">📋 Manager</span>
+                    {% endif %}
+                    {% if user.is_turf_owner %}
+                    <span class="position-badge pos-defender">🌱 Owner</span>
+                    {% endif %}
+                    {% if not user.is_player and not user.is_club_manager and not user.is_turf_owner %}
+                    <span class="position-badge pos-sub">🚶 Visitor</span>
+                    {% endif %}
+                  </div>
+                </td>
+                <td data-label="Status">
+                  {% if user.user_active %}
+                  <span class="match-status status-active">
+                    <span class="status-dot"></span> On Field
+                  </span>
+                  {% else %}
+                  <span class="match-status status-inactive">
+                    <span class="status-dot"></span> Benched
+                  </span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7">
+                  <div class="empty-dugout">
+                    <div class="empty-dugout-icon">👤</div>
+                    <h4 class="text-white mb-2">Empty Dugout</h4>
+                    <p class="mb-0">No players match the current formation filter.</p>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+<script>
+  // Floating football particles
+  (function() {
+    const container = document.getElementById('ballParticles');
+    const ballCount = 12;
+    
+    for (let i = 0; i < ballCount; i++) {
+      const ball = document.createElement('div');
+      ball.className = 'floating-ball';
+      ball.style.left = Math.random() * 100 + '%';
+      ball.style.animationDelay = Math.random() * 15 + 's';
+      ball.style.animationDuration = (Math.random() * 10 + 15) + 's';
+      const size = Math.random() * 12 + 8;
+      ball.style.width = size + 'px';
+      ball.style.height = size + 'px';
+      container.appendChild(ball);
+    }
+  })();
+
+  // Intersection Observer for scroll animations
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -30px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, observerOptions);
+
+  // Observe table rows for entrance animation
+  document.querySelectorAll('.squad-table tbody tr').forEach((row, index) => {
+    row.style.opacity = '0';
+    row.style.transform = 'translateY(20px)';
+    row.style.transition = `all 0.5s ease ${index * 0.05}s`;
+    observer.observe(row);
+  });
+</script>
+{% endblock %}

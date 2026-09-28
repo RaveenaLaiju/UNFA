@@ -1,0 +1,493 @@
+{% extends 'user/user_head.html' %} 
+{% load static %} 
+{% block content %}
+
+<div class="thp-01-page">
+  <div class="thp-02-light thp-02-light-one"></div>
+  <div class="thp-02-light thp-02-light-two"></div>
+  <div class="thp-02-light thp-02-light-three"></div>
+
+  <div class="thp-03-pitch-grid"></div>
+
+  <div class="thp-04-football thp-04-football-one">⚽</div>
+
+  <div class="thp-04-football thp-04-football-two">⚽</div>
+
+  <div class="thp-04-football thp-04-football-three">⚽</div>
+
+  <div class="thp-04-football thp-04-football-four">⚽</div>
+
+  <div class="thp-05-field"></div>
+
+  <div class="container thp-06-wrapper">
+    <div class="row justify-content-center">
+      <div class="col-12 col-xl-10 col-xxl-9">
+        <div class="thp-07-card">
+          <div class="thp-08-header">
+            <div class="thp-09-badge">
+              <i class="fas fa-futbol"></i>
+              Tournament Management
+            </div>
+
+            <h1 class="thp-10-title">
+              Host Your
+              <span class="thp-10-title-highlight"> Championship </span>
+            </h1>
+
+            <p class="thp-11-subtitle">
+              Build your tournament, configure the competition format, invite
+              teams and prepare for the ultimate football showdown.
+            </p>
+
+            <div class="d-flex flex-wrap gap-4 mt-4">
+              <div class="thp-12-stat">
+                <i class="fas fa-trophy"></i>
+                Custom Tournament
+              </div>
+
+              <div class="thp-12-stat">
+                <i class="fas fa-users"></i>
+                Team Management
+              </div>
+
+              <div class="thp-12-stat">
+                <i class="fas fa-shield-alt"></i>
+                Secure Setup
+              </div>
+            </div>
+          </div>
+
+          <div class="thp-13-body">
+            <form method="post" action="{% url 'host_tournament' %}">
+              {% csrf_token %}
+
+              <div class="thp-14-section">
+                <div class="thp-14-section-title">
+                  <i class="fas fa-id-card"></i>
+                  Tournament Identity
+                </div>
+
+                <div class="thp-14-section-line"></div>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+                  <div class="thp-15-field thp-24-animate">
+                    <label for="tournament_name" class="thp-15-label">
+                      Tournament Name
+                      <span class="thp-15-required"> * </span>
+                    </label>
+
+                    <input
+                      type="text"
+                      class="form-control thp-16-input"
+                      id="tournament_name"
+                      name="tournament_name"
+                      required
+                      placeholder="e.g. Summer Cup 2026"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="thp-15-field thp-24-animate">
+                    <label for="description" class="thp-15-label">
+                      <i class="fas fa-align-left"></i>
+                      Tournament Description
+                    </label>
+
+                    <textarea
+                      class="form-control thp-16-textarea"
+                      id="description"
+                      name="description"
+                      rows="4"
+                      placeholder="Describe your tournament rules, venue, prizes..."
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="thp-14-section">
+                <div class="thp-14-section-title">
+                  <i class="fas fa-calendar-alt"></i>
+                  Schedule
+                </div>
+
+                <div class="thp-14-section-line"></div>
+              </div>
+
+              <div class="row">
+                <div class="col-12 col-md-6">
+                  <div class="thp-15-field thp-24-animate">
+                    <label for="tournament_date" class="thp-15-label">
+                      Start Date
+                      <span class="thp-15-required"> * </span>
+                    </label>
+
+                    <input
+                      type="date"
+                      class="form-control thp-16-input"
+                      id="tournament_date"
+                      name="tournament_date"
+                      required
+                      min="{{ today }}"
+                    />
+
+                    <div class="thp-18-helper">
+                      <i class="fas fa-clock"></i>
+                      Tournament starting date
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="thp-15-field thp-24-animate">
+                    <label for="registration_deadline" class="thp-15-label">
+                      Registration Deadline
+                    </label>
+
+                    <input
+                      type="date"
+                      class="form-control thp-16-input"
+                      id="registration_deadline"
+                      name="registration_deadline"
+                      min="{{ today }}"
+                    />
+
+                    <div class="thp-18-helper">
+                      <i class="fas fa-user-clock"></i>
+                      Last date for team registration
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="thp-14-section">
+                <div class="thp-14-section-title">
+                  <i class="fas fa-coins"></i>
+                  Prizes & Fees
+                </div>
+
+                <div class="thp-14-section-line"></div>
+              </div>
+
+              <div class="row">
+                <div class="col-12 col-md-6">
+                  <div class="thp-15-field thp-24-animate">
+                    <label for="registration_fee" class="thp-15-label">
+                      Registration Fee
+                    </label>
+
+                    <div class="thp-17-currency">
+                      <span class="thp-17-currency-symbol"> ₹ </span>
+
+                      <input
+                        type="number"
+                        class="form-control thp-16-input"
+                        id="registration_fee"
+                        name="registration_fee"
+                        value="0"
+                        min="0"
+                        step="50"
+                      />
+                    </div>
+
+                    <div class="thp-18-helper">
+                      <i class="fas fa-info-circle"></i>
+                      Set to 0 for free entry
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="thp-15-field thp-24-animate">
+                    <label for="prize_pool" class="thp-15-label">
+                      Prize Pool
+                    </label>
+
+                    <div class="thp-17-currency">
+                      <span class="thp-17-currency-symbol"> ₹ </span>
+
+                      <input
+                        type="number"
+                        class="form-control thp-16-input"
+                        id="prize_pool"
+                        name="prize_pool"
+                        value="0"
+                        min="0"
+                        step="100"
+                      />
+                    </div>
+
+                    <div class="thp-18-helper">
+                      <i class="fas fa-trophy"></i>
+                      Total prize amount
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="thp-14-section">
+                <div class="thp-14-section-title">
+                  <i class="fas fa-futbol"></i>
+                  Format & Teams
+                </div>
+
+                <div class="thp-14-section-line"></div>
+              </div>
+
+              <div class="row">
+                <!-- Maximum Teams -->
+
+                <div class="col-12 col-md-4">
+                  <div class="thp-15-field thp-24-animate">
+                    <label for="max_teams" class="thp-15-label">
+                      <i class="fas fa-users"></i>
+                      Maximum Teams
+                    </label>
+
+                    <select
+                      class="form-select thp-16-select"
+                      id="max_teams"
+                      name="max_teams"
+                    >
+                      <option value="4">4 Teams</option>
+
+                      <option value="8" selected>8 Teams</option>
+
+                      <option value="16">16 Teams</option>
+
+                      <option value="32">32 Teams</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Tournament Format -->
+
+                <div class="col-12 col-md-4">
+                  <div class="thp-15-field thp-24-animate">
+                    <label for="format" class="thp-15-label">
+                      <i class="fas fa-sitemap"></i>
+                      Tournament Format
+                    </label>
+
+                    <select
+                      class="form-select thp-16-select"
+                      id="format"
+                      name="format"
+                    >
+                      <option value="league">Round Robin (League)</option>
+
+                      <option value="knockout">
+                        Knockout (Single Elimination)
+                      </option>
+
+                      <option value="hybrid" selected>
+                        Group Stage + Knockout
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Squad Size -->
+
+                <div class="col-12 col-md-4">
+                  <div class="thp-15-field thp-24-animate">
+                    <label for="squad_size" class="thp-15-label">
+                      <i class="fas fa-users"></i>
+                      Squad Size
+                      <span class="thp-15-required"> * </span>
+                    </label>
+
+                    <select
+                      class="form-select thp-16-select"
+                      id="squad_size"
+                      name="squad_size"
+                      required
+                    >
+                      {% for size, label in squad_sizes %}
+
+                      <option
+                        value="{{ size }}"
+                        {%
+                        if
+                        size=""
+                        ="5"
+                        %}
+                        selected
+                        {%
+                        endif
+                        %}
+                      >
+                        {{ label }}
+                      </option>
+
+                      {% endfor %}
+                    </select>
+
+                    <div class="thp-18-helper">
+                      <i class="fas fa-user-friends"></i>
+                      Starting players per team
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="group_settings" class="thp-19-group">
+                <div class="thp-20-format-info mb-3">
+                  <i class="fas fa-layer-group"></i>
+
+                  <span>
+                    Group stage settings are active because
+                    <strong>Group Stage + Knockout</strong>
+                    is selected.
+                  </span>
+                </div>
+
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="thp-15-field">
+                      <label for="teams_per_group" class="thp-15-label">
+                        Teams per Group
+                      </label>
+
+                      <select
+                        class="form-select thp-16-select"
+                        id="teams_per_group"
+                        name="teams_per_group"
+                      >
+                        <option value="2">2 Teams</option>
+
+                        <option value="3">3 Teams</option>
+
+                        <option value="4" selected>4 Teams</option>
+
+                        <option value="5">5 Teams</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <div class="thp-15-field">
+                      <label for="teams_qualifying" class="thp-15-label">
+                        Teams Qualifying per Group
+                      </label>
+
+                      <select
+                        class="form-select thp-16-select"
+                        id="teams_qualifying"
+                        name="teams_qualifying"
+                      >
+                        <option value="1">1 Team</option>
+
+                        <option value="2" selected>2 Teams</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="thp-21-actions">
+                <div class="thp-21-actions-title">Ready for kickoff?</div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-sm-8">
+                    <button type="submit" class="btn thp-22-primary w-100">
+                      <span class="me-2"> 🏆 </span>
+
+                      Create Tournament
+                    </button>
+                  </div>
+
+                  <div class="col-12 col-sm-4">
+                    <a
+                      href="{% url 'tournament_list' %}"
+                      class="btn thp-23-secondary w-100 text-decoration-none"
+                    >
+                      <i class="fas fa-arrow-left me-2"></i>
+                      Cancel
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const formatSelect = document.getElementById("format");
+    const groupSettings = document.getElementById("group_settings");
+
+    function toggleGroupSettings() {
+      if (!formatSelect || !groupSettings) {
+        return;
+      }
+
+      if (formatSelect.value === "hybrid") {
+        groupSettings.classList.remove("is-hidden");
+      } else {
+        groupSettings.classList.add("is-hidden");
+      }
+    }
+
+    if (formatSelect) {
+      formatSelect.addEventListener("change", toggleGroupSettings);
+
+      toggleGroupSettings();
+    }
+
+    const animatedFields = document.querySelectorAll(".thp-24-animate");
+
+    animatedFields.forEach(function (field, index) {
+      field.style.animationDelay = `${index * 70}ms`;
+    });
+
+    const formControls = document.querySelectorAll(
+      ".thp-16-input, .thp-16-select, .thp-16-textarea",
+    );
+
+    formControls.forEach(function (control) {
+      control.addEventListener("focus", function () {
+        const field = this.closest(".thp-15-field");
+
+        if (field) {
+          field.style.zIndex = "3";
+        }
+      });
+
+      control.addEventListener("blur", function () {
+        const field = this.closest(".thp-15-field");
+
+        if (field) {
+          field.style.zIndex = "";
+        }
+      });
+    });
+
+    const tournamentDate = document.getElementById("tournament_date");
+
+    const registrationDeadline = document.getElementById(
+      "registration_deadline",
+    );
+
+    if (tournamentDate && registrationDeadline) {
+      tournamentDate.addEventListener("change", function () {
+        registrationDeadline.min = this.value;
+
+        if (
+          registrationDeadline.value &&
+          registrationDeadline.value < this.value
+        ) {
+          registrationDeadline.value = "";
+        }
+      });
+    }
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,432 @@
+{% extends 'user/user_head.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="my-tournaments-arena">
+
+    <div class="my-tournaments-pitch">
+        <div class="my-tournaments-pitch-lines"></div>
+        <div class="my-tournaments-pitch-box"></div>
+    </div>
+
+    <div class="my-tournaments-football my-tournaments-football-one">
+        ⚽
+    </div>
+
+    <div class="my-tournaments-football my-tournaments-football-two">
+        ⚽
+    </div>
+
+    <div class="my-tournaments-football my-tournaments-football-three">
+        ⚽
+    </div>
+
+    <!-- Animated particles -->
+    <div
+        class="my-tournaments-particles"
+        id="myTournamentsParticles">
+    </div>
+
+
+    <div class="container-fluid px-3 px-md-4 px-xl-5">
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <header class="my-tournaments-header">
+
+            <div class="my-tournaments-header-badge">
+                <i class="fas fa-crown"></i>
+                <span>Manager Arena</span>
+            </div>
+
+            <h1 class="my-tournaments-title">
+                <span class="my-tournaments-title-main">
+                    My Tournaments
+                </span>
+
+                <span class="my-tournaments-title-sub">
+                    Hosted Championships
+                </span>
+            </h1>
+
+            <p class="my-tournaments-description">
+                Manage the tournaments hosted by your club, monitor
+                participating teams, and access each tournament's
+                bracket from one place.
+            </p>
+
+        </header>
+
+
+        <!-- =================================================
+             SUMMARY
+             ================================================= -->
+
+        <div class="my-tournaments-summary">
+
+            <div class="row justify-content-center">
+
+                <div class="col-12 col-md-8 col-lg-5">
+
+                    <div class="my-tournaments-summary-card">
+
+                        <div class="my-tournaments-summary-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+
+                        <div>
+                            <span class="my-tournaments-summary-number">
+                                {{ tournaments|length }}
+                            </span>
+
+                            <span class="my-tournaments-summary-label">
+                                Tournaments Hosted By Your Club
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             TOURNAMENTS
+             ================================================= -->
+
+        {% if tournaments %}
+
+            <section class="my-tournaments-grid">
+
+                <div class="row g-4">
+
+                    {% for tournament in tournaments %}
+
+                        <div
+                            class="col-12 col-md-6 col-xl-4 my-tournament-animate"
+                            style="--my-tour-index: {{ forloop.counter0 }};"
+                        >
+
+                            <article class="my-tournament-card">
+
+                                <!-- Card Header -->
+
+                                <div class="my-tournament-card-header">
+
+                                    <!-- Number -->
+
+                                    <div
+                                        class="my-tournament-number"
+                                        title="Tournament Number"
+                                    >
+                                        #{{ forloop.counter }}
+                                    </div>
+
+
+                                    <!-- Status -->
+
+                                    {% if tournament.is_completed %}
+
+                                        <div class="my-tournament-status my-tournament-status-completed">
+                                            <span class="my-tournament-status-dot"></span>
+                                            Completed
+                                        </div>
+
+                                    {% elif tournament.t_date > now.date %}
+
+                                        <div class="my-tournament-status my-tournament-status-upcoming">
+                                            <span class="my-tournament-status-dot"></span>
+                                            Upcoming
+                                        </div>
+
+                                    {% else %}
+
+                                        <div class="my-tournament-status my-tournament-status-live">
+                                            <span class="my-tournament-status-dot"></span>
+                                            Live
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- Card Body -->
+
+                                <div class="my-tournament-card-body">
+
+                                    <h2 class="my-tournament-name">
+                                        {{ tournament.t_name }}
+                                    </h2>
+
+
+                                    <div class="my-tournament-details">
+
+                                        <!-- Date -->
+
+                                        <div class="my-tournament-detail">
+
+                                            <div class="my-tournament-detail-icon">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </div>
+
+                                            <div class="my-tournament-detail-content">
+
+                                                <span class="my-tournament-detail-label">
+                                                    Tournament Date
+                                                </span>
+
+                                                <span class="my-tournament-detail-value">
+                                                    {{ tournament.t_date|date:"d M Y" }}
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <!-- Registered Clubs -->
+
+                                        <div class="my-tournament-detail">
+
+                                            <div class="my-tournament-detail-icon">
+                                                <i class="fas fa-users"></i>
+                                            </div>
+
+                                            <div class="my-tournament-detail-content">
+
+                                                <span class="my-tournament-detail-label">
+                                                    Participation
+                                                </span>
+
+                                                <span class="my-tournament-detail-value">
+                                                    {{ tournament.t_club_map_set.count|default:0 }}
+                                                    Registered Clubs
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <!-- Host Club -->
+
+                                        <div class="my-tournament-detail">
+
+                                            <div class="my-tournament-detail-icon my-tournament-host-logo">
+
+                                                {% if tournament.t_host.club_logo %}
+
+                                                    <img
+                                                        src="{{ tournament.t_host.club_logo.url }}"
+                                                        alt="{{ tournament.t_host.club_name }}"
+                                                    >
+
+                                                {% else %}
+
+                                                    <i class="fas fa-shield-alt"></i>
+
+                                                {% endif %}
+
+                                            </div>
+
+                                            <div class="my-tournament-detail-content">
+
+                                                <span class="my-tournament-detail-label">
+                                                    Hosted By
+                                                </span>
+
+                                                <span class="my-tournament-detail-value">
+                                                    {{ tournament.t_host.club_name|default:"Your Club" }}
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- Card Footer -->
+
+                                <div class="my-tournament-card-footer">
+
+                                    <a
+                                        href="{% url 'view_tournament' tournament.t_id %}"
+                                        class="my-tournament-action my-tournament-view"
+                                    >
+                                        <i class="fas fa-eye"></i>
+                                        <span>View</span>
+                                    </a>
+
+
+                                    <a
+                                        href="{% url 'tournament_bracket' tournament.t_id %}"
+                                        class="my-tournament-action my-tournament-bracket"
+                                    >
+                                        <i class="fas fa-sitemap"></i>
+                                        <span>Bracket</span>
+                                    </a>
+
+
+                                    <button
+                                        type="button"
+                                        class="my-tournament-action my-tournament-host"
+                                        disabled
+                                    >
+                                        <i class="fas fa-crown"></i>
+                                        <span>Host</span>
+                                    </button>
+
+                                </div>
+
+
+                                <!-- Glass shine -->
+
+                                <div class="my-tournament-card-shine"></div>
+
+                            </article>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+        {% else %}
+
+            <!-- =================================================
+                 EMPTY STATE
+                 ================================================= -->
+
+            <section class="my-tournaments-empty">
+
+                <div class="my-tournaments-empty-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+
+                <h2 class="my-tournaments-empty-title">
+                    No Hosted Tournaments
+                </h2>
+
+                <p class="my-tournaments-empty-text">
+                    Your club hasn't hosted any tournaments yet.
+                    Create your first championship and bring clubs
+                    onto the arena.
+                </p>
+
+                {% if is_manager %}
+
+                    <a
+                        href="{% url 'host_tournament' %}"
+                        class="my-tournaments-host-button"
+                    >
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Host Tournament</span>
+                    </a>
+
+                {% endif %}
+
+            </section>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =====================================================
+       PARTICLE SYSTEM
+       ===================================================== */
+
+    const particleContainer =
+        document.getElementById("myTournamentsParticles");
+
+    if (particleContainer) {
+
+        const particleCount = 32;
+
+        for (let i = 0; i < particleCount; i++) {
+
+            const particle = document.createElement("span");
+
+            const size = Math.random() * 3 + 1;
+
+            particle.style.position = "absolute";
+            particle.style.width = size + "px";
+            particle.style.height = size + "px";
+            particle.style.left = Math.random() * 100 + "%";
+            particle.style.top = Math.random() * 100 + "%";
+            particle.style.borderRadius = "50%";
+            particle.style.background =
+                "rgba(0, 242, 166, " +
+                (Math.random() * 0.25 + 0.05) +
+                ")";
+
+            particle.style.boxShadow =
+                "0 0 10px rgba(0, 242, 166, 0.25)";
+
+            particle.style.animation =
+                "myTournamentParticleFloat " +
+                (Math.random() * 7 + 5) +
+                "s ease-in-out infinite";
+
+            particle.style.animationDelay =
+                "-" + Math.random() * 5 + "s";
+
+            particleContainer.appendChild(particle);
+        }
+    }
+
+});
+
+
+/* =========================================================
+   PARTICLE ANIMATION
+   ========================================================= */
+
+const myTournamentParticleStyle =
+    document.createElement("style");
+
+myTournamentParticleStyle.textContent = `
+    @keyframes myTournamentParticleFloat {
+
+        0% {
+            transform: translate3d(0, 0, 0);
+            opacity: 0.2;
+        }
+
+        50% {
+            transform: translate3d(
+                ${Math.random() * 30 - 15}px,
+                -35px,
+                0
+            );
+            opacity: 0.8;
+        }
+
+        100% {
+            transform: translate3d(0, 0, 0);
+            opacity: 0.2;
+        }
+    }
+`;
+
+document.head.appendChild(myTournamentParticleStyle);
+</script>
+
+{% endblock %}

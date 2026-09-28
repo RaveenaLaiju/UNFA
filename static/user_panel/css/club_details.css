@@ -1,0 +1,2060 @@
+
+:root {
+--ufc27-bg: #030712;
+--ufc27-bg-soft: #07111f;
+
+--ufc27-cyan: #00eaff;
+--ufc27-blue: #3d7eff;
+--ufc27-green: #35ff7a;
+--ufc27-lime: #a6ff00;
+--ufc27-gold: #ffd84d;
+--ufc27-pink: #ff2ba6;
+--ufc27-purple: #9b5cff;
+
+--ufc27-white: #ffffff;
+--ufc27-text: #dbe7f7;
+--ufc27-muted: #7e91ad;
+
+--ufc27-glass: rgba(255, 255, 255, 0.045);
+--ufc27-glass-strong: rgba(255, 255, 255, 0.075);
+--ufc27-border: rgba(255, 255, 255, 0.11);
+
+--ufc27-radius-lg: 26px;
+--ufc27-radius-md: 18px;
+--ufc27-radius-sm: 12px;
+
+--ufc27-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+
+--ufc27-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ufc27-page {
+position: relative;
+min-height: 100vh;
+overflow: hidden;
+background:
+radial-gradient(
+circle at 10% 0%,
+rgba(0, 234, 255, 0.09),
+transparent 32%
+),
+radial-gradient(
+circle at 90% 10%,
+rgba(255, 43, 166, 0.08),
+transparent 30%
+),
+linear-gradient(145deg, #02050d 0%, #050b15 48%, #02050b 100%);
+color: var(--ufc27-text);
+font-family:
+Inter,
+system-ui,
+-apple-system,
+BlinkMacSystemFont,
+"Segoe UI",
+sans-serif;
+}
+
+.ufc27-page *,
+.ufc27-page *::before,
+.ufc27-page *::after {
+box-sizing: border-box;
+}
+
+.ufc27-page a {
+color: inherit;
+}
+
+.ufc27-main {
+position: relative;
+z-index: 5;
+padding: 24px 0 40px;
+}
+
+.ufc27-container {
+position: relative;
+z-index: 5;
+max-width: 1600px;
+margin: 0 auto;
+}
+
+.ufc27-background {
+position: fixed;
+inset: 0;
+z-index: 0;
+overflow: hidden;
+pointer-events: none;
+background: radial-gradient(
+ellipse at center bottom,
+rgba(0, 75, 100, 0.17),
+transparent 60%
+);
+}
+
+.ufc27-bg-glow {
+position: absolute;
+width: 460px;
+height: 460px;
+border-radius: 50%;
+filter: blur(80px);
+opacity: 0.15;
+}
+
+.ufc27-bg-glow-one {
+top: -180px;
+left: -100px;
+background: var(--ufc27-cyan);
+animation: ufc27GlowFloatOne 12s ease-in-out infinite;
+}
+
+.ufc27-bg-glow-two {
+right: -160px;
+top: 25%;
+background: var(--ufc27-pink);
+animation: ufc27GlowFloatTwo 15s ease-in-out infinite;
+}
+
+.ufc27-bg-glow-three {
+left: 35%;
+bottom: -250px;
+background: var(--ufc27-purple);
+animation: ufc27GlowFloatThree 18s ease-in-out infinite;
+}
+
+/* Stadium grid */
+
+.ufc27-stadium-grid {
+position: absolute;
+inset: -30%;
+background-image:
+linear-gradient(rgba(0, 234, 255, 0.035) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0, 234, 255, 0.035) 1px, transparent 1px);
+background-size: 50px 50px;
+transform: perspective(650px) rotateX(58deg) translateY(8%);
+transform-origin: center bottom;
+mask-image: linear-gradient(
+to bottom,
+transparent 0%,
+black 28%,
+black 70%,
+transparent 100%
+);
+animation: ufc27GridMove 14s linear infinite;
+}
+
+/* Football pitch lines */
+
+.ufc27-pitch-lines {
+position: absolute;
+left: 50%;
+bottom: -350px;
+width: 850px;
+height: 850px;
+transform: translateX(-50%) perspective(700px) rotateX(65deg);
+border: 2px solid rgba(53, 255, 122, 0.07);
+border-radius: 40px;
+box-shadow:
+0 0 0 80px rgba(53, 255, 122, 0.015),
+0 0 0 160px rgba(53, 255, 122, 0.01);
+}
+
+.ufc27-pitch-lines::before {
+content: "";
+position: absolute;
+top: 50%;
+left: 0;
+right: 0;
+height: 2px;
+background: rgba(53, 255, 122, 0.07);
+}
+
+.ufc27-pitch-lines::after {
+content: "";
+position: absolute;
+top: 50%;
+left: 50%;
+width: 180px;
+height: 180px;
+transform: translate(-50%, -50%);
+border: 2px solid rgba(53, 255, 122, 0.07);
+border-radius: 50%;
+}
+
+/* Stadium lights */
+
+.ufc27-light-beam {
+position: absolute;
+top: -20%;
+width: 180px;
+height: 130%;
+opacity: 0.05;
+filter: blur(18px);
+transform: rotate(18deg);
+background: linear-gradient(
+90deg,
+transparent,
+var(--ufc27-cyan),
+transparent
+);
+}
+
+.ufc27-light-beam-one {
+left: 8%;
+animation: ufc27BeamOne 9s ease-in-out infinite;
+}
+
+.ufc27-light-beam-two {
+left: 48%;
+background: linear-gradient(
+90deg,
+transparent,
+var(--ufc27-pink),
+transparent
+);
+animation: ufc27BeamTwo 11s ease-in-out infinite;
+}
+
+.ufc27-light-beam-three {
+right: 7%;
+background: linear-gradient(
+90deg,
+transparent,
+var(--ufc27-green),
+transparent
+);
+animation: ufc27BeamThree 13s ease-in-out infinite;
+}
+
+/* Orbit rings */
+
+.ufc27-orbit {
+position: absolute;
+left: 50%;
+top: 48%;
+border-radius: 50%;
+border: 1px solid rgba(0, 234, 255, 0.08);
+transform: translate(-50%, -50%);
+}
+
+.ufc27-orbit-one {
+width: 580px;
+height: 580px;
+animation: ufc27OrbitOne 12s linear infinite;
+}
+
+.ufc27-orbit-two {
+width: 900px;
+height: 900px;
+border-color: rgba(255, 43, 166, 0.045);
+animation: ufc27OrbitTwo 20s linear infinite reverse;
+}
+
+/* Particles */
+
+.ufc27-particles {
+position: absolute;
+inset: 0;
+}
+
+.ufc27-particle {
+position: absolute;
+width: 3px;
+height: 3px;
+border-radius: 50%;
+background: var(--ufc27-cyan);
+box-shadow: 0 0 10px var(--ufc27-cyan);
+opacity: 0;
+animation: ufc27ParticleFloat var(--ufc27-particle-duration) linear infinite;
+animation-delay: var(--ufc27-particle-delay);
+}
+
+.ufc27-commandbar {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+margin-bottom: 18px;
+padding: 12px 16px;
+border: 1px solid rgba(255, 255, 255, 0.08);
+border-radius: 16px;
+background: rgba(5, 13, 26, 0.62);
+backdrop-filter: blur(18px);
+box-shadow: 0 10px 40px rgba(0, 0, 0, 0.22);
+}
+
+.ufc27-command-icon {
+display: flex;
+align-items: center;
+justify-content: center;
+width: 42px;
+height: 42px;
+flex-shrink: 0;
+border: 1px solid rgba(0, 234, 255, 0.32);
+border-radius: 12px;
+color: var(--ufc27-cyan);
+background: rgba(0, 234, 255, 0.06);
+box-shadow:
+inset 0 0 20px rgba(0, 234, 255, 0.05),
+0 0 20px rgba(0, 234, 255, 0.08);
+}
+
+.ufc27-command-kicker {
+color: var(--ufc27-muted);
+font-size: 9px;
+font-weight: 800;
+letter-spacing: 0.18em;
+}
+
+.ufc27-command-title {
+margin-top: 2px;
+color: var(--ufc27-white);
+font-size: 13px;
+font-weight: 900;
+letter-spacing: 0.1em;
+}
+
+.ufc27-command-status {
+display: flex;
+align-items: center;
+gap: 8px;
+padding: 7px 11px;
+border: 1px solid rgba(53, 255, 122, 0.2);
+border-radius: 999px;
+color: var(--ufc27-green);
+background: rgba(53, 255, 122, 0.045);
+font-size: 9px;
+font-weight: 800;
+letter-spacing: 0.12em;
+white-space: nowrap;
+}
+
+.ufc27-status-dot {
+width: 7px;
+height: 7px;
+border-radius: 50%;
+background: var(--ufc27-green);
+box-shadow: 0 0 8px var(--ufc27-green);
+animation: ufc27StatusPulse 1.7s ease-in-out infinite;
+}
+
+.ufc27-hero {
+position: relative;
+overflow: hidden;
+padding: 30px;
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: var(--ufc27-radius-lg);
+background: linear-gradient(
+135deg,
+rgba(255, 255, 255, 0.075),
+rgba(255, 255, 255, 0.025)
+);
+backdrop-filter: blur(24px) saturate(150%);
+box-shadow:
+var(--ufc27-shadow),
+inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.ufc27-hero::before {
+content: "";
+position: absolute;
+inset: 0;
+pointer-events: none;
+background: linear-gradient(
+110deg,
+transparent 20%,
+rgba(0, 234, 255, 0.035) 45%,
+transparent 70%
+);
+animation: ufc27HeroScan 8s linear infinite;
+}
+
+.ufc27-hero::after {
+content: "";
+position: absolute;
+left: 0;
+right: 0;
+top: 0;
+height: 2px;
+background: linear-gradient(
+90deg,
+transparent,
+var(--ufc27-cyan),
+var(--ufc27-purple),
+var(--ufc27-pink),
+transparent
+);
+opacity: 0.8;
+}
+
+.ufc27-hero-scan {
+position: absolute;
+inset: 0;
+pointer-events: none;
+background: repeating-linear-gradient(
+0deg,
+transparent,
+transparent 5px,
+rgba(255, 255, 255, 0.008) 6px
+);
+}
+
+.ufc27-hero-highlight {
+position: absolute;
+top: -160px;
+right: -120px;
+width: 420px;
+height: 420px;
+border-radius: 50%;
+background: radial-gradient(
+circle,
+rgba(0, 234, 255, 0.12),
+transparent 68%
+);
+animation: ufc27HeroGlow 5s ease-in-out infinite;
+}
+
+/* Club identity */
+
+.ufc27-club-identity {
+display: flex;
+align-items: center;
+gap: 28px;
+}
+
+.ufc27-crest-wrap {
+position: relative;
+display: flex;
+align-items: center;
+justify-content: center;
+width: 155px;
+height: 155px;
+flex: 0 0 155px;
+}
+
+.ufc27-crest-frame {
+position: relative;
+z-index: 4;
+display: flex;
+align-items: center;
+justify-content: center;
+width: 108px;
+height: 108px;
+padding: 9px;
+border: 1px solid rgba(255, 255, 255, 0.2);
+border-radius: 50%;
+background: linear-gradient(
+145deg,
+rgba(255, 255, 255, 0.1),
+rgba(255, 255, 255, 0.025)
+);
+backdrop-filter: blur(12px);
+box-shadow:
+0 0 0 8px rgba(0, 234, 255, 0.025),
+0 0 45px rgba(0, 234, 255, 0.16);
+}
+
+.ufc27-crest-image {
+width: 100%;
+height: 100%;
+object-fit: contain;
+border-radius: 50%;
+filter: drop-shadow(0 0 15px rgba(0, 234, 255, 0.22));
+}
+
+.ufc27-crest-ring {
+position: absolute;
+border-radius: 50%;
+border: 1px solid transparent;
+}
+
+.ufc27-crest-ring-one {
+inset: 8px;
+border-top-color: var(--ufc27-cyan);
+border-right-color: rgba(0, 234, 255, 0.1);
+border-bottom-color: var(--ufc27-purple);
+animation: ufc27CrestSpin 7s linear infinite;
+}
+
+.ufc27-crest-ring-two {
+inset: -5px;
+border-left-color: var(--ufc27-pink);
+border-right-color: var(--ufc27-cyan);
+opacity: 0.5;
+animation: ufc27CrestSpin 11s linear infinite reverse;
+}
+
+.ufc27-crest-glow {
+position: absolute;
+inset: 5px;
+border-radius: 50%;
+background: radial-gradient(
+circle,
+rgba(0, 234, 255, 0.18),
+transparent 65%
+);
+filter: blur(8px);
+animation: ufc27CrestGlow 3s ease-in-out infinite;
+}
+
+.ufc27-crest-cross {
+position: absolute;
+z-index: 5;
+background: rgba(0, 234, 255, 0.3);
+}
+
+.ufc27-cross-horizontal {
+width: 175px;
+height: 1px;
+}
+
+.ufc27-cross-vertical {
+width: 1px;
+height: 175px;
+}
+
+/* Club text */
+
+.ufc27-club-copy {
+min-width: 0;
+}
+
+.ufc27-overall-pill {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+margin-bottom: 9px;
+padding: 7px 11px;
+border: 1px solid rgba(166, 255, 0, 0.28);
+border-radius: 999px;
+color: var(--ufc27-lime);
+background: rgba(166, 255, 0, 0.055);
+box-shadow: 0 0 20px rgba(166, 255, 0, 0.06);
+font-size: 10px;
+font-weight: 800;
+letter-spacing: 0.08em;
+}
+
+.ufc27-overall-pill i {
+font-size: 9px;
+}
+
+.ufc27-overall-pill strong {
+color: var(--ufc27-white);
+font-size: 13px;
+}
+
+.ufc27-eyebrow {
+margin-bottom: 5px;
+color: var(--ufc27-cyan);
+font-size: 9px;
+font-weight: 800;
+letter-spacing: 0.2em;
+}
+
+.ufc27-club-title {
+margin: 0;
+color: var(--ufc27-white);
+font-size: clamp(2rem, 4vw, 3.5rem);
+font-weight: 950;
+line-height: 0.98;
+letter-spacing: -0.045em;
+text-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
+}
+
+.ufc27-location {
+display: flex;
+align-items: center;
+gap: 8px;
+margin-top: 13px;
+color: var(--ufc27-muted);
+font-size: 13px;
+}
+
+.ufc27-location-icon {
+color: var(--ufc27-cyan);
+text-shadow: 0 0 12px rgba(0, 234, 255, 0.5);
+}
+
+.ufc27-identity-tags {
+display: flex;
+flex-wrap: wrap;
+gap: 7px;
+margin-top: 15px;
+}
+
+.ufc27-identity-tag {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+padding: 5px 8px;
+border: 1px solid rgba(255, 255, 255, 0.08);
+border-radius: 7px;
+color: var(--ufc27-muted);
+background: rgba(255, 255, 255, 0.025);
+font-size: 8px;
+font-weight: 800;
+letter-spacing: 0.1em;
+}
+
+.ufc27-identity-tag i {
+color: var(--ufc27-cyan);
+}
+
+.ufc27-stat-card {
+position: relative;
+min-height: 145px;
+overflow: hidden;
+padding: 16px;
+border: 1px solid rgba(255, 255, 255, 0.09);
+border-radius: var(--ufc27-radius-md);
+background: rgba(255, 255, 255, 0.035);
+backdrop-filter: blur(15px);
+transition:
+transform 0.35s var(--ufc27-ease),
+border-color 0.35s ease,
+box-shadow 0.35s ease;
+}
+
+.ufc27-stat-card:hover {
+transform: translateY(-5px);
+border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ufc27-stat-card::before {
+content: "";
+position: absolute;
+right: -35px;
+top: -35px;
+width: 110px;
+height: 110px;
+border-radius: 50%;
+background: radial-gradient(
+circle,
+var(--ufc27-stat-color),
+transparent 70%
+);
+opacity: 0.12;
+filter: blur(3px);
+}
+
+.ufc27-stat-lime {
+--ufc27-stat-color: var(--ufc27-lime);
+}
+
+.ufc27-stat-cyan {
+--ufc27-stat-color: var(--ufc27-cyan);
+}
+
+.ufc27-stat-gold {
+--ufc27-stat-color: var(--ufc27-gold);
+}
+
+.ufc27-stat-pink {
+--ufc27-stat-color: var(--ufc27-pink);
+}
+
+.ufc27-stat-icon {
+display: flex;
+align-items: center;
+justify-content: center;
+width: 31px;
+height: 31px;
+margin-bottom: 13px;
+border: 1px solid
+color-mix(in srgb, var(--ufc27-stat-color) 35%, transparent);
+border-radius: 9px;
+color: var(--ufc27-stat-color);
+background: color-mix(in srgb, var(--ufc27-stat-color) 7%, transparent);
+font-size: 12px;
+}
+
+.ufc27-stat-number {
+position: relative;
+z-index: 2;
+color: var(--ufc27-stat-color);
+font-size: 30px;
+font-weight: 950;
+line-height: 1;
+text-shadow: 0 0 18px
+color-mix(in srgb, var(--ufc27-stat-color) 45%, transparent);
+}
+
+.ufc27-stat-label {
+margin-top: 5px;
+color: var(--ufc27-muted);
+font-size: 8px;
+font-weight: 900;
+letter-spacing: 0.15em;
+}
+
+.ufc27-stat-progress {
+position: absolute;
+left: 16px;
+right: 16px;
+bottom: 15px;
+height: 3px;
+overflow: hidden;
+border-radius: 999px;
+background: rgba(255, 255, 255, 0.06);
+}
+
+.ufc27-stat-progress-fill {
+width: 0;
+height: 100%;
+border-radius: inherit;
+background: var(--ufc27-stat-color);
+box-shadow: 0 0 10px var(--ufc27-stat-color);
+transition: width 1.7s var(--ufc27-ease);
+}
+
+.ufc27-winrate-card {
+position: relative;
+overflow: hidden;
+padding: 15px 17px;
+border: 1px solid rgba(0, 234, 255, 0.11);
+border-radius: var(--ufc27-radius-md);
+background: linear-gradient(
+110deg,
+rgba(0, 234, 255, 0.035),
+rgba(53, 255, 122, 0.02)
+);
+backdrop-filter: blur(15px);
+}
+
+.ufc27-winrate-top {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 15px;
+}
+
+.ufc27-winrate-heading {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.ufc27-winrate-icon {
+display: flex;
+align-items: center;
+justify-content: center;
+width: 34px;
+height: 34px;
+border: 1px solid rgba(0, 234, 255, 0.2);
+border-radius: 10px;
+color: var(--ufc27-cyan);
+background: rgba(0, 234, 255, 0.05);
+}
+
+.ufc27-mini-label {
+color: var(--ufc27-muted);
+font-size: 7px;
+font-weight: 900;
+letter-spacing: 0.16em;
+}
+
+.ufc27-winrate-title {
+margin-top: 2px;
+color: var(--ufc27-white);
+font-size: 11px;
+font-weight: 900;
+letter-spacing: 0.08em;
+}
+
+.ufc27-winrate-value {
+color: var(--ufc27-cyan);
+font-size: 25px;
+font-weight: 950;
+text-shadow: 0 0 18px rgba(0, 234, 255, 0.4);
+}
+
+.ufc27-winrate-track {
+position: relative;
+height: 10px;
+margin-top: 13px;
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.06);
+border-radius: 999px;
+background: rgba(255, 255, 255, 0.035);
+}
+
+.ufc27-winrate-fill {
+position: relative;
+width: 0;
+height: 100%;
+overflow: hidden;
+border-radius: inherit;
+background: linear-gradient(90deg, var(--ufc27-cyan), var(--ufc27-green));
+box-shadow: 0 0 20px rgba(0, 234, 255, 0.25);
+transition: width 2s var(--ufc27-ease);
+}
+
+.ufc27-winrate-shimmer {
+position: absolute;
+inset: 0;
+width: 35%;
+background: linear-gradient(
+90deg,
+transparent,
+rgba(255, 255, 255, 0.35),
+transparent
+);
+transform: translateX(-150%);
+animation: ufc27WinShimmer 2.6s linear infinite;
+}
+
+.ufc27-winrate-bubbles {
+position: absolute;
+inset: 0;
+background-image: radial-gradient(
+circle,
+rgba(255, 255, 255, 0.35) 1px,
+transparent 1px
+);
+background-size: 18px 100%;
+animation: ufc27BubbleMove 2s linear infinite;
+}
+
+.ufc27-winrate-scale {
+display: flex;
+justify-content: space-between;
+margin-top: 5px;
+color: rgba(126, 145, 173, 0.65);
+font-size: 7px;
+font-weight: 700;
+}
+
+.ufc27-section-heading {
+display: flex;
+align-items: center;
+gap: 15px;
+margin: 28px 0 14px;
+}
+
+.ufc27-section-heading-left {
+display: flex;
+align-items: center;
+gap: 11px;
+flex-shrink: 0;
+}
+
+.ufc27-section-number {
+display: flex;
+align-items: center;
+justify-content: center;
+width: 35px;
+height: 35px;
+border: 1px solid rgba(0, 234, 255, 0.25);
+border-radius: 10px;
+color: var(--ufc27-cyan);
+background: rgba(0, 234, 255, 0.045);
+font-size: 10px;
+font-weight: 950;
+}
+
+.ufc27-section-number-pink {
+border-color: rgba(255, 43, 166, 0.25);
+color: var(--ufc27-pink);
+background: rgba(255, 43, 166, 0.045);
+}
+
+.ufc27-section-kicker {
+margin-bottom: 2px;
+color: var(--ufc27-muted);
+font-size: 7px;
+font-weight: 900;
+letter-spacing: 0.2em;
+}
+
+.ufc27-section-title {
+margin: 0;
+color: var(--ufc27-white);
+font-size: 15px;
+font-weight: 950;
+letter-spacing: 0.04em;
+}
+
+.ufc27-section-line {
+flex: 1;
+height: 1px;
+background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.ufc27-section-badge {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+padding: 7px 10px;
+border: 1px solid rgba(0, 234, 255, 0.13);
+border-radius: 999px;
+color: var(--ufc27-cyan);
+background: rgba(0, 234, 255, 0.035);
+font-size: 7px;
+font-weight: 900;
+letter-spacing: 0.1em;
+white-space: nowrap;
+}
+
+.ufc27-section-badge-pink {
+border-color: rgba(255, 43, 166, 0.13);
+color: var(--ufc27-pink);
+background: rgba(255, 43, 166, 0.035);
+}
+
+.ufc27-glass-panel {
+position: relative;
+overflow: hidden;
+padding: 20px;
+border: 1px solid rgba(255, 255, 255, 0.085);
+border-radius: var(--ufc27-radius-lg);
+background: rgba(255, 255, 255, 0.028);
+backdrop-filter: blur(22px) saturate(140%);
+box-shadow:
+0 18px 55px rgba(0, 0, 0, 0.25),
+inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+.ufc27-panel-topline {
+position: absolute;
+left: 8%;
+right: 8%;
+top: 0;
+height: 1px;
+background: linear-gradient(
+90deg,
+transparent,
+rgba(0, 234, 255, 0.45),
+transparent
+);
+}
+
+.ufc27-panel-topline-pink {
+background: linear-gradient(
+90deg,
+transparent,
+rgba(255, 43, 166, 0.45),
+transparent
+);
+}
+
+.ufc27-player-link {
+display: block;
+height: 100%;
+color: inherit;
+text-decoration: none;
+opacity: 0;
+transform: translateY(25px) scale(0.96);
+transition:
+opacity 0.6s var(--ufc27-ease),
+transform 0.6s var(--ufc27-ease);
+}
+
+.ufc27-player-link.ufc27-visible {
+opacity: 1;
+transform: translateY(0) scale(1);
+}
+
+.ufc27-player-link:hover {
+color: inherit;
+text-decoration: none;
+transform: translateY(-7px) scale(1.015);
+}
+
+.ufc27-player-card {
+position: relative;
+display: flex;
+flex-direction: column;
+height: 100%;
+min-height: 265px;
+overflow: hidden;
+padding: 10px;
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 20px;
+background: linear-gradient(
+145deg,
+rgba(255, 255, 255, 0.075),
+rgba(255, 255, 255, 0.018)
+);
+backdrop-filter: blur(18px);
+transition:
+border-color 0.35s ease,
+box-shadow 0.35s ease;
+}
+
+.ufc27-player-link:hover .ufc27-player-card {
+border-color: rgba(0, 234, 255, 0.4);
+box-shadow:
+0 18px 35px rgba(0, 0, 0, 0.3),
+0 0 25px rgba(0, 234, 255, 0.08);
+}
+
+.ufc27-player-card-border {
+position: absolute;
+inset: -1px;
+z-index: -1;
+border-radius: inherit;
+background: linear-gradient(
+135deg,
+rgba(0, 234, 255, 0.5),
+transparent 35%,
+transparent 65%,
+rgba(255, 43, 166, 0.35)
+);
+opacity: 0;
+transition: opacity 0.35s ease;
+}
+
+.ufc27-player-link:hover .ufc27-player-card-border {
+opacity: 1;
+}
+
+.ufc27-player-shimmer {
+position: absolute;
+inset: 0;
+z-index: 5;
+pointer-events: none;
+border-radius: inherit;
+background: linear-gradient(
+115deg,
+transparent 35%,
+rgba(255, 255, 255, 0.07) 47%,
+rgba(255, 255, 255, 0.14) 50%,
+rgba(255, 255, 255, 0.07) 53%,
+transparent 65%
+);
+background-size: 250% 100%;
+animation: ufc27CardShimmer 4s ease-in-out infinite;
+}
+
+/* Player top */
+
+.ufc27-player-top {
+position: relative;
+z-index: 8;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 7px;
+margin-bottom: 7px;
+}
+
+.ufc27-player-position {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+min-width: 31px;
+padding: 5px 7px;
+border: 1px solid rgba(53, 255, 122, 0.25);
+border-radius: 7px;
+color: var(--ufc27-green);
+background: rgba(53, 255, 122, 0.05);
+font-size: 8px;
+font-weight: 950;
+letter-spacing: 0.08em;
+}
+
+.ufc27-player-rating {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+min-width: 34px;
+padding: 5px 7px;
+border: 1px solid rgba(255, 216, 77, 0.25);
+border-radius: 7px;
+color: var(--ufc27-gold);
+background: rgba(255, 216, 77, 0.05);
+font-size: 9px;
+font-weight: 950;
+}
+
+/* Player image */
+
+.ufc27-player-image-wrap {
+position: relative;
+overflow: hidden;
+aspect-ratio: 0.86;
+border: 1px solid rgba(255, 255, 255, 0.08);
+border-radius: 15px;
+background: linear-gradient(
+180deg,
+rgba(0, 234, 255, 0.04),
+rgba(0, 0, 0, 0.35)
+);
+}
+
+.ufc27-player-image {
+width: 100%;
+height: 100%;
+object-fit: cover;
+object-position: center;
+filter: saturate(1.05) contrast(1.04);
+transition:
+transform 0.55s var(--ufc27-ease),
+filter 0.35s ease;
+}
+
+.ufc27-player-link:hover .ufc27-player-image {
+transform: scale(1.07);
+filter: saturate(1.18) contrast(1.07);
+}
+
+.ufc27-player-image-glow {
+position: absolute;
+z-index: 1;
+left: 50%;
+bottom: -45px;
+width: 140px;
+height: 140px;
+transform: translateX(-50%);
+border-radius: 50%;
+background: radial-gradient(
+circle,
+rgba(0, 234, 255, 0.2),
+transparent 70%
+);
+filter: blur(10px);
+}
+
+.ufc27-player-image-overlay {
+position: absolute;
+inset: 0;
+z-index: 2;
+background: linear-gradient(
+180deg,
+transparent 50%,
+rgba(3, 7, 18, 0.72) 100%
+);
+}
+
+.ufc27-player-scan {
+position: absolute;
+left: 0;
+right: 0;
+top: -15%;
+z-index: 4;
+height: 2px;
+background: linear-gradient(
+90deg,
+transparent,
+rgba(0, 234, 255, 0.8),
+transparent
+);
+box-shadow: 0 0 12px rgba(0, 234, 255, 0.6);
+animation: ufc27PlayerScan 3.5s linear infinite;
+}
+
+/* Player information */
+
+.ufc27-player-info {
+position: relative;
+z-index: 8;
+padding: 10px 3px 3px;
+}
+
+.ufc27-player-role {
+color: var(--ufc27-cyan);
+font-size: 7px;
+font-weight: 900;
+letter-spacing: 0.15em;
+}
+
+.ufc27-player-name {
+overflow: hidden;
+margin: 3px 0 7px;
+color: var(--ufc27-white);
+font-size: 12px;
+font-weight: 900;
+line-height: 1.15;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
+
+.ufc27-player-rating-line {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 5px;
+color: var(--ufc27-muted);
+font-size: 7px;
+font-weight: 800;
+}
+
+.ufc27-player-rating-line i {
+margin-right: 3px;
+color: var(--ufc27-gold);
+}
+
+.ufc27-player-rating-line strong {
+color: var(--ufc27-gold);
+font-size: 9px;
+}
+
+/* Player corners */
+
+.ufc27-player-corner {
+position: absolute;
+z-index: 10;
+width: 8px;
+height: 8px;
+border-color: var(--ufc27-cyan);
+border-style: solid;
+opacity: 0.5;
+transition:
+opacity 0.3s ease,
+width 0.3s ease,
+height 0.3s ease;
+}
+
+.ufc27-player-corner-tl {
+top: 5px;
+left: 5px;
+border-width: 1px 0 0 1px;
+}
+
+.ufc27-player-corner-tr {
+top: 5px;
+right: 5px;
+border-width: 1px 1px 0 0;
+}
+
+.ufc27-player-corner-bl {
+bottom: 5px;
+left: 5px;
+border-width: 0 0 1px 1px;
+}
+
+.ufc27-player-corner-br {
+right: 5px;
+bottom: 5px;
+border-width: 0 1px 1px 0;
+}
+
+.ufc27-player-link:hover .ufc27-player-corner {
+width: 13px;
+height: 13px;
+opacity: 1;
+}
+
+.ufc27-match-list {
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+
+.ufc27-match-link {
+display: block;
+color: inherit;
+text-decoration: none;
+opacity: 0;
+transform: translateX(-22px);
+transition:
+opacity 0.6s var(--ufc27-ease),
+transform 0.6s var(--ufc27-ease);
+}
+
+.ufc27-match-link.ufc27-visible {
+opacity: 1;
+transform: translateX(0);
+}
+
+.ufc27-match-link:hover {
+color: inherit;
+text-decoration: none;
+transform: translateX(5px);
+}
+
+.ufc27-match-card {
+position: relative;
+display: flex;
+align-items: center;
+gap: 15px;
+min-height: 82px;
+overflow: hidden;
+padding: 12px 15px;
+border: 1px solid rgba(255, 255, 255, 0.075);
+border-radius: 16px;
+background: rgba(255, 255, 255, 0.025);
+transition:
+background 0.3s ease,
+border-color 0.3s ease,
+box-shadow 0.3s ease;
+}
+
+.ufc27-match-link:hover .ufc27-match-card {
+border-color: rgba(0, 234, 255, 0.18);
+background: rgba(0, 234, 255, 0.035);
+box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+}
+
+.ufc27-match-hover-line {
+position: absolute;
+left: 0;
+top: 0;
+bottom: 0;
+width: 2px;
+background: linear-gradient(180deg, var(--ufc27-cyan), var(--ufc27-pink));
+opacity: 0.5;
+transition:
+width 0.3s ease,
+opacity 0.3s ease;
+}
+
+.ufc27-match-link:hover .ufc27-match-hover-line {
+width: 4px;
+opacity: 1;
+}
+
+/* Date */
+
+.ufc27-match-date {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+width: 50px;
+min-width: 50px;
+height: 56px;
+border: 1px solid rgba(255, 255, 255, 0.075);
+border-radius: 11px;
+background: rgba(255, 255, 255, 0.025);
+}
+
+.ufc27-match-day {
+color: var(--ufc27-white);
+font-size: 20px;
+font-weight: 950;
+line-height: 1;
+}
+
+.ufc27-match-month {
+margin-top: 4px;
+color: var(--ufc27-cyan);
+font-size: 7px;
+font-weight: 900;
+letter-spacing: 0.14em;
+}
+
+/* Teams */
+
+.ufc27-match-teams {
+display: flex;
+align-items: center;
+justify-content: center;
+flex: 1;
+min-width: 0;
+gap: 18px;
+}
+
+.ufc27-team {
+display: flex;
+align-items: center;
+gap: 9px;
+flex: 1;
+min-width: 0;
+}
+
+.ufc27-team-home {
+justify-content: flex-end;
+text-align: right;
+}
+
+.ufc27-team-away {
+justify-content: flex-start;
+text-align: left;
+}
+
+.ufc27-team-name {
+overflow: hidden;
+max-width: 170px;
+color: var(--ufc27-text);
+font-size: 11px;
+font-weight: 800;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
+
+.ufc27-team-logo {
+display: flex;
+align-items: center;
+justify-content: center;
+width: 43px;
+height: 43px;
+flex: 0 0 43px;
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 50%;
+background: rgba(0, 0, 0, 0.28);
+transition:
+transform 0.35s ease,
+border-color 0.35s ease;
+}
+
+.ufc27-match-link:hover .ufc27-team-logo {
+transform: scale(1.06);
+border-color: rgba(0, 234, 255, 0.25);
+}
+
+.ufc27-team-logo img {
+width: 75%;
+height: 75%;
+object-fit: contain;
+}
+
+/* Score */
+
+.ufc27-score-board {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 7px;
+min-width: 90px;
+padding: 8px 11px;
+border: 1px solid rgba(255, 255, 255, 0.09);
+border-radius: 11px;
+background: rgba(0, 0, 0, 0.16);
+}
+
+.ufc27-score-number {
+min-width: 20px;
+color: var(--ufc27-white);
+font-size: 20px;
+font-weight: 950;
+text-align: center;
+}
+
+.ufc27-score-divider {
+color: var(--ufc27-muted);
+font-size: 13px;
+font-weight: 900;
+}
+
+/* Result */
+
+.ufc27-match-result {
+flex: 0 0 36px;
+}
+
+.ufc27-result {
+display: flex;
+align-items: center;
+justify-content: center;
+width: 34px;
+height: 34px;
+border-radius: 10px;
+font-size: 10px;
+font-weight: 950;
+}
+
+.ufc27-result-win {
+border: 1px solid rgba(53, 255, 122, 0.35);
+color: var(--ufc27-green);
+background: rgba(53, 255, 122, 0.07);
+box-shadow: 0 0 14px rgba(53, 255, 122, 0.1);
+}
+
+.ufc27-result-draw {
+border: 1px solid rgba(255, 216, 77, 0.35);
+color: var(--ufc27-gold);
+background: rgba(255, 216, 77, 0.07);
+}
+
+.ufc27-result-loss {
+border: 1px solid rgba(255, 43, 166, 0.35);
+color: var(--ufc27-pink);
+background: rgba(255, 43, 166, 0.07);
+}
+
+/* Arrow */
+
+.ufc27-match-arrow {
+display: flex;
+align-items: center;
+justify-content: center;
+width: 22px;
+color: rgba(126, 145, 173, 0.5);
+font-size: 9px;
+transition:
+transform 0.3s ease,
+color 0.3s ease;
+}
+
+.ufc27-match-link:hover .ufc27-match-arrow {
+color: var(--ufc27-cyan);
+transform: translateX(3px);
+}
+
+.ufc27-empty-state {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+min-height: 270px;
+padding: 35px 20px;
+border: 1px dashed rgba(255, 255, 255, 0.1);
+border-radius: 18px;
+text-align: center;
+background: rgba(255, 255, 255, 0.018);
+}
+
+.ufc27-empty-icon {
+position: relative;
+display: flex;
+align-items: center;
+justify-content: center;
+width: 78px;
+height: 78px;
+margin-bottom: 16px;
+}
+
+.ufc27-empty-icon i {
+position: relative;
+z-index: 2;
+color: var(--ufc27-cyan);
+font-size: 25px;
+text-shadow: 0 0 18px rgba(0, 234, 255, 0.4);
+animation: ufc27EmptyIcon 2.2s ease-in-out infinite;
+}
+
+.ufc27-empty-ring {
+position: absolute;
+inset: 0;
+border: 1px solid rgba(0, 234, 255, 0.3);
+border-radius: 50%;
+animation: ufc27EmptyRing 2.5s linear infinite;
+}
+
+.ufc27-empty-kicker {
+margin-bottom: 5px;
+color: var(--ufc27-cyan);
+font-size: 7px;
+font-weight: 900;
+letter-spacing: 0.2em;
+}
+
+.ufc27-empty-state p {
+margin: 0;
+color: var(--ufc27-white);
+font-size: 15px;
+font-weight: 850;
+}
+
+.ufc27-empty-state > span {
+margin-top: 6px;
+color: var(--ufc27-muted);
+font-size: 10px;
+}
+
+.ufc27-match-empty {
+min-height: 230px;
+}
+
+.ufc27-bottom-status {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 14px;
+margin-top: 26px;
+padding: 10px;
+color: var(--ufc27-muted);
+font-size: 7px;
+font-weight: 900;
+letter-spacing: 0.14em;
+}
+
+.ufc27-bottom-status-item {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+}
+
+.ufc27-bottom-status-item i {
+color: var(--ufc27-cyan);
+}
+
+.ufc27-bottom-status-line {
+width: 60px;
+height: 1px;
+background: rgba(255, 255, 255, 0.1);
+}
+
+.ufc27-reveal {
+opacity: 0;
+transform: translateY(20px);
+transition:
+opacity 0.7s var(--ufc27-ease),
+transform 0.7s var(--ufc27-ease);
+}
+
+.ufc27-reveal.ufc27-visible {
+opacity: 1;
+transform: translateY(0);
+}
+
+@keyframes ufc27GlowFloatOne {
+0%,
+100% {
+transform: translate(0, 0);
+}
+
+50% {
+transform: translate(90px, 60px);
+}
+}
+
+@keyframes ufc27GlowFloatTwo {
+0%,
+100% {
+transform: translate(0, 0);
+}
+
+50% {
+transform: translate(-80px, 50px);
+}
+}
+
+@keyframes ufc27GlowFloatThree {
+0%,
+100% {
+transform: translate(0, 0);
+}
+
+50% {
+transform: translate(50px, -60px);
+}
+}
+
+@keyframes ufc27GridMove {
+0% {
+background-position: 0 0;
+}
+
+100% {
+background-position: 0 50px;
+}
+}
+
+@keyframes ufc27BeamOne {
+0%,
+100% {
+transform: rotate(18deg) translateX(-30px);
+}
+
+50% {
+transform: rotate(18deg) translateX(80px);
+}
+}
+
+@keyframes ufc27BeamTwo {
+0%,
+100% {
+transform: rotate(18deg) translateX(40px);
+}
+
+50% {
+transform: rotate(18deg) translateX(-70px);
+}
+}
+
+@keyframes ufc27BeamThree {
+0%,
+100% {
+transform: rotate(18deg) translateX(30px);
+}
+
+50% {
+transform: rotate(18deg) translateX(-80px);
+}
+}
+
+@keyframes ufc27OrbitOne {
+0% {
+transform: translate(-50%, -50%) rotate(0deg) scale(1);
+}
+
+50% {
+transform: translate(-50%, -50%) rotate(180deg) scale(1.08);
+}
+
+100% {
+transform: translate(-50%, -50%) rotate(360deg) scale(1);
+}
+}
+
+@keyframes ufc27OrbitTwo {
+0% {
+transform: translate(-50%, -50%) rotate(0deg);
+}
+
+100% {
+transform: translate(-50%, -50%) rotate(360deg);
+}
+}
+
+@keyframes ufc27ParticleFloat {
+0% {
+opacity: 0;
+transform: translate3d(0, 40px, 0) scale(0.5);
+}
+
+20% {
+opacity: 0.8;
+}
+
+80% {
+opacity: 0.5;
+}
+
+100% {
+opacity: 0;
+transform: translate3d(var(--ufc27-particle-x), -100vh, 0) scale(1);
+}
+}
+
+@keyframes ufc27HeroScan {
+0% {
+transform: translateX(-100%);
+}
+
+100% {
+transform: translateX(100%);
+}
+}
+
+@keyframes ufc27HeroGlow {
+0%,
+100% {
+transform: scale(0.95);
+opacity: 0.6;
+}
+
+50% {
+transform: scale(1.08);
+opacity: 1;
+}
+}
+
+@keyframes ufc27CrestSpin {
+from {
+transform: rotate(0deg);
+}
+
+to {
+transform: rotate(360deg);
+}
+}
+
+@keyframes ufc27CrestGlow {
+0%,
+100% {
+opacity: 0.5;
+transform: scale(0.95);
+}
+
+50% {
+opacity: 1;
+transform: scale(1.08);
+}
+}
+
+@keyframes ufc27StatusPulse {
+0%,
+100% {
+opacity: 1;
+transform: scale(1);
+}
+
+50% {
+opacity: 0.45;
+transform: scale(0.75);
+}
+}
+
+@keyframes ufc27WinShimmer {
+0% {
+transform: translateX(-150%);
+}
+
+100% {
+transform: translateX(400%);
+}
+}
+
+@keyframes ufc27BubbleMove {
+from {
+background-position: 0 0;
+}
+
+to {
+background-position: 36px 0;
+}
+}
+
+@keyframes ufc27CardShimmer {
+0% {
+background-position: 250% 0;
+}
+
+55%,
+100% {
+background-position: -150% 0;
+}
+}
+
+@keyframes ufc27PlayerScan {
+0% {
+top: -10%;
+opacity: 0;
+}
+
+15% {
+opacity: 1;
+}
+
+75% {
+opacity: 0.8;
+}
+
+100% {
+top: 110%;
+opacity: 0;
+}
+}
+
+@keyframes ufc27EmptyIcon {
+0%,
+100% {
+transform: translateY(0);
+}
+
+50% {
+transform: translateY(-6px);
+}
+}
+
+@keyframes ufc27EmptyRing {
+0% {
+transform: scale(0.85) rotate(0deg);
+opacity: 0.9;
+}
+
+100% {
+transform: scale(1.25) rotate(360deg);
+opacity: 0;
+}
+}
+
+@media (max-width: 991.98px) {
+.ufc27-main {
+padding-top: 16px;
+}
+
+.ufc27-hero {
+padding: 22px;
+}
+
+.ufc27-club-identity {
+justify-content: center;
+}
+
+.ufc27-club-copy {
+text-align: left;
+}
+
+.ufc27-match-teams {
+gap: 10px;
+}
+
+.ufc27-team-name {
+max-width: 120px;
+}
+}
+
+@media (max-width: 767.98px) {
+.ufc27-commandbar {
+padding: 10px 12px;
+}
+
+.ufc27-command-status {
+display: none;
+}
+
+.ufc27-hero {
+padding: 18px;
+border-radius: 21px;
+}
+
+.ufc27-club-identity {
+flex-direction: column;
+text-align: center;
+}
+
+.ufc27-club-copy {
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+.ufc27-location {
+justify-content: center;
+text-align: center;
+}
+
+.ufc27-identity-tags {
+justify-content: center;
+}
+
+.ufc27-section-heading {
+gap: 10px;
+}
+
+.ufc27-section-line {
+display: none;
+}
+
+.ufc27-section-badge {
+margin-left: auto;
+}
+
+.ufc27-glass-panel {
+padding: 13px;
+border-radius: 20px;
+}
+
+.ufc27-match-card {
+flex-wrap: wrap;
+gap: 9px;
+padding: 11px;
+}
+
+.ufc27-match-date {
+width: 44px;
+min-width: 44px;
+height: 49px;
+}
+
+.ufc27-match-day {
+font-size: 17px;
+}
+
+.ufc27-match-teams {
+order: 3;
+width: 100%;
+flex-basis: 100%;
+}
+
+.ufc27-match-result {
+margin-left: auto;
+}
+
+.ufc27-match-arrow {
+display: none;
+}
+
+.ufc27-team-name {
+max-width: 105px;
+font-size: 9px;
+}
+
+.ufc27-team-logo {
+width: 36px;
+height: 36px;
+flex-basis: 36px;
+}
+
+.ufc27-score-board {
+min-width: 75px;
+}
+
+.ufc27-score-number {
+font-size: 17px;
+}
+
+.ufc27-bottom-status {
+flex-wrap: wrap;
+}
+}
+
+@media (max-width: 575.98px) {
+.ufc27-main {
+padding-left: 4px;
+padding-right: 4px;
+}
+
+.ufc27-container {
+padding-left: 10px;
+padding-right: 10px;
+}
+
+.ufc27-command-title {
+font-size: 11px;
+}
+
+.ufc27-command-kicker {
+font-size: 7px;
+}
+
+.ufc27-command-icon {
+width: 36px;
+height: 36px;
+}
+
+.ufc27-crest-wrap {
+width: 135px;
+height: 135px;
+flex-basis: 135px;
+}
+
+.ufc27-crest-frame {
+width: 94px;
+height: 94px;
+}
+
+.ufc27-cross-horizontal {
+width: 150px;
+}
+
+.ufc27-cross-vertical {
+height: 150px;
+}
+
+.ufc27-club-title {
+font-size: 2rem;
+}
+
+.ufc27-section-title {
+font-size: 13px;
+}
+
+.ufc27-section-badge {
+padding: 6px 8px;
+font-size: 6px;
+}
+
+.ufc27-player-card {
+min-height: 245px;
+padding: 8px;
+border-radius: 17px;
+}
+
+.ufc27-player-name {
+font-size: 10px;
+}
+
+.ufc27-player-rating-line {
+font-size: 6px;
+}
+
+.ufc27-match-panel {
+padding: 10px;
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+.ufc27-page *,
+.ufc27-page *::before,
+.ufc27-page *::after {
+animation-duration: 0.01ms !important;
+animation-iteration-count: 1 !important;
+scroll-behavior: auto !important;
+transition-duration: 0.01ms !important;
+}
+}

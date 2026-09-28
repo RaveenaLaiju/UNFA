@@ -1,0 +1,296 @@
+{% extends 'user/user_head.html' %}
+{% block content %}
+{% load static %}
+
+{% load static %}
+<div class="tournament-arena">
+  <div class="arena-bg">
+    <div class="pitch-lines"></div>
+    <div class="floating-ball">⚽</div>
+    <div class="floating-ball delay-1">⚽</div>
+    <div class="floating-ball delay-2">⚽</div>
+    <div class="particles" id="particles"></div>
+  </div>
+
+  <div class="container-fluid">
+    <!-- Hero Section -->
+    <header class="arena-hero animate-on-scroll">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <i class="fas fa-medal"></i>
+          <span>Tournament Center</span>
+        </div>
+        <h1 class="arena-title">
+          <span class="title-glow">Championship</span>
+          <span class="title-outline">Arena</span>
+        </h1>
+        <p class="arena-subtitle">
+          Compete in organized tournaments, challenge the best clubs, and claim glory on the grandest stage.
+        </p>
+        {% if is_manager %}
+        <a href="{% url 'host_tournament' %}" class="arena-btn host-btn">
+          <span class="btn-glow"></span>
+          <i class="fas fa-plus-circle"></i>
+          <span>Host Tournament</span>
+        </a>
+        {% endif %}
+      </div>
+      <div class="hero-visual">
+        <div class="trophy-display">
+          <i class="fas fa-trophy"></i>
+          <div class="trophy-glow"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar animate-on-scroll">
+      <div class="stat-item">
+        <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+        <div class="stat-info">
+          <span class="stat-value">{{ tournaments|length }}</span>
+          <span class="stat-label">Active Tournaments</span>
+        </div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
+        <div class="stat-info">
+          <span class="stat-value">
+            {% with total_clubs=0 %}
+              {% for t in tournaments %}
+                {% if forloop.first %}
+                  {{ t.t_club_map_set.count|default:0 }}+
+                {% endif %}
+              {% empty %}
+                0+
+              {% endfor %}
+            {% endwith %}
+          </span>
+          <span class="stat-label">Clubs Competing</span>
+        </div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-icon"><i class="fas fa-fire"></i></div>
+        <div class="stat-info">
+          <span class="stat-value">LIVE</span>
+          <span class="stat-label">Tournament Status</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tournament Grid -->
+    <section class="tournament-grid-container">
+      {% if tournaments|length > 0 %}
+      <div class="tournament-grid">
+        {% for tournament in tournaments %}
+        <article class="tournament-card animate-on-scroll" style="--delay: {{ forloop.counter }}">
+          <!-- Card Header with Status -->
+          <div class="card-header">
+            <div class="status-badge 
+              {% if tournament.t_date > now.date %}upcoming
+              {% elif tournament.is_completed %}completed
+              {% else %}live{% endif %}">
+              <span class="pulse"></span>
+              {% if tournament.t_date > now.date %}Upcoming
+              {% elif tournament.is_completed %}Completed
+              {% else %}Live{% endif %}
+            </div>
+            <div class="card-icon">
+              <i class="fas fa-trophy"></i>
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="card-body">
+            <h3 class="tournament-name">{{ tournament.t_name }}</h3>
+            
+            <div class="tournament-details">
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="detail-text">
+                  <span class="detail-label">Date</span>
+                  <span class="detail-value">{{ tournament.t_date|date:"d M Y" }}</span>
+                </div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div class="detail-text">
+                  <span class="detail-label">Clubs</span>
+                  <span class="detail-value">{{ tournament.t_club_map_set.count|default:0 }} Registered</span>
+                </div>
+              </div>
+
+              <div class="detail-item host-item">
+                <div class="detail-icon host-avatar">
+                  {% if tournament.t_host.club_logo %}
+                  <img src="{{ tournament.t_host.club_logo.url }}" alt="{{ tournament.t_host.club_name }}">
+                  {% else %}
+                  <i class="fas fa-shield-alt"></i>
+                  {% endif %}
+                </div>
+                <div class="detail-text">
+                  <span class="detail-label">Hosted by</span>
+                  <span class="detail-value host-name">{{ tournament.t_host.club_name|default:"Unknown" }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Actions -->
+          <div class="card-actions">
+            <a href="{% url 'view_tournament' tournament.t_id %}" class="action-btn view-btn">
+              <i class="fas fa-eye"></i>
+              <span>View</span>
+            </a>
+            
+            <!-- Bracket Button (visible to all) -->
+            <a href="{% url 'tournament_bracket' tournament.t_id %}" class="action-btn bracket-btn" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white;">
+              <i class="fas fa-sitemap"></i>
+              <span>Bracket</span>
+            </a>
+            
+            {% if is_manager %}
+              {% if tournament.t_host.club_manager == user %}
+                <button class="action-btn host-badge" disabled>
+                  <i class="fas fa-crown"></i>
+                  <span>Host</span>
+                </button>
+              {% else %}
+                {% if tournament.t_id not in joined_tournaments %}
+                <a href="{% url 'join_tournament' tournament.t_id %}" class="action-btn join-btn">
+                  <i class="fas fa-sign-in-alt"></i>
+                  <span>Join</span>
+                </a>
+                {% else %}
+                <button class="action-btn joined-badge" disabled>
+                  <i class="fas fa-check"></i>
+                  <span>Joined</span>
+                </button>
+                {% endif %}
+              {% endif %}
+            {% endif %}
+          </div>
+          
+          <!-- Decorative Elements -->
+          <div class="card-shine"></div>
+          <div class="card-border-glow"></div>
+        </article>
+        {% endfor %}
+      </div>
+      
+      {% else %}
+      <div class="empty-arena animate-on-scroll">
+        <div class="empty-visual">
+          <div class="empty-circle">
+            <i class="fas fa-medal"></i>
+          </div>
+          <div class="empty-orbits">
+            <div class="orbit"></div>
+            <div class="orbit"></div>
+          </div>
+        </div>
+        <h2 class="empty-title">No Tournaments Yet</h2>
+        <p class="empty-text">The arena is quiet... Be the first to host a championship!</p>
+        {% if is_manager %}
+        <a href="{% url 'host_tournament' %}" class="arena-btn host-btn mt-4">
+          <i class="fas fa-plus-circle"></i>
+          <span>Host First Tournament</span>
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </section>
+  </div>
+</div>
+
+<script>
+// Particle System
+document.addEventListener('DOMContentLoaded', function() {
+  const particlesContainer = document.getElementById('particles');
+  const particleCount = 30;
+  
+  for (let i = 0; i < particleCount; i++) {
+    createParticle();
+  }
+  
+  function createParticle() {
+    const particle = document.createElement('div');
+    particle.style.position = 'absolute';
+    particle.style.width = Math.random() * 4 + 2 + 'px';
+    particle.style.height = particle.style.width;
+    particle.style.background = 'rgba(0, 242, 195, ' + (Math.random() * 0.3 + 0.1) + ')';
+    particle.style.borderRadius = '50%';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.top = Math.random() * 100 + '%';
+    particle.style.animation = `float ${Math.random() * 6 + 4}s ease-in-out infinite`;
+    particle.style.animationDelay = Math.random() * 5 + 's';
+    particlesContainer.appendChild(particle);
+  }
+  
+  // Intersection Observer for Scroll Animations
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, observerOptions);
+  
+  document.querySelectorAll('.animate-on-scroll').forEach(el => {
+    observer.observe(el);
+  });
+  
+  // Join Button Interaction
+  document.querySelectorAll('.join-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      // Add ripple effect
+      const ripple = document.createElement('span');
+      ripple.style.position = 'absolute';
+      ripple.style.width = '20px';
+      ripple.style.height = '20px';
+      ripple.style.background = 'rgba(255,255,255,0.3)';
+      ripple.style.borderRadius = '50%';
+      ripple.style.transform = 'translate(-50%, -50%)';
+      ripple.style.pointerEvents = 'none';
+      ripple.style.animation = 'ripple 0.6s ease-out';
+      
+      const rect = this.getBoundingClientRect();
+      ripple.style.left = (e.clientX - rect.left) + 'px';
+      ripple.style.top = (e.clientY - rect.top) + 'px';
+      
+      this.style.position = 'relative';
+      this.style.overflow = 'hidden';
+      this.appendChild(ripple);
+      
+      setTimeout(() => ripple.remove(), 600);
+    });
+  });
+});
+
+// Ripple Animation
+const rippleStyle = document.createElement('style');
+rippleStyle.textContent = `
+  @keyframes ripple {
+    to {
+      width: 200px;
+      height: 200px;
+      opacity: 0;
+    }
+  }
+`;
+document.head.appendChild(rippleStyle);
+</script>
+
+{% endblock %}

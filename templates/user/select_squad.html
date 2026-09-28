@@ -1,0 +1,457 @@
+{% extends 'user/user_head.html' %}
+{% load static %}
+
+{% block content %}
+<div class="squad-arena min-vh-100 position-relative overflow-hidden">
+  <!-- Ambient particles -->
+  <div class="particle" style="left: 15%; width: 4px; height: 4px; animation-delay: 0s;"></div>
+  <div class="particle" style="left: 35%; width: 6px; height: 6px; animation-delay: 3s;"></div>
+  <div class="particle" style="left: 55%; width: 3px; height: 3px; animation-delay: 5s;"></div>
+  <div class="particle" style="left: 75%; width: 5px; height: 5px; animation-delay: 7s;"></div>
+  <div class="particle" style="left: 90%; width: 4px; height: 4px; animation-delay: 9s;"></div>
+
+  <div class="container-fluid position-relative" style="z-index: 1;">
+    
+    <!-- Header -->
+    <header class="text-center mb-4 reveal-fx">
+      <span class="kicker d-inline-block">
+        {% if is_tournament %}
+          <i class="fas fa-crown"></i> Tournament Squad Selection
+        {% else %}
+          <i class="fas fa-users"></i> Squad Selection
+        {% endif %}
+      </span>
+      <h1 class="page-title display-5 fw-bold mb-2">
+        {% if is_tournament %}
+          Select {{ side|title }} Squad — {{ match.tournament.t_name }}
+        {% else %}
+          Select {{ side|title }} Squad
+        {% endif %}
+      </h1>
+      <p class="subtitle text-white-50">
+        {% if is_tournament %}
+          <span class="tournament-badge d-inline-block mb-2"><i class="fas fa-trophy"></i> {{ squad_size }}-a-side Tournament</span>
+        {% else %}
+          Choose {{ squad_size }} starters and substitutes for the match
+        {% endif %}
+        <br>
+        <strong class="team-highlight fs-5">{{ club_name }}</strong>
+      </p>
+    </header>
+
+    <!-- Main Panel -->
+    <div class="hud-panel rounded-4 p-3 p-md-4 reveal-fx delay-1" style="max-width: 1100px; margin: 0 auto;">
+      
+      <!-- Tactics Board -->
+      <div class="tactics-board rounded-4 p-3 p-md-4 mb-4 reveal-fx delay-2">
+        <div class="row align-items-center g-3">
+          <div class="col-12 col-md-8 text-center text-md-start">
+            <strong class="d-block mb-2 fs-5"><i class="fas fa-info-circle"></i> Selection Rules</strong>
+            <p class="mb-0 text-white-50">
+              Select exactly <strong class="text-white">{{ squad_size }} starters</strong>. 
+              Remaining players will be substitutes.
+              {% if is_tournament %}
+                <br><span class="host-note"><i class="fas fa-crown"></i> You are selecting as Tournament Host</span>
+              {% endif %}
+            </p>
+          </div>
+          <div class="col-12 col-md-4 text-center">
+            <div class="starter-counter mx-auto mx-md-0 ms-md-auto" style="max-width: 140px;">
+              <div class="counter-value display-2 fw-bold" id="starterCount">0</div>
+              <div class="counter-label text-white-50 small">/ {{ squad_size }} Starters</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Player Count Info -->
+      <div class="player-count-bar rounded-3 p-3 mb-4 reveal-fx delay-2">
+        <div class="row g-3 text-center">
+          <div class="col-12 col-sm-4">
+            <div class="count-item">
+              <i class="fas fa-users me-2"></i>
+              <span class="text-white-50">Total Players: <strong class="text-white" id="totalPlayers">{{ players|length }}</strong></span>
+            </div>
+          </div>
+          <div class="col-12 col-sm-4">
+            <div class="count-item">
+              <i class="fas fa-running me-2"></i>
+              <span class="text-white-50">Starters Needed: <strong class="text-white">{{ squad_size }}</strong></span>
+            </div>
+          </div>
+          <div class="col-12 col-sm-4">
+            <div class="count-item">
+              <i class="fas fa-chair me-2"></i>
+              <span class="text-white-50">Subs Available: <strong class="text-white" id="subsAvailable">{{ players|length|add:"-"|add:squad_size }}</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form method="POST" id="squadForm">
+        {% csrf_token %}
+
+        <!-- Player Grid -->
+        <div class="row g-3 mb-4" id="playerGrid">
+          {% for player in players %}
+          <div class="col-12 col-md-6 col-xl-4">
+            <div class="athlete-card h-100 rounded-4 p-3" data-player-id="{{ player.player_id }}">
+              <div class="d-flex align-items-center gap-3">
+                <img src="{{ player.player_image.url }}" class="athlete-avatar flex-shrink-0" alt="{{ player.player_card_name }}" style="width: 60px; height: 60px; object-fit: cover;">
+                
+                <div class="flex-grow-1 min-width-0" style="min-width: 0;">
+                  <div class="athlete-name fw-semibold text-white text-truncate mb-1">{{ player.player_card_name }}</div>
+                  <div class="d-flex align-items-center gap-2 flex-wrap small text-white-50">
+                    <span class="badge position-badge">{{ player.player_position.position_code }}</span>
+                    <span class="opacity-50">•</span>
+                    <span class="rating-badge">OVR {{ player.player_rating }}</span>
+                    <span class="opacity-50">•</span>
+                    <span class="power-badge">PWR {{ player.player_power }}</span>
+                  </div>
+                </div>
+
+                <div class="role-controls d-flex flex-column gap-2 flex-shrink-0">
+                  <label class="role-toggle starter-toggle rounded-3 px-2 py-1 small" onclick="toggleRole(this, 'starter')" style="cursor: pointer;">
+                    <input type="checkbox" name="role_{{ player.player_id }}" value="starter" class="starter-check d-none">
+                    <span class="toggle-icon d-inline-flex align-items-center justify-content-center rounded-1 me-1" style="width: 18px; height: 18px; border: 1px solid rgba(255,255,255,0.2);">
+                      <i class="fas fa-check" style="font-size: 0.6rem; opacity: 0; transform: scale(0); transition: all 0.2s ease;"></i>
+                    </span>
+                    <span>Starter</span>
+                  </label>
+                  <label class="role-toggle sub-toggle rounded-3 px-2 py-1 small" onclick="toggleRole(this, 'sub')" style="cursor: pointer;">
+                    <input type="checkbox" name="role_{{ player.player_id }}" value="sub" class="sub-check d-none">
+                    <span class="toggle-icon d-inline-flex align-items-center justify-content-center rounded-1 me-1" style="width: 18px; height: 18px; border: 1px solid rgba(255,255,255,0.2);">
+                      <i class="fas fa-check" style="font-size: 0.6rem; opacity: 0; transform: scale(0); transition: all 0.2s ease;"></i>
+                    </span>
+                    <span>Sub</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-12">
+            <div class="empty-squad text-center py-5 text-white-50">
+              <i class="fas fa-exclamation-triangle fa-3x mb-3 text-danger"></i>
+              <h3 class="text-white mb-2">No Players Found</h3>
+              <p class="mb-0">This club has no registered players. Players must register their player cards first.</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Validation Message -->
+        <div class="validation-msg rounded-3 p-3 mb-3 text-center" id="validationMsg">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          <span id="validationText">Select exactly {{ squad_size }} starters to proceed</span>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="execute-btn btn w-100 rounded-4 py-3 fw-bold fs-5 border-0" id="submitSquad" disabled>
+          <i class="fas fa-check-circle me-2"></i> 
+          <span id="btnText">Confirm Squad (0/{{ squad_size }} Starters)</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ===== SQUAD ARENA STYLES ===== */
+.squad-arena {
+  background: linear-gradient(135deg, #0a0e1a 0%, #0f1729 50%, #0a0e1a 100%);
+}
+
+/* Ambient Particles */
+.particle {
+  position: absolute;
+  top: -10px;
+  background: rgba(0, 255, 136, 0.3);
+  border-radius: 50%;
+  animation: fall linear infinite;
+  pointer-events: none;
+}
+@keyframes fall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+/* Header */
+.kicker {
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  color: #00ff88;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+.page-title {
+  color: #fff;
+  text-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+}
+.team-highlight {
+  color: #00ff88;
+}
+.tournament-badge {
+  background: linear-gradient(135deg, #ffc107, #ff9800);
+  color: #000;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.host-note {
+  color: #ffc107;
+  font-size: 0.9rem;
+}
+
+/* HUD Panel */
+.hud-panel {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+/* Tactics Board */
+.tactics-board {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.05), rgba(0, 255, 136, 0.02));
+  border: 1px solid rgba(0, 255, 136, 0.15);
+}
+.counter-value {
+  color: #00ff88;
+  line-height: 1;
+  transition: color 0.3s ease;
+}
+.counter-value.full {
+  color: #ffc107;
+  text-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+}
+.counter-value.over {
+  color: #ff4444;
+  text-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+}
+
+/* Player Count Bar */
+.player-count-bar {
+  background: rgba(255, 255, 255, 0.02);
+}
+.count-item i {
+  color: #00ff88;
+}
+
+/* Athlete Card */
+.athlete-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+}
+.athlete-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(0, 255, 136, 0.2);
+  transform: translateY(-2px);
+}
+.athlete-card.selected-starter {
+  border-color: #00ff88;
+  background: rgba(0, 255, 136, 0.05);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+}
+.athlete-card.selected-sub {
+  border-color: #4488ff;
+  background: rgba(68, 136, 255, 0.05);
+}
+.athlete-avatar {
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+.selected-starter .athlete-avatar {
+  border-color: #00ff88;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+}
+
+/* Badges */
+.position-badge {
+  background: rgba(255, 193, 7, 0.15) !important;
+  color: #ffc107 !important;
+}
+.rating-badge {
+  color: #00ff88;
+}
+.power-badge {
+  color: #4488ff;
+}
+
+/* Role Controls */
+.role-toggle {
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  transition: all 0.2s ease;
+  margin: 0;
+}
+.role-toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+.toggle-icon i {
+  transition: all 0.2s ease;
+}
+
+/* Starter Toggle Active */
+.starter-toggle.active {
+  background: rgba(0, 255, 136, 0.1);
+  border-color: #00ff88;
+  color: #00ff88;
+}
+.starter-toggle.active .toggle-icon {
+  background: #00ff88;
+  border-color: #00ff88;
+}
+.starter-toggle.active .toggle-icon i {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+  color: #000;
+}
+
+/* Sub Toggle Active */
+.sub-toggle.active {
+  background: rgba(68, 136, 255, 0.1);
+  border-color: #4488ff;
+  color: #4488ff;
+}
+.sub-toggle.active .toggle-icon {
+  background: #4488ff;
+  border-color: #4488ff;
+}
+.sub-toggle.active .toggle-icon i {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+  color: #fff;
+}
+
+/* Validation Message */
+.validation-msg {
+  background: rgba(255, 68, 68, 0.05);
+  border: 1px solid rgba(255, 68, 68, 0.2);
+  color: #ff4444;
+  transition: all 0.3s ease;
+}
+.validation-msg.valid {
+  background: rgba(0, 255, 136, 0.05);
+  border-color: rgba(0, 255, 136, 0.2);
+  color: #00ff88;
+}
+
+/* Execute Button */
+.execute-btn {
+  background: linear-gradient(135deg, #00ff88, #00cc6a);
+  color: #000;
+  transition: all 0.3s ease;
+}
+.execute-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+}
+.execute-btn:disabled {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Animations */
+.reveal-fx {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: reveal 0.6s ease forwards;
+}
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+@keyframes reveal {
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<script>
+(function() {
+  const SQUAD_SIZE = {{ squad_size }};
+  const starterCountEl = document.getElementById('starterCount');
+  const submitBtn = document.getElementById('submitSquad');
+  const btnText = document.getElementById('btnText');
+  const validationMsg = document.getElementById('validationMsg');
+  const validationText = document.getElementById('validationText');
+
+  let selectedStarters = 0;
+
+  window.toggleRole = function(label, role) {
+    const card = label.closest('.athlete-card');
+    const checkbox = label.querySelector('input[type="checkbox"]');
+    const isStarter = role === 'starter';
+    const otherLabel = card.querySelector(isStarter ? '.sub-toggle' : '.starter-toggle');
+    const otherCheckbox = otherLabel.querySelector('input');
+
+    // Uncheck the other role
+    otherCheckbox.checked = false;
+    otherLabel.classList.remove('active');
+    card.classList.remove('selected-starter', 'selected-sub');
+
+    if (checkbox.checked) {
+      // Unchecking
+      checkbox.checked = false;
+      label.classList.remove('active');
+    } else {
+      // Checking
+      checkbox.checked = true;
+      label.classList.add('active');
+      card.classList.add(isStarter ? 'selected-starter' : 'selected-sub');
+    }
+
+    updateCounter();
+  };
+
+  function updateCounter() {
+    selectedStarters = document.querySelectorAll('.starter-check:checked').length;
+    starterCountEl.textContent = selectedStarters;
+
+    // Update counter styling
+    starterCountEl.classList.remove('full', 'over');
+    if (selectedStarters === SQUAD_SIZE) {
+      starterCountEl.classList.add('full');
+    } else if (selectedStarters > SQUAD_SIZE) {
+      starterCountEl.classList.add('over');
+    }
+
+    // Update button
+    const isValid = selectedStarters === SQUAD_SIZE;
+    submitBtn.disabled = !isValid;
+    btnText.textContent = isValid 
+      ? `Confirm Squad (${SQUAD_SIZE}/${SQUAD_SIZE} Starters)` 
+      : `Confirm Squad (${selectedStarters}/${SQUAD_SIZE} Starters)`;
+
+    // Update validation message
+    validationMsg.classList.toggle('valid', isValid);
+    if (isValid) {
+      validationText.textContent = 'Perfect! Ready to confirm squad.';
+    } else if (selectedStarters < SQUAD_SIZE) {
+      validationText.textContent = `Select ${SQUAD_SIZE - selectedStarters} more starter(s) to proceed`;
+    } else {
+      validationText.textContent = `Too many starters! Remove ${selectedStarters - SQUAD_SIZE} player(s)`;
+    }
+  }
+
+  // Form validation
+  document.getElementById('squadForm').addEventListener('submit', function(e) {
+    if (selectedStarters !== SQUAD_SIZE) {
+      e.preventDefault();
+      alert(`You must select exactly ${SQUAD_SIZE} starters. Currently selected: ${selectedStarters}`);
+      return false;
+    }
+    return true;
+  });
+
+  // Initialize
+  updateCounter();
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,184 @@
+{% extends 'admin/admin_base.html' %}
+{% load static %}
+{% block title %}Players - Football Arena Admin{% endblock %}
+
+{% block content %}
+
+<div class="fa-main-container" style="position:relative !important;z-index:1 !important;margin:0 auto !important;">
+
+  <!-- Header -->
+  <header class="fa-match-header" style="display:flex !important;align-items:center !important;justify-content:space-between !important;flex-wrap:wrap !important;gap:1rem !important;margin-bottom:1.5rem !important;padding:1.25rem 1.75rem !important;background:rgba(30,41,59,0.7) !important;backdrop-filter:blur(20px) saturate(180%) !important;-webkit-backdrop-filter:blur(20px) saturate(180%) !important;border:1px solid rgba(255,255,255,0.1) !important;border-radius:16px !important;box-shadow:0 8px 32px rgba(0,0,0,0.3), 0 0 20px rgba(22,163,74,0.25) !important;">
+    <div style="display:flex !important;align-items:center !important;gap:0.875rem !important;">
+      <div style="width:44px !important;height:44px !important;display:flex !important;align-items:center !important;justify-content:center !important;background:linear-gradient(135deg, #16a34a, #15803d) !important;border-radius:12px !important;color:white !important;font-size:1.25rem !important;box-shadow:0 0 20px rgba(22,163,74,0.4) !important;flex-shrink:0 !important;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 10 10"></path><path d="M12 22a10 10 0 0 0 10-10"></path><path d="M2 12a10 10 0 0 0 10 10"></path><path d="M2 12a10 10 0 0 1 10-10"></path><path d="M12 2v20"></path><path d="M2 12h20"></path></svg>
+      </div>
+      <div style="min-width:0 !important;">
+        <h1 style="font-size:1.5rem !important;font-weight:800 !important;color:#ecfdf5 !important;margin:0 !important;text-transform:uppercase !important;letter-spacing:-0.5px !important;">Player Squad</h1>
+        <p style="font-size:0.8rem !important;color:#6ee7b7 !important;margin:0.125rem 0 0 !important;">Manage player cards, ratings, and statistics</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filters -->
+  <form method="get" class="fa-scout-bar" style="display:flex !important;flex-wrap:wrap !important;align-items:flex-end !important;gap:0.75rem !important;margin-bottom:1.5rem !important;padding:1.25rem !important;background:linear-gradient(180deg, #0a1f14 0%, #0d2818 100%)!important;border:1px solid rgba(255,255,255,0.1) !important;border-radius:14px !important;box-shadow:0 4px 24px rgba(0,0,0,0.2) !important;">
+    <div class="fa-filter-unit" style="display:flex !important;flex-direction:column !important;gap:0.375rem !important;min-width:140px !important;flex:1 !important;">
+      <label style="display:flex !important;align-items:center !important;gap:0.375rem !important;font-size:0.7rem !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:0.5px !important;color:#6ee7b7 !important;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        Name
+      </label>
+      <input type="text" name="name" placeholder="Search player..." value="{{ request.GET.name }}" style="width:100% !important;padding:0.5rem 0.75rem !important;background:rgba(15,23,42,0.8) !important;border:1px solid rgba(255,255,255,0.1) !important;border-radius:10px !important;color:#ecfdf5 !important;font-size:0.85rem !important;outline:none !important;box-sizing:border-box !important;">
+    </div>
+    <div class="fa-filter-unit" style="display:flex !important;flex-direction:column !important;gap:0.375rem !important;min-width:140px !important;flex:1 !important;">
+      <label style="display:flex !important;align-items:center !important;gap:0.375rem !important;font-size:0.7rem !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:0.5px !important;color:#6ee7b7 !important;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="2" x2="12" y2="12"></line><line x1="12" y1="12" x2="20" y2="12"></line></svg>
+        Gender
+      </label>
+      <select name="gender" style="width:100% !important;padding:0.5rem 0.75rem !important;background:rgba(15,23,42,0.8) !important;border:1px solid rgba(255,255,255,0.1) !important;border-radius:10px !important;color:#ecfdf5 !important;font-size:0.85rem !important;outline:none !important;box-sizing:border-box !important;appearance:none !important;-webkit-appearance:none !important;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 fill=%27%2394a3b8%27 viewBox=%270 0 16 16%27%3E%3Cpath d=%27M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z%27/%3E%3C/svg%3E') !important;background-repeat:no-repeat !important;background-position:right 0.6rem center !important;padding-right:2rem !important;">
+        <option value="">All</option>
+        <option value="male" {% if request.GET.gender == 'male' %}selected{% endif %}>Male</option>
+        <option value="female" {% if request.GET.gender == 'female' %}selected{% endif %}>Female</option>
+        <option value="other" {% if request.GET.gender == 'other' %}selected{% endif %}>Other</option>
+      </select>
+    </div>
+    <div class="fa-filter-unit" style="display:flex !important;flex-direction:column !important;gap:0.375rem !important;min-width:140px !important;flex:1 !important;">
+      <label style="display:flex !important;align-items:center !important;gap:0.375rem !important;font-size:0.7rem !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:0.5px !important;color:#6ee7b7 !important;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 21 18 21 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+        District
+      </label>
+      <input type="text" name="district" placeholder="Search district..." value="{{ request.GET.district }}" style="width:100% !important;padding:0.5rem 0.75rem !important;background:rgba(15,23,42,0.8) !important;border:1px solid rgba(255,255,255,0.1) !important;border-radius:10px !important;color:#ecfdf5 !important;font-size:0.85rem !important;outline:none !important;box-sizing:border-box !important;">
+    </div>
+    <div class="fa-filter-unit" style="display:flex !important;flex-direction:column !important;gap:0.375rem !important;min-width:140px !important;flex:1 !important;">
+      <label style="display:flex !important;align-items:center !important;gap:0.375rem !important;font-size:0.7rem !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:0.5px !important;color:#6ee7b7 !important;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.4a1.6 1.6 0 0 0-1.6 0L12 6.4 5.22 3.4a1.6 1.6 0 0 0-1.6 0l-1.6.8a1.6 1.6 0 0 0-.8 1.4v12.8a1.6 1.6 0 0 0 .8 1.4l1.6.8a1.6 1.6 0 0 0 1.6 0L12 17.6l6.78 3a1.6 1.6 0 0 0 1.6 0l1.6-.8a1.6 1.6 0 0 0 .8-1.4V5.6a1.6 1.6 0 0 0-.8-1.4l-1.6-.8z"></path><line x1="12" y1="6.4" x2="12" y2="17.6"></line></svg>
+        Position
+      </label>
+      <select name="position" style="width:100% !important;padding:0.5rem 0.75rem !important;background:rgba(15,23,42,0.8) !important;border:1px solid rgba(255,255,255,0.1) !important;border-radius:10px !important;color:#ecfdf5 !important;font-size:0.85rem !important;outline:none !important;box-sizing:border-box !important;appearance:none !important;-webkit-appearance:none !important;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 fill=%27%2394a3b8%27 viewBox=%270 0 16 16%27%3E%3Cpath d=%27M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z%27/%3E%3C/svg%3E') !important;background-repeat:no-repeat !important;background-position:right 0.6rem center !important;padding-right:2rem !important;">
+        <option value="">All</option>
+        {% for pos in positions %}
+        <option value="{{ pos.position_code }}" {% if request.GET.position == pos.position_code %}selected{% endif %}>{{ pos.position_name }} ({{ pos.position_code }})</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="fa-filter-unit" style="display:flex !important;flex-direction:column !important;gap:0.375rem !important;min-width:140px !important;flex:1 !important;">
+      <label style="display:flex !important;align-items:center !important;gap:0.375rem !important;font-size:0.7rem !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:0.5px !important;color:#6ee7b7 !important;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        Club
+      </label>
+      <input type="text" name="club" placeholder="Search club..." value="{{ request.GET.club }}" style="width:100% !important;padding:0.5rem 0.75rem !important;background:rgba(15,23,42,0.8) !important;border:1px solid rgba(255,255,255,0.1) !important;border-radius:10px !important;color:#ecfdf5 !important;font-size:0.85rem !important;outline:none !important;box-sizing:border-box !important;">
+    </div>
+    <div class="fa-filter-unit" style="display:flex !important;flex-direction:column !important;gap:0.375rem !important;min-width:140px !important;flex:1 !important;">
+      <label style="display:flex !important;align-items:center !important;gap:0.375rem !important;font-size:0.7rem !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:0.5px !important;color:#6ee7b7 !important;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="14" y2="12"></line><line x1="4" y1="18" x2="10" y2="18"></line></svg>
+        Sort
+      </label>
+      <select name="sort" style="width:100% !important;padding:0.5rem 0.75rem !important;background:rgba(15,23,42,0.8) !important;border:1px solid rgba(255,255,255,0.1) !important;border-radius:10px !important;color:#ecfdf5 !important;font-size:0.85rem !important;outline:none !important;box-sizing:border-box !important;appearance:none !important;-webkit-appearance:none !important;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 fill=%27%2394a3b8%27 viewBox=%270 0 16 16%27%3E%3Cpath d=%27M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z%27/%3E%3C/svg%3E') !important;background-repeat:no-repeat !important;background-position:right 0.6rem center !important;padding-right:2rem !important;">
+        <option value="">Default</option>
+        <option value="high" {% if request.GET.sort == 'high' %}selected{% endif %}>Rating: High → Low</option>
+        <option value="low" {% if request.GET.sort == 'low' %}selected{% endif %}>Rating: Low → High</option>
+      </select>
+    </div>
+    <button type="submit" class="fa-btn-scout" style="display:inline-flex !important;align-items:center !important;justify-content:center !important;gap:0.5rem !important;padding:0.55rem 1.1rem !important;border-radius:10px !important;font-size:0.8rem !important;font-weight:700 !important;border:none !important;cursor:pointer !important;text-decoration:none !important;white-space:nowrap !important;background:linear-gradient(135deg, #16a34a, #15803d) !important;color:white !important;box-shadow:0 4px 15px rgba(22,163,74,0.3) !important;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+      Filter
+    </button>
+    <a href="{% url 'admin_view_players' %}" class="fa-btn-clear" style="display:inline-flex !important;align-items:center !important;justify-content:center !important;gap:0.5rem !important;padding:0.55rem 1.1rem !important;border-radius:10px !important;font-size:0.8rem !important;font-weight:700 !important;border:none !important;cursor:pointer !important;text-decoration:none !important;white-space:nowrap !important;background:rgba(248,113,113,0.12) !important;color:#f87171 !important;border:1px solid rgba(248,113,113,0.3) !important;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      Clear
+    </a>
+  </form>
+
+  <!-- Squad Grid -->
+  <section class="fa-squad-grid" style="display:grid !important;grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)) !important;gap:1.25rem !important;">
+    {% for player in players %}
+    <article class="fa-player-card" style="position:relative !important;background:rgba(30,41,59,0.7) !important;backdrop-filter:blur(20px) saturate(180%) !important;-webkit-backdrop-filter:blur(20px) saturate(180%) !important;border:1px solid rgba(255,255,255,0.1) !important;border-radius:18px !important;overflow:hidden !important;transition:all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;">
+      <div style="display:flex !important;align-items:center !important;gap:0.875rem !important;padding:1.25rem !important;border-bottom:1px solid rgba(255,255,255,0.1) !important;">
+        <div style="position:relative !important;flex-shrink:0 !important;">
+          {% if player.player_image %}
+          <img src="{{ player.player_image.url }}" alt="{{ player.player_card_name }}" style="width:56px !important;height:56px !important;border-radius:14px !important;object-fit:cover !important;border:2px solid rgba(22,163,74,0.25) !important;box-shadow:0 0 15px rgba(22,163,74,0.15) !important;">
+          {% else %}
+          <div class="fa-player-avatar" style="width:56px !important;height:56px !important;border-radius:14px !important;display:flex !important;align-items:center !important;justify-content:center !important;background:linear-gradient(135deg, #16a34a, #15803d) !important;color:white !important;font-size:1.25rem !important;font-weight:800 !important;border:2px solid rgba(22,163,74,0.25) !important;box-shadow:0 0 15px rgba(22,163,74,0.15) !important;">{{ player.player_card_name|first|upper }}</div>
+          {% endif %}
+          <span class="fa-rating-badge" style="position:absolute !important;bottom:-5px !important;right:-5px !important;width:26px !important;height:26px !important;display:flex !important;align-items:center !important;justify-content:center !important;background:linear-gradient(135deg, #4ade80, #16a34a) !important;border-radius:50% !important;font-size:0.7rem !important;font-weight:900 !important;color:#000 !important;border:2px solid rgba(30,41,59,0.7) !important;box-shadow:0 2px 8px rgba(74,222,128,0.4) !important;">{{ player.player_rating }}</span>
+        </div>
+        <div style="flex:1 !important;min-width:0 !important;">
+          <h3 style="font-size:1.05rem !important;font-weight:800 !important;color:#ecfdf5 !important;margin:0 !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;">{{ player.player_card_name }}</h3>
+          <p style="font-size:0.75rem !important;color:#6ee7b7 !important;margin:0.2rem 0 0 !important;">{{ player.player_user.user_name }} • {{ player.player_user.user_gender }}</p>
+          <div style="display:flex !important;flex-wrap:wrap !important;gap:0.4rem !important;margin-top:0.5rem !important;">
+            <span style="display:inline-flex !important;align-items:center !important;gap:0.25rem !important;padding:0.2rem 0.6rem !important;border-radius:6px !important;font-size:0.7rem !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:0.3px !important;background:rgba(22,163,74,0.12) !important;color:#16a34a !important;border:1px solid rgba(22,163,74,0.25) !important;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.4a1.6 1.6 0 0 0-1.6 0L12 6.4 5.22 3.4a1.6 1.6 0 0 0-1.6 0l-1.6.8a1.6 1.6 0 0 0-.8 1.4v12.8a1.6 1.6 0 0 0 .8 1.4l1.6.8a1.6 1.6 0 0 0 1.6 0L12 17.6l6.78 3a1.6 1.6 0 0 0 1.6 0l1.6-.8a1.6 1.6 0 0 0 .8-1.4V5.6a1.6 1.6 0 0 0-.8-1.4l-1.6-.8z"></path><line x1="12" y1="6.4" x2="12" y2="17.6"></line></svg>
+              {{ player.player_position.position_code }}
+            </span>
+            {% if player.player_club %}
+            <span style="display:inline-flex !important;align-items:center !important;gap:0.25rem !important;padding:0.2rem 0.6rem !important;border-radius:6px !important;font-size:0.7rem !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:0.3px !important;background:rgba(45,212,191,0.12) !important;color:#2dd4bf !important;border:1px solid rgba(45,212,191,0.25) !important;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              {{ player.player_club.club_name }}
+            </span>
+            {% else %}
+            <span style="display:inline-flex !important;align-items:center !important;gap:0.25rem !important;padding:0.2rem 0.6rem !important;border-radius:6px !important;font-size:0.7rem !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:0.3px !important;background:rgba(163,230,53,0.12) !important;color:#a3e635 !important;border:1px solid rgba(163,230,53,0.25) !important;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+              Free Agent
+            </span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="fa-stat-grid" style="display:grid !important;grid-template-columns:repeat(3, 1fr) !important;gap:1px !important;background:rgba(255,255,255,0.1) !important;margin:0 1.25rem !important;border-radius:10px !important;overflow:hidden !important;">
+        <div style="background:rgba(30,41,59,0.5) !important;padding:0.875rem 0.5rem !important;text-align:center !important;">
+          <div class="fa-stat-value" style="font-size:1.15rem !important;font-weight:900 !important;line-height:1 !important;color:#4ade80 !important;text-shadow:0 0 8px rgba(74,222,128,0.25) !important;">{{ player.player_rating }}</div>
+          <div style="font-size:0.65rem !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:0.5px !important;color:#6ee7b7 !important;margin-top:0.25rem !important;">Rating</div>
+        </div>
+        <div style="background:rgba(30,41,59,0.5) !important;padding:0.875rem 0.5rem !important;text-align:center !important;">
+          <div class="fa-stat-value" style="font-size:1.15rem !important;font-weight:900 !important;line-height:1 !important;color:#16a34a !important;">{{ player.total_goals }}</div>
+          <div style="font-size:0.65rem !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:0.5px !important;color:#6ee7b7 !important;margin-top:0.25rem !important;">Goals</div>
+        </div>
+        <div style="background:rgba(30,41,59,0.5) !important;padding:0.875rem 0.5rem !important;text-align:center !important;">
+          <div class="fa-stat-value" style="font-size:1.15rem !important;font-weight:900 !important;line-height:1 !important;color:#34d399 !important;">{{ player.total_assists }}</div>
+          <div style="font-size:0.65rem !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:0.5px !important;color:#6ee7b7 !important;margin-top:0.25rem !important;">Assists</div>
+        </div>
+      </div>
+
+      <div class="fa-info-grid" style="display:grid !important;grid-template-columns:1fr 1fr !important;gap:0.6rem !important;padding:1rem 1.25rem !important;">
+        <div style="display:flex !important;align-items:center !important;gap:0.5rem !important;font-size:0.75rem !important;color:#6ee7b7 !important;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          <span>Power</span><strong style="color:#ecfdf5 !important;font-weight:700 !important;margin-left:auto !important;">{{ player.player_power }}</strong>
+        </div>
+        <div style="display:flex !important;align-items:center !important;gap:0.5rem !important;font-size:0.75rem !important;color:#6ee7b7 !important;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"></path></svg>
+          <span>Weight</span><strong style="color:#ecfdf5 !important;font-weight:700 !important;margin-left:auto !important;">{{ player.player_weight }}kg</strong>
+        </div>
+        <div style="display:flex !important;align-items:center !important;gap:0.5rem !important;font-size:0.75rem !important;color:#6ee7b7 !important;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M8 6h8M8 10h8M8 14h8M8 18h8"></path></svg>
+          <span>Height</span><strong style="color:#ecfdf5 !important;font-weight:700 !important;margin-left:auto !important;">{{ player.player_height }}cm</strong>
+        </div>
+        <div style="display:flex !important;align-items:center !important;gap:0.5rem !important;font-size:0.75rem !important;color:#6ee7b7 !important;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 11 3.8 11 6.5c0 2.33-1.58 4.24-3.5 4.5v2"></path><circle cx="11" cy="16" r="3"></circle></svg>
+          <span>Foot</span><strong style="color:#ecfdf5 !important;font-weight:700 !important;margin-left:auto !important;">{{ player.player_strong_foot }}</strong>
+        </div>
+      </div>
+
+      <div class="fa-location" style="display:flex !important;align-items:center !important;gap:0.5rem !important;padding:0 1.25rem 0.75rem !important;font-size:0.75rem !important;color:#6ee7b7 !important;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+        <span style="overflow:hidden !important;text-overflow:ellipsis !important;white-space:nowrap !important;">{{ player.player_district }}, {{ player.player_location }}</span>
+      </div>
+
+      <div class="fa-actions" style="display:grid !important;grid-template-columns:1fr!important;gap:0.6rem !important;padding:0 1.25rem 1.25rem !important;">
+        <form method="post" action="{% url 'admin_delete_player' player.player_id %}" data-confirm="Are you sure you want to delete player '{{ player.player_card_name }}'?" style="flex:1 !important;">
+          {% csrf_token %}
+          <button type="submit" style="width:100% !important;display:inline-flex !important;align-items:center !important;justify-content:center !important;gap:0.5rem !important;padding:0.5rem !important;border-radius:10px !important;font-size:0.75rem !important;font-weight:700 !important;border:none !important;cursor:pointer !important;text-decoration:none !important;white-space:nowrap !important;background:rgba(248,113,113,0.12) !important;color:#f87171 !important;border:1px solid rgba(248,113,113,0.3) !important;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            Delete
+          </button>
+        </form>
+      </div>
+    </article>
+    {% empty %}
+    <div style="grid-column:1 / -1 !important;display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;padding:3.5rem 2rem !important;background:rgba(30,41,59,0.7) !important;backdrop-filter:blur(20px) !important;border:1px solid rgba(255,255,255,0.1) !important;border-radius:18px !important;text-align:center !important;">
+      <div style="font-size:3.5rem !important;margin-bottom:1rem !important;">🏃</div>
+      <h2 style="font-size:1.35rem !important;font-weight:800 !important;color:#ecfdf5 !important;margin:0 0 0.4rem !important;">No Players Found</h2>
+      <p style="color:#6ee7b7 !important;font-size:0.85rem !important;">Try adjusting your scout filters to find your squad.</p>
+    </div>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}

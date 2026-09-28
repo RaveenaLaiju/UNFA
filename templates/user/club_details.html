@@ -1,0 +1,825 @@
+{% extends 'user/user_head.html' %} 
+{% load static %} 
+{% block content %}
+
+<div class="ufc27-page">
+  <div class="ufc27-background" aria-hidden="true">
+    <div class="ufc27-bg-glow ufc27-bg-glow-one"></div>
+    <div class="ufc27-bg-glow ufc27-bg-glow-two"></div>
+    <div class="ufc27-bg-glow ufc27-bg-glow-three"></div>
+
+    <div class="ufc27-stadium-grid"></div>
+    <div class="ufc27-pitch-lines"></div>
+
+    <div class="ufc27-light-beam ufc27-light-beam-one"></div>
+    <div class="ufc27-light-beam ufc27-light-beam-two"></div>
+    <div class="ufc27-light-beam ufc27-light-beam-three"></div>
+
+    <div class="ufc27-orbit ufc27-orbit-one"></div>
+    <div class="ufc27-orbit ufc27-orbit-two"></div>
+
+    <div class="ufc27-particles" id="ufc27Particles"></div>
+  </div>
+
+
+  <main class="ufc27-main">
+    <div class="container-fluid ufc27-container">
+
+      <div class="ufc27-commandbar">
+        <div class="d-flex align-items-center gap-3">
+          <div class="ufc27-command-icon">
+            <i class="fas fa-futbol"></i>
+          </div>
+
+          <div>
+            <div class="ufc27-command-kicker">FOOTBALL CLUB SYSTEM</div>
+
+            <div class="ufc27-command-title">CLUB COMMAND CENTER</div>
+          </div>
+        </div>
+
+        <div class="ufc27-command-status">
+          <span class="ufc27-status-dot"></span>
+          LIVE CLUB DATA
+        </div>
+      </div>
+
+      <section class="ufc27-hero ufc27-reveal" data-ufc27-delay="0">
+        <div class="ufc27-hero-scan"></div>
+        <div class="ufc27-hero-highlight"></div>
+
+        <div class="row align-items-center g-4 position-relative">
+
+          <div class="col-12 col-xl-5">
+            <div class="ufc27-club-identity">
+              <div class="ufc27-crest-wrap">
+                <div class="ufc27-crest-ring ufc27-crest-ring-one"></div>
+                <div class="ufc27-crest-ring ufc27-crest-ring-two"></div>
+
+                <div class="ufc27-crest-glow"></div>
+
+                <div class="ufc27-crest-frame">
+                  <img
+                    src="{{ club.club_logo.url }}"
+                    alt="{{ club.club_name }} logo"
+                    class="ufc27-crest-image"
+                  />
+                </div>
+
+                <div class="ufc27-crest-cross ufc27-cross-horizontal"></div>
+                <div class="ufc27-crest-cross ufc27-cross-vertical"></div>
+              </div>
+
+              <div class="ufc27-club-copy">
+                <div class="ufc27-overall-pill">
+                  <i class="fas fa-bolt"></i>
+                  <span>OVR</span>
+                  <strong>{{ club.club_weight }}</strong>
+                </div>
+
+                <div class="ufc27-eyebrow">PROFESSIONAL FOOTBALL CLUB</div>
+
+                <h1 class="ufc27-club-title">{{ club.club_name }}</h1>
+
+                <div class="ufc27-location">
+                  <span class="ufc27-location-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                  </span>
+
+                  <span>
+                    {{ club.club_location }}, {{ club.club_district }}
+                  </span>
+                </div>
+
+                <div class="ufc27-identity-tags">
+                  <span class="ufc27-identity-tag">
+                    <i class="fas fa-shield-alt"></i>
+                    CLUB
+                  </span>
+
+                  <span class="ufc27-identity-tag">
+                    <i class="fas fa-chart-line"></i>
+                    ACTIVE
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-xl-7">
+            <div class="row g-3">
+              <!-- Strength -->
+              <div class="col-6 col-lg-3">
+                <div
+                  class="ufc27-stat-card ufc27-stat-lime ufc27-reveal"
+                  data-ufc27-delay="1"
+                >
+                  <div class="ufc27-stat-icon">
+                    <i class="fas fa-dumbbell"></i>
+                  </div>
+
+                  <div
+                    class="ufc27-stat-number"
+                    data-count="{{ club.club_weight }}"
+                  >
+                    0
+                  </div>
+
+                  <div class="ufc27-stat-label">STRENGTH</div>
+
+                  <div class="ufc27-stat-progress">
+                    <div
+                      class="ufc27-stat-progress-fill"
+                      style="--ufc27-target: {{ club.club_weight }}%;"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Wins -->
+              <div class="col-6 col-lg-3">
+                <div
+                  class="ufc27-stat-card ufc27-stat-cyan ufc27-reveal"
+                  data-ufc27-delay="2"
+                >
+                  <div class="ufc27-stat-icon">
+                    <i class="fas fa-trophy"></i>
+                  </div>
+
+                  <div class="ufc27-stat-number" data-count="{{ wins }}">0</div>
+
+                  <div class="ufc27-stat-label">WINS</div>
+
+                  <div class="ufc27-stat-progress">
+                    <div
+                      class="ufc27-stat-progress-fill"
+                      style="--ufc27-target: {{ wins }}%;"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Draws -->
+              <div class="col-6 col-lg-3">
+                <div
+                  class="ufc27-stat-card ufc27-stat-gold ufc27-reveal"
+                  data-ufc27-delay="3"
+                >
+                  <div class="ufc27-stat-icon">
+                    <i class="fas fa-handshake"></i>
+                  </div>
+
+                  <div class="ufc27-stat-number" data-count="{{ draws }}">
+                    0
+                  </div>
+
+                  <div class="ufc27-stat-label">DRAWS</div>
+
+                  <div class="ufc27-stat-progress">
+                    <div
+                      class="ufc27-stat-progress-fill"
+                      style="--ufc27-target: {{ draws }}%;"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Losses -->
+              <div class="col-6 col-lg-3">
+                <div
+                  class="ufc27-stat-card ufc27-stat-pink ufc27-reveal"
+                  data-ufc27-delay="4"
+                >
+                  <div class="ufc27-stat-icon">
+                    <i class="fas fa-times-circle"></i>
+                  </div>
+
+                  <div class="ufc27-stat-number" data-count="{{ losses }}">
+                    0
+                  </div>
+
+                  <div class="ufc27-stat-label">LOSSES</div>
+
+                  <div class="ufc27-stat-progress">
+                    <div
+                      class="ufc27-stat-progress-fill"
+                      style="--ufc27-target: {{ losses }}%;"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Win Rate -->
+              <div class="col-12">
+                <div
+                  class="ufc27-winrate-card ufc27-reveal"
+                  data-ufc27-delay="5"
+                >
+                  <div class="ufc27-winrate-top">
+                    <div class="ufc27-winrate-heading">
+                      <div class="ufc27-winrate-icon">
+                        <i class="fas fa-chart-line"></i>
+                      </div>
+
+                      <div>
+                        <div class="ufc27-mini-label">PERFORMANCE INDEX</div>
+
+                        <div class="ufc27-winrate-title">WIN RATE</div>
+                      </div>
+                    </div>
+
+                    <div class="ufc27-winrate-value" id="ufc27WinRatePct">
+                      0%
+                    </div>
+                  </div>
+
+                  <div class="ufc27-winrate-track">
+                    <div
+                      class="ufc27-winrate-fill"
+                      id="ufc27WinRateFill"
+                      data-target="{{ win_rate|default:0 }}"
+                    >
+                      <div class="ufc27-winrate-shimmer"></div>
+                      <div class="ufc27-winrate-bubbles"></div>
+                    </div>
+                  </div>
+
+                  <div class="ufc27-winrate-scale">
+                    <span>0%</span>
+                    <span>25%</span>
+                    <span>50%</span>
+                    <span>75%</span>
+                    <span>100%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="ufc27-section-heading ufc27-reveal">
+        <div class="ufc27-section-heading-left">
+          <span class="ufc27-section-number"> 01 </span>
+
+          <div>
+            <div class="ufc27-section-kicker">TEAM MANAGEMENT</div>
+
+            <h2 class="ufc27-section-title">SQUAD LINEUP</h2>
+          </div>
+        </div>
+
+        <div class="ufc27-section-line"></div>
+
+        <div class="ufc27-section-badge">
+          <i class="fas fa-users"></i>
+          ACTIVE SQUAD
+        </div>
+      </div>
+
+      <section class="ufc27-glass-panel ufc27-reveal" data-ufc27-delay="1">
+        <div class="ufc27-panel-topline"></div>
+
+        <div class="row g-3">
+          {% for player in players %}
+
+          <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+            <a
+              href="{% url 'player_public_profile' player.player_id %}"
+              class="ufc27-player-link"
+              data-ufc27-delay="{{ forloop.counter }}"
+            >
+              <article class="ufc27-player-card">
+                <div class="ufc27-player-card-border"></div>
+                <div class="ufc27-player-shimmer"></div>
+
+                <div class="ufc27-player-top">
+                  <span class="ufc27-player-position">
+                    {{ player.player_position.position_code }}
+                  </span>
+
+                  <span class="ufc27-player-rating">
+                    {{ player.player_rating }}
+                  </span>
+                </div>
+
+                <div class="ufc27-player-image-wrap">
+                  <div class="ufc27-player-image-glow"></div>
+
+                  <img
+                    src="{{ player.player_image.url }}"
+                    class="ufc27-player-image"
+                    alt="{{ player.player_card_name }}"
+                    loading="lazy"
+                  />
+
+                  <div class="ufc27-player-image-overlay"></div>
+
+                  <div class="ufc27-player-scan"></div>
+                </div>
+
+                <div class="ufc27-player-info">
+                  <div class="ufc27-player-role">
+                    {{ player.player_position.position_code }}
+                  </div>
+
+                  <h3 class="ufc27-player-name">
+                    {{ player.player_card_name }}
+                  </h3>
+
+                  <div class="ufc27-player-rating-line">
+                    <span>
+                      <i class="fas fa-star"></i>
+                      RATING
+                    </span>
+
+                    <strong> {{ player.player_rating }} </strong>
+                  </div>
+                </div>
+
+                <div class="ufc27-player-corner ufc27-player-corner-tl"></div>
+                <div class="ufc27-player-corner ufc27-player-corner-tr"></div>
+                <div class="ufc27-player-corner ufc27-player-corner-bl"></div>
+                <div class="ufc27-player-corner ufc27-player-corner-br"></div>
+              </article>
+            </a>
+          </div>
+
+          {% empty %}
+
+          <div class="col-12">
+            <div class="ufc27-empty-state">
+              <div class="ufc27-empty-icon">
+                <div class="ufc27-empty-ring"></div>
+
+                <i class="fas fa-user-slash"></i>
+              </div>
+
+              <div class="ufc27-empty-kicker">SQUAD DATABASE</div>
+
+              <p>No players registered yet</p>
+
+              <span> Your club squad is currently empty. </span>
+            </div>
+          </div>
+
+          {% endfor %}
+        </div>
+      </section>
+
+      <div class="ufc27-section-heading ufc27-reveal">
+        <div class="ufc27-section-heading-left">
+          <span class="ufc27-section-number ufc27-section-number-pink">
+            02
+          </span>
+
+          <div>
+            <div class="ufc27-section-kicker">MATCH DATABASE</div>
+
+            <h2 class="ufc27-section-title">MATCH HISTORY</h2>
+          </div>
+        </div>
+
+        <div class="ufc27-section-line"></div>
+
+        <div class="ufc27-section-badge ufc27-section-badge-pink">
+          <i class="fas fa-history"></i>
+          FIXTURES
+        </div>
+      </div>
+
+      <section
+        class="ufc27-glass-panel ufc27-match-panel ufc27-reveal"
+        data-ufc27-delay="2"
+      >
+        <div class="ufc27-panel-topline ufc27-panel-topline-pink"></div>
+
+        <div class="ufc27-match-list">
+          {% for match in matches %}
+
+          <a
+            href="{% url 'watch_live_score' match.match_id %}"
+            class="ufc27-match-link"
+            data-ufc27-delay="{{ forloop.counter }}"
+          >
+            <article class="ufc27-match-card">
+              <div class="ufc27-match-hover-line"></div>
+
+              <!-- Match date -->
+
+              <div class="ufc27-match-date">
+                <span class="ufc27-match-day">
+                  {{ match.match_date|date:"d" }}
+                </span>
+
+                <span class="ufc27-match-month">
+                  {{ match.match_date|date:"M" }}
+                </span>
+              </div>
+
+              <!-- Match teams -->
+
+              <div class="ufc27-match-teams">
+                <!-- Home -->
+
+                <div class="ufc27-team ufc27-team-home">
+                  <div class="ufc27-team-name">
+                    {{ match.match_home_team.club_name }}
+                  </div>
+
+                  <div class="ufc27-team-logo">
+                    <img
+                      src="{{ match.match_home_team.club_logo.url }}"
+                      alt="{{ match.match_home_team.club_name }}"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+
+                <!-- Score -->
+
+                <div class="ufc27-score-board">
+                  <div class="ufc27-score-number">
+                    {{ match.result.result_home_team }}
+                  </div>
+
+                  <div class="ufc27-score-divider">:</div>
+
+                  <div class="ufc27-score-number">
+                    {{ match.result.result_away_team }}
+                  </div>
+                </div>
+
+                <!-- Away -->
+
+                <div class="ufc27-team ufc27-team-away">
+                  <div class="ufc27-team-logo">
+                    <img
+                      src="{{ match.match_away_team.club_logo.url }}"
+                      alt="{{ match.match_away_team.club_name }}"
+                      loading="lazy"
+                    />
+                  </div>
+
+                  <div class="ufc27-team-name">
+                    {{ match.match_away_team.club_name }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Result -->
+
+              <div class="ufc27-match-result">
+                {% if match.match_home_team == club %} 
+                {% if match.result.result_home_team > match.result.result_away_team %}
+
+                <span class="ufc27-result ufc27-result-win"> W </span>
+
+                {% elif match.result.result_home_team == match.result.result_away_team %}
+
+                <span class="ufc27-result ufc27-result-draw"> D </span>
+
+                {% else %}
+
+                <span class="ufc27-result ufc27-result-loss"> L </span>
+
+                {% endif %} 
+                {% else %} 
+                {% if match.result.result_away_team > match.result.result_home_team %}
+
+                <span class="ufc27-result ufc27-result-win"> W </span>
+
+                {% elif match.result.result_home_team == match.result.result_away_team %}
+
+                <span class="ufc27-result ufc27-result-draw"> D </span>
+
+                {% else %}
+
+                <span class="ufc27-result ufc27-result-loss"> L </span>
+
+                {% endif %} 
+                {% endif %}
+              </div>
+
+              <div class="ufc27-match-arrow">
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </article>
+          </a>
+
+          {% empty %}
+
+          <div class="ufc27-empty-state ufc27-match-empty">
+            <div class="ufc27-empty-icon">
+              <div class="ufc27-empty-ring"></div>
+
+              <i class="fas fa-calendar-times"></i>
+            </div>
+
+            <div class="ufc27-empty-kicker">FIXTURE DATABASE</div>
+
+            <p>No matches played yet</p>
+
+            <span>
+              Match history will appear here after fixtures are completed.
+            </span>
+          </div>
+
+          {% endfor %}
+        </div>
+      </section>
+
+
+        <div class="ufc27-bottom-status-line"></div>
+
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const particleContainer = document.getElementById("ufc27Particles");
+
+    if (particleContainer) {
+      const particleCount = 32;
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement("span");
+
+        particle.className = "ufc27-particle";
+
+        particle.style.left = Math.random() * 100 + "%";
+
+        particle.style.top = 70 + Math.random() * 35 + "%";
+
+        particle.style.setProperty(
+          "--ufc27-particle-x",
+          Math.random() * 180 - 90 + "px",
+        );
+
+        particle.style.setProperty(
+          "--ufc27-particle-duration",
+          7 + Math.random() * 10 + "s",
+        );
+
+        particle.style.setProperty(
+          "--ufc27-particle-delay",
+          -Math.random() * 12 + "s",
+        );
+
+        if (Math.random() > 0.65) {
+          particle.style.background = "var(--ufc27-pink)";
+
+          particle.style.boxShadow = "0 0 10px var(--ufc27-pink)";
+        }
+
+        particleContainer.appendChild(particle);
+      }
+    }
+
+    const revealElements = document.querySelectorAll(".ufc27-reveal");
+    const playerElements = document.querySelectorAll(".ufc27-player-link");
+    const matchElements = document.querySelectorAll(".ufc27-match-link");
+    const revealObserver = new IntersectionObserver(
+      function (entries, observer) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          const element = entry.target;
+          const delay = parseInt(element.dataset.ufc27Delay || 0, 10);
+
+          setTimeout(function () {
+            element.classList.add("ufc27-visible");
+          }, delay * 90);
+
+          observer.unobserve(element);
+        });
+      },
+      {
+        threshold: 0.08,
+        rootMargin: "0px 0px -40px 0px",
+      },
+    );
+
+    revealElements.forEach(function (element) {
+      revealObserver.observe(element);
+    });
+
+    playerElements.forEach(function (element) {
+      revealObserver.observe(element);
+    });
+
+    matchElements.forEach(function (element) {
+      revealObserver.observe(element);
+    });
+
+
+    const statNumbers = document.querySelectorAll(".ufc27-stat-number");
+
+    function ufc27AnimateCounter(element) {
+      const target = parseInt(element.dataset.count || 0, 10);
+
+      if (isNaN(target)) {
+        return;
+      }
+
+      const duration = 1500;
+      const startTime = performance.now();
+
+      function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        element.textContent = Math.floor(eased * target);
+
+        if (progress < 1) {
+          requestAnimationFrame(updateCounter);
+        } else {
+          element.textContent = target;
+        }
+      }
+
+      requestAnimationFrame(updateCounter);
+    }
+
+    const statObserver = new IntersectionObserver(
+      function (entries, observer) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          ufc27AnimateCounter(entry.target);
+
+          observer.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0.5,
+      },
+    );
+
+    statNumbers.forEach(function (element) {
+      statObserver.observe(element);
+    });
+
+    const progressBars = document.querySelectorAll(".ufc27-stat-progress-fill");
+
+    const progressObserver = new IntersectionObserver(
+      function (entries, observer) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          const bar = entry.target;
+          const target = bar.style.getPropertyValue("--ufc27-target");
+
+          setTimeout(function () {
+            bar.style.width = target || "0%";
+          }, 250);
+
+          observer.unobserve(bar);
+        });
+      },
+      {
+        threshold: 0.35,
+      },
+    );
+
+    progressBars.forEach(function (bar) {
+      progressObserver.observe(bar);
+    });
+
+
+    const winRateFill = document.getElementById("ufc27WinRateFill");
+    const winRatePct = document.getElementById("ufc27WinRatePct");
+
+    if (winRateFill && winRatePct) {
+      let targetRate = parseFloat(winRateFill.dataset.target || 0);
+
+      if (isNaN(targetRate)) {
+        targetRate = 0;
+      }
+
+      targetRate = Math.max(0, Math.min(100, targetRate));
+
+      const winRateObserver = new IntersectionObserver(
+        function (entries, observer) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+              return;
+            }
+
+            setTimeout(function () {
+              winRateFill.style.width = targetRate + "%";
+
+              const duration = 1400;
+              const start = performance.now();
+
+              function animateRate(currentTime) {
+                const elapsed = currentTime - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const currentValue = targetRate * eased;
+                winRatePct.textContent = Math.round(currentValue) + "%";
+
+                if (progress < 1) {
+                  requestAnimationFrame(animateRate);
+                } else {
+                  winRatePct.textContent = Math.round(targetRate) + "%";
+                }
+              }
+
+              requestAnimationFrame(animateRate);
+            }, 300);
+
+            observer.unobserve(winRateFill);
+          });
+        },
+        {
+          threshold: 0.4,
+        },
+      );
+
+      winRateObserver.observe(winRateFill);
+    }
+
+    const playerCards = document.querySelectorAll(".ufc27-player-card");
+
+    playerCards.forEach(function (card) {
+      card.addEventListener("mousemove", function (event) {
+        if (window.matchMedia("(max-width: 767.98px)").matches) {
+          return;
+        }
+
+        const rect = card.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const rotateY = (x / rect.width - 0.5) * 5;
+        const rotateX = (y / rect.height - 0.5) * -5;
+
+        card.style.transform =
+          "perspective(700px) " +
+          "rotateX(" +
+          rotateX +
+          "deg) " +
+          "rotateY(" +
+          rotateY +
+          "deg) " +
+          "translateY(-3px)";
+      });
+
+      card.addEventListener("mouseleave", function () {
+        card.style.transform = "";
+      });
+    });
+
+    const hero = document.querySelector(".ufc27-hero");
+
+    if (hero) {
+      hero.addEventListener("mousemove", function (event) {
+        if (window.matchMedia("(max-width: 767.98px)").matches) {
+          return;
+        }
+
+        const rect = hero.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - 0.5;
+        const y = (event.clientY - rect.top) / rect.height - 0.5;
+        const highlight = hero.querySelector(".ufc27-hero-highlight");
+
+        if (highlight) {
+          highlight.style.transform =
+            "translate(" + x * 30 + "px, " + y * 30 + "px)";
+        }
+      });
+
+      hero.addEventListener("mouseleave", function () {
+        const highlight = hero.querySelector(".ufc27-hero-highlight");
+
+        if (highlight) {
+          highlight.style.transform = "";
+        }
+      });
+    }
+
+
+    const interactiveElements = document.querySelectorAll(
+      ".ufc27-player-link, .ufc27-match-link",
+    );
+
+    interactiveElements.forEach(function (element) {
+      element.addEventListener("mouseenter", function () {
+        element.classList.add("ufc27-hover-active");
+      });
+
+      element.addEventListener("mouseleave", function () {
+        element.classList.remove("ufc27-hover-active");
+      });
+    });
+  });
+</script>
+
+{% endblock %}

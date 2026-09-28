@@ -1,0 +1,836 @@
+{% extends 'user/user_head.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="ftb-page">
+
+    <div class="ftb-pitch-bg">
+        <div class="ftb-pitch-lines"></div>
+        <div class="ftb-pitch-circle"></div>
+
+        <div class="ftb-floating-ball ftb-ball-one">⚽</div>
+        <div class="ftb-floating-ball ftb-ball-two">⚽</div>
+        <div class="ftb-floating-ball ftb-ball-three">⚽</div>
+    </div>
+
+
+    <div class="container ftb-main-container">
+
+        <!-- =========================================================
+             TOURNAMENT HEADER
+        ========================================================== -->
+
+        <div class="ftb-hero">
+
+            <div class="ftb-trophy">
+                <i class="fas fa-trophy"></i>
+            </div>
+
+            <h1 class="ftb-title">
+                {{ tournament.t_name }}
+            </h1>
+
+            <p class="ftb-subtitle">
+                <i class="fas fa-sitemap me-2"></i>
+                Tournament Results
+            </p>
+
+            {% if is_host %}
+            <div class="ftb-host-badge">
+                <i class="fas fa-crown"></i>
+                You are the Host
+            </div>
+            {% endif %}
+
+        </div>
+
+
+        <!-- =========================================================
+             1. ROUND ROBIN
+        ========================================================== -->
+
+        {% if round_robin_matches %}
+
+        <section class="ftb-result-section">
+
+            <div class="ftb-round-heading">
+
+                <div class="ftb-round-line"></div>
+
+                <div class="ftb-round-number">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>ROUND ROBIN</span>
+                </div>
+
+                <div class="ftb-round-line-right"></div>
+
+            </div>
+
+
+            <div class="row g-3 g-lg-4">
+
+                {% for item in round_robin_matches %}
+
+                <div class="col-12 col-md-6">
+
+                    <article class="ftb-match-card
+                        {% if item.match.match_finished %}
+                            ftb-match-finished
+                        {% elif item.match.match_started %}
+                            ftb-match-live
+                        {% endif %}
+                    ">
+
+                        <!-- HOME TEAM -->
+
+                        <div class="ftb-team-row">
+
+                            <div class="ftb-team-info">
+
+                                {% if item.match.match_home_team %}
+
+                                <img
+                                    src="{% if item.match.match_home_team.club_logo %}{{ item.match.match_home_team.club_logo.url }}{% else %}{% static 'images/default_club.png' %}{% endif %}"
+                                    class="ftb-team-logo"
+                                    alt=""
+                                >
+
+                                <span class="ftb-team-name">
+                                    {{ item.match.match_home_team.club_name|truncatechars:20 }}
+                                </span>
+
+                                {% else %}
+
+                                <div class="ftb-team-logo ftb-team-placeholder">
+                                    ?
+                                </div>
+
+                                <span class="ftb-team-name ftb-tbd">
+                                    TBD
+                                </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="ftb-score-box">
+
+                                <span class="ftb-score">
+
+                                    {% if item.result %}
+                                        {{ item.result.result_home_team }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ftb-team-divider"></div>
+
+
+                        <!-- AWAY TEAM -->
+
+                        <div class="ftb-team-row">
+
+                            <div class="ftb-team-info">
+
+                                {% if item.match.match_away_team %}
+
+                                <img
+                                    src="{% if item.match.match_away_team.club_logo %}{{ item.match.match_away_team.club_logo.url }}{% else %}{% static 'images/default_club.png' %}{% endif %}"
+                                    class="ftb-team-logo"
+                                    alt=""
+                                >
+
+                                <span class="ftb-team-name">
+                                    {{ item.match.match_away_team.club_name|truncatechars:20 }}
+                                </span>
+
+                                {% else %}
+
+                                <div class="ftb-team-logo ftb-team-placeholder">
+                                    ?
+                                </div>
+
+                                <span class="ftb-team-name ftb-tbd">
+                                    TBD
+                                </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="ftb-score-box">
+
+                                <span class="ftb-score">
+
+                                    {% if item.result %}
+                                        {{ item.result.result_away_team }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- MATCH INFORMATION -->
+
+                        <div class="ftb-match-footer">
+
+                            <div class="ftb-match-meta">
+
+                                {% if item.match.match_date %}
+                                <span>
+                                    <i class="far fa-calendar"></i>
+                                    {{ item.match.match_date|date:"M d, Y" }}
+                                </span>
+                                {% endif %}
+
+                                {% if item.match.match_time %}
+                                <span>
+                                    <i class="far fa-clock"></i>
+                                    {{ item.match.match_time }}
+                                </span>
+                                {% endif %}
+
+                            </div>
+
+
+                            {% if item.match.match_finished %}
+
+                            <span class="ftb-status ftb-status-finished">
+                                <i class="fas fa-check"></i>
+                                Finished
+                            </span>
+
+                            {% elif item.match.match_started %}
+
+                            <span class="ftb-status ftb-status-live">
+                                <span class="ftb-live-dot"></span>
+                                Live
+                            </span>
+
+                            {% else %}
+
+                            <span class="ftb-status ftb-status-upcoming">
+                                <i class="far fa-clock"></i>
+                                Upcoming
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+
+        <!-- =========================================================
+             2. GROUP STAGE
+        ========================================================== -->
+
+        {% if group_stage_matches %}
+
+        <section class="ftb-result-section">
+
+            <div class="ftb-round-heading">
+
+                <div class="ftb-round-line"></div>
+
+                <div class="ftb-round-number">
+
+                    <i class="fas fa-users"></i>
+
+                    <span>GROUP STAGE</span>
+
+                </div>
+
+                <div class="ftb-round-line-right"></div>
+
+            </div>
+
+
+            {% for group in group_stage_matches %}
+
+            <div class="ftb-group-block">
+
+                {% if group.group_name %}
+
+                <h3 class="ftb-group-title">
+                    {{ group.group_name }}
+                </h3>
+
+                {% endif %}
+
+
+                <div class="row g-3 g-lg-4">
+
+                    {% for item in group.matches %}
+
+                    <div class="col-12 col-md-6">
+
+                        <article class="ftb-match-card
+                            {% if item.match.match_finished %}
+                                ftb-match-finished
+                            {% elif item.match.match_started %}
+                                ftb-match-live
+                            {% endif %}
+                        ">
+
+                            <div class="ftb-team-row">
+
+                                <div class="ftb-team-info">
+
+                                    {% if item.match.match_home_team %}
+
+                                    <img
+                                        src="{% if item.match.match_home_team.club_logo %}{{ item.match.match_home_team.club_logo.url }}{% else %}{% static 'images/default_club.png' %}{% endif %}"
+                                        class="ftb-team-logo"
+                                        alt=""
+                                    >
+
+                                    <span class="ftb-team-name">
+                                        {{ item.match.match_home_team.club_name|truncatechars:20 }}
+                                    </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="ftb-score-box">
+
+                                    <span class="ftb-score">
+
+                                        {% if item.result %}
+                                            {{ item.result.result_home_team }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ftb-team-divider"></div>
+
+
+                            <div class="ftb-team-row">
+
+                                <div class="ftb-team-info">
+
+                                    {% if item.match.match_away_team %}
+
+                                    <img
+                                        src="{% if item.match.match_away_team.club_logo %}{{ item.match.match_away_team.club_logo.url }}{% else %}{% static 'images/default_club.png' %}{% endif %}"
+                                        class="ftb-team-logo"
+                                        alt=""
+                                    >
+
+                                    <span class="ftb-team-name">
+                                        {{ item.match.match_away_team.club_name|truncatechars:20 }}
+                                    </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="ftb-score-box">
+
+                                    <span class="ftb-score">
+
+                                        {% if item.result %}
+                                            {{ item.result.result_away_team }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ftb-match-footer">
+
+                                {% if item.match.match_finished %}
+
+                                <span class="ftb-status ftb-status-finished">
+                                    <i class="fas fa-check"></i>
+                                    Finished
+                                </span>
+
+                                {% elif item.match.match_started %}
+
+                                <span class="ftb-status ftb-status-live">
+                                    <span class="ftb-live-dot"></span>
+                                    Live
+                                </span>
+
+                                {% else %}
+
+                                <span class="ftb-status ftb-status-upcoming">
+                                    <i class="far fa-clock"></i>
+                                    Upcoming
+                                </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </section>
+
+        {% endif %}
+
+
+
+        <!-- =========================================================
+             3. KNOCKOUT STAGE
+        ========================================================== -->
+
+        {% if bracket_rounds %}
+
+        <section class="ftb-result-section">
+
+            <div class="ftb-round-heading">
+
+                <div class="ftb-round-line"></div>
+
+                <div class="ftb-round-number">
+
+                    <i class="fas fa-sitemap"></i>
+
+                    <span>KNOCKOUT STAGE</span>
+
+                </div>
+
+                <div class="ftb-round-line-right"></div>
+
+            </div>
+
+
+            {% for round in bracket_rounds %}
+
+            <section
+                class="ftb-round-section"
+                style="animation-delay: {{ forloop.counter0 }}00ms;"
+            >
+
+                <div class="ftb-round-heading">
+
+                    <div class="ftb-round-line"></div>
+
+                    <div class="ftb-round-number">
+
+                        <i class="fas fa-layer-group"></i>
+
+                        <span>
+                            ROUND {{ round.round_num|stringformat:"02d" }}
+                        </span>
+
+                    </div>
+
+                    <div class="ftb-round-line-right"></div>
+
+                </div>
+
+
+                <div class="row g-3 g-lg-4">
+
+                    {% for item in round.matches %}
+
+                    <div class="col-12 col-md-6">
+
+                        <article
+                            class="ftb-match-card
+                            {% if item.match.match_finished %}
+                                ftb-match-finished
+                            {% elif item.match.match_started %}
+                                ftb-match-live
+                            {% endif %}"
+                        >
+
+                            <!-- HOME -->
+
+                            <div class="ftb-team-row">
+
+                                <div class="ftb-team-info">
+
+                                    {% if item.match.match_home_team %}
+
+                                    <img
+                                        src="{% if item.match.match_home_team.club_logo %}{{ item.match.match_home_team.club_logo.url }}{% else %}{% static 'images/default_club.png' %}{% endif %}"
+                                        class="ftb-team-logo"
+                                        alt=""
+                                    >
+
+                                    <span
+                                        class="ftb-team-name
+                                        {% if item.match.match_finished and item.result and item.result.result_home_team > item.result.result_away_team %}
+                                            ftb-winner
+                                        {% elif item.match.match_finished and item.result and item.result.result_home_team < item.result.result_away_team %}
+                                            ftb-loser
+                                        {% endif %}"
+                                    >
+                                        {{ item.match.match_home_team.club_name|truncatechars:20 }}
+                                    </span>
+
+                                    {% else %}
+
+                                    <div class="ftb-team-logo ftb-team-placeholder">
+                                        ?
+                                    </div>
+
+                                    <span class="ftb-team-name ftb-tbd">
+                                        TBD
+                                    </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="ftb-score-box">
+
+                                    <span class="ftb-score">
+
+                                        {% if item.result %}
+                                            {{ item.result.result_home_team }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ftb-team-divider"></div>
+
+
+                            <!-- AWAY -->
+
+                            <div class="ftb-team-row">
+
+                                <div class="ftb-team-info">
+
+                                    {% if item.match.match_away_team %}
+
+                                    <img
+                                        src="{% if item.match.match_away_team.club_logo %}{{ item.match.match_away_team.club_logo.url }}{% else %}{% static 'images/default_club.png' %}{% endif %}"
+                                        class="ftb-team-logo"
+                                        alt=""
+                                    >
+
+                                    <span
+                                        class="ftb-team-name
+                                        {% if item.match.match_finished and item.result and item.result.result_away_team > item.result.result_home_team %}
+                                            ftb-winner
+                                        {% elif item.match.match_finished and item.result and item.result.result_away_team < item.result.result_home_team %}
+                                            ftb-loser
+                                        {% endif %}"
+                                    >
+                                        {{ item.match.match_away_team.club_name|truncatechars:20 }}
+                                    </span>
+
+                                    {% else %}
+
+                                    <div class="ftb-team-logo ftb-team-placeholder">
+                                        ?
+                                    </div>
+
+                                    <span class="ftb-team-name ftb-tbd">
+                                        TBD
+                                    </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="ftb-score-box">
+
+                                    <span class="ftb-score">
+
+                                        {% if item.result %}
+                                            {{ item.result.result_away_team }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- MATCH FOOTER -->
+
+                            <div class="ftb-match-footer">
+
+                                <div class="ftb-match-meta">
+
+                                    {% if item.match.match_date %}
+
+                                    <span>
+                                        <i class="far fa-calendar"></i>
+                                        {{ item.match.match_date|date:"M d, Y" }}
+                                    </span>
+
+                                    {% endif %}
+
+                                    {% if item.match.match_time %}
+
+                                    <span>
+                                        <i class="far fa-clock"></i>
+                                        {{ item.match.match_time }}
+                                    </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                {% if item.match.match_finished %}
+
+                                <span class="ftb-status ftb-status-finished">
+                                    <i class="fas fa-check"></i>
+                                    Finished
+                                </span>
+
+                                {% elif item.match.match_started %}
+
+                                <span class="ftb-status ftb-status-live">
+
+                                    <span class="ftb-live-dot"></span>
+
+                                    Live
+
+                                </span>
+
+                                {% else %}
+
+                                <span class="ftb-status ftb-status-upcoming">
+
+                                    <i class="far fa-clock"></i>
+
+                                    Upcoming
+
+                                </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+
+                            <!-- HOST MATCH CONTROLS -->
+
+                            {% if is_host and item.match.match_home_team and item.match.match_away_team %}
+
+                                {% if not item.match.match_started and not item.match.match_finished %}
+
+                                <div class="ftb-host-actions">
+
+                                    <a
+                                        href="{% url 'start_match' item.match.match_id %}"
+                                        class="ftb-action-btn ftb-btn-start"
+                                        onclick="return confirm('Start this match?');"
+                                    >
+                                        <i class="fas fa-play"></i>
+                                        Start Match
+                                    </a>
+
+                                </div>
+
+                                {% elif item.match.match_started and not item.match.match_finished %}
+
+                                <div class="ftb-host-actions">
+
+                                    <a
+                                        href="{% url 'go_to_match' item.match.match_id %}"
+                                        class="ftb-action-btn ftb-btn-view"
+                                    >
+                                        <i class="fas fa-eye"></i>
+                                        View Live Match
+                                    </a>
+
+
+                                    <a
+                                        href="{% url 'end_match' item.match.match_id %}"
+                                        class="ftb-action-btn ftb-btn-end"
+                                        onclick="return confirm('End this match?');"
+                                    >
+                                        <i class="fas fa-stop"></i>
+                                        End Match
+                                    </a>
+
+                                </div>
+
+                                {% endif %}
+
+                            {% endif %}
+
+                        </article>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+            {% endfor %}
+
+        </section>
+
+        {% endif %}
+
+
+
+        <!-- =========================================================
+             4. TOURNAMENT FINAL WINNER
+        ========================================================== -->
+
+        {% if tournament_winner %}
+
+        <section class="ftb-winner-section">
+
+            <div class="ftb-winner-card">
+
+                <div class="ftb-winner-glow"></div>
+
+                <div class="ftb-winner-trophy">
+
+                    <i class="fas fa-trophy"></i>
+
+                </div>
+
+
+                <div class="ftb-winner-content">
+
+                    <span class="ftb-winner-label">
+                        TOURNAMENT CHAMPION
+                    </span>
+
+
+                    {% if tournament_winner.club_logo %}
+
+                    <img
+                        src="{{ tournament_winner.club_logo.url }}"
+                        class="ftb-champion-logo"
+                        alt="{{ tournament_winner.club_name }}"
+                    >
+
+                    {% endif %}
+
+
+                    <h2 class="ftb-winner-name">
+                        {{ tournament_winner.club_name }}
+                    </h2>
+
+
+                    <p class="ftb-winner-text">
+                        Congratulations!
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        {% elif tournament.tournament_finished %}
+
+        <section class="ftb-winner-section">
+
+            <div class="ftb-winner-card">
+
+                <div class="ftb-winner-trophy">
+                    <i class="fas fa-trophy"></i>
+                </div>
+
+                <div class="ftb-winner-content">
+
+                    <span class="ftb-winner-label">
+                        TOURNAMENT COMPLETED
+                    </span>
+
+                    <p class="ftb-winner-text">
+                        Winner information is not available yet.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+
+        <!-- =========================================================
+             BACK BUTTON
+        ========================================================== -->
+
+        <div class="ftb-back-wrapper">
+
+            <a
+                href="{% url 'view_tournament' tournament.t_id %}"
+                class="ftb-back-btn"
+            >
+                <i class="fas fa-arrow-left"></i>
+                Back to Tournament
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

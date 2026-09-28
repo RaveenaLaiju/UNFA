@@ -1,0 +1,394 @@
+{% extends 'user/user_head.html' %}
+
+{% block content %}
+
+{% load static %}
+
+<div class="pay26-page">
+<div class="pay26-bg-grid"></div>
+<div class="pay26-scan-line"></div>
+
+<div class="pay26-glow pay26-glow-one"></div>
+<div class="pay26-glow pay26-glow-two"></div>
+<div class="pay26-glow pay26-glow-three"></div>
+
+<div class="pay26-ball pay26-ball-one">
+    <i class="fas fa-futbol"></i>
+</div>
+
+<div class="pay26-ball pay26-ball-two">
+    <i class="fas fa-futbol"></i>
+</div>
+
+<div class="pay26-ball pay26-ball-three">
+    <i class="fas fa-futbol"></i>
+</div>
+
+<div class="container position-relative pay26-content">
+
+    <div class="text-center mb-4 mb-md-5 pay26-header">
+
+        <div class="pay26-badge mb-3">
+            <i class="fas fa-shield-alt"></i>
+            <span>Secure Payment</span>
+        </div>
+
+        <h1 class="pay26-title">
+            Complete Booking
+        </h1>
+
+        <p class="pay26-subtitle mb-0">
+            Secure your turf booking and get ready for kickoff
+        </p>
+
+        <div class="pay26-title-line">
+            <span></span>
+            <i class="fas fa-futbol"></i>
+            <span></span>
+        </div>
+
+    </div>
+
+    <div class="row g-4 justify-content-center">
+
+        <div class="col-12 col-lg-6">
+
+            <div class="pay26-card h-100">
+
+                <div class="pay26-card-top">
+
+                    <div class="pay26-card-icon">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+
+                    <div>
+                        <span class="pay26-card-label">
+                            Booking Details
+                        </span>
+
+                        <h2 class="pay26-card-title">
+                            Booking Summary
+                        </h2>
+                    </div>
+
+                </div>
+
+                <div class="pay26-divider"></div>
+
+                <!-- Turf -->
+
+                <div class="pay26-info-row">
+
+                    <div class="pay26-info-left">
+                        <div class="pay26-info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+
+                        <div>
+                            <span class="pay26-info-label">
+                                Turf
+                            </span>
+
+                            <span class="pay26-info-small">
+                                Playing venue
+                            </span>
+                        </div>
+                    </div>
+
+                    <strong class="pay26-info-value">
+                        {{ booking.turf.turf_name }}
+                    </strong>
+
+                </div>
+
+                <!-- Date -->
+
+                <div class="pay26-info-row">
+
+                    <div class="pay26-info-left">
+                        <div class="pay26-info-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+
+                        <div>
+                            <span class="pay26-info-label">
+                                Date
+                            </span>
+
+                            <span class="pay26-info-small">
+                                Match day
+                            </span>
+                        </div>
+                    </div>
+
+                    <strong class="pay26-info-value">
+                        {{ booking.booking_date }}
+                    </strong>
+
+                </div>
+
+                <!-- Time -->
+
+                <div class="pay26-info-row">
+
+                    <div class="pay26-info-left">
+                        <div class="pay26-info-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+
+                        <div>
+                            <span class="pay26-info-label">
+                                Time
+                            </span>
+
+                            <span class="pay26-info-small">
+                                Kickoff slot
+                            </span>
+                        </div>
+                    </div>
+
+                    <strong class="pay26-info-value">
+                        {{ booking.time_slot.tt_time.time_range }}
+                    </strong>
+
+                </div>
+
+                <!-- Total -->
+
+                <div class="pay26-total-box">
+
+                    <div class="pay26-total-content">
+
+                        <div class="pay26-total-icon">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+
+                        <div>
+                            <span class="pay26-total-label">
+                                Total Amount
+                            </span>
+
+                            <span class="pay26-total-note">
+                                Final booking amount
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <strong class="pay26-total-price">
+                        ₹{{ booking.turf.turf_rate }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-12 col-lg-6">
+
+            <div class="pay26-card pay26-payment-card h-100">
+
+                <div class="pay26-card-top">
+
+                    <div class="pay26-card-icon pay26-payment-icon">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+
+                    <div>
+                        <span class="pay26-card-label">
+                            Checkout
+                        </span>
+
+                        <h2 class="pay26-card-title">
+                            Payment Gateway
+                        </h2>
+                    </div>
+
+                </div>
+
+                <div class="pay26-divider"></div>
+
+                <div class="pay26-payment-content">
+
+                    <div class="pay26-payment-ball">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+
+                    <h3 class="pay26-payment-heading">
+                        Ready for Kickoff?
+                    </h3>
+
+                    <p class="pay26-payment-text">
+                        Complete your payment securely to confirm
+                        your turf booking.
+                    </p>
+
+                    <!-- Razorpay Button -->
+
+                    <button
+                        type="button"
+                        id="rzp-button"
+                        class="pay26-pay-button"
+                    >
+                        <span class="pay26-pay-icon">
+                            <i class="fas fa-lock"></i>
+                        </span>
+
+                        <span>
+                            Pay with Razorpay
+                        </span>
+
+                        <i class="fas fa-arrow-right pay26-pay-arrow"></i>
+                    </button>
+
+                    <!-- Hidden Razorpay Form -->
+
+                    <form
+                        id="razorpay-form"
+                        action="{{ callback_url }}"
+                        method="POST"
+                        class="d-none"
+                    >
+                        {% csrf_token %}
+                    </form>
+
+                    <!-- Security -->
+
+                    <div class="pay26-security">
+
+                        <div class="pay26-security-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+
+                        <div>
+                            <strong>
+                                Secure & Encrypted
+                            </strong>
+
+                            <span>
+                                Payments powered by Razorpay
+                            </span>
+                        </div>
+
+                        <i class="fas fa-check-circle pay26-security-check"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row justify-content-center mt-4">
+
+        <div class="col-12 col-md-10 col-lg-8">
+
+            <div class="pay26-trust-bar">
+
+                <div class="pay26-trust-item">
+                    <i class="fas fa-lock"></i>
+                    <span>SSL Encrypted</span>
+                </div>
+
+                <div class="pay26-trust-separator"></div>
+
+                <div class="pay26-trust-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Secure Checkout</span>
+                </div>
+
+                <div class="pay26-trust-separator"></div>
+
+                <div class="pay26-trust-item">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Razorpay Protected</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {
+    "key": "{{ razorpay_key }}",
+    "amount": {{ amount }},          
+    "currency": "INR",
+    "name": "UNFA Football",
+    "description": "Turf Booking Payment",
+    "order_id": "{{ payment.provider_order_id }}",
+    "prefill": {
+        "name": "{{ user.user_name|default:'UNFA User' }}",
+        "email": "{{ user.user_email|default:'user@unfa.local' }}",
+        "contact": "{{ user.user_phone|default:'' }}"  
+    },
+    "theme": {
+        "color": "#00ff88"
+    },
+    "handler": function (response) {
+        var form = document.getElementById('razorpay-form');
+        
+        var fields = {
+            'razorpay_payment_id': response.razorpay_payment_id,
+            'razorpay_order_id': response.razorpay_order_id,
+            'razorpay_signature': response.razorpay_signature
+        };
+        
+        for (var key in fields) {
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = fields[key];
+            form.appendChild(input);
+        }
+        
+        form.submit();
+    },
+    "modal": {
+        "ondismiss": function() {
+            console.log("Payment modal closed");
+        }
+    }
+};
+
+var rzp = new Razorpay(options);
+document.getElementById('rzp-button').onclick = function(e) {
+    rzp.open();
+    e.preventDefault();
+};
+</script>
+        <div class="security-banner">
+          <i class="fas fa-shield-alt"></i>
+          <span>Secured by Razorpay • SSL Encrypted</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<script> 
+  document.getElementById("razorpay-form").addEventListener( "submit", function()
+  { 
+    const button = document.getElementById("rzp-button"); 
+    if (!button) 
+    { 
+      return;
+     } 
+     button.disabled = true; 
+     button.innerHTML = ` <span class="pay26-pay-icon"> <i class="fas fa-spinner fa-spin"></i> </span> <span> Processing Payment... </span> `; 
+    } 
+    ); 
+  </script>
+
+{% endblock %}

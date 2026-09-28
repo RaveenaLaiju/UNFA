@@ -1,0 +1,3400 @@
+{% extends 'user/user_head.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   TOURNAMENT EDITOR
+   ALL CLASSES USE ted- PREFIX
+========================================================= */
+
+:root {
+    --ted-bg: #03070d;
+    --ted-panel: rgba(8, 17, 29, 0.88);
+    --ted-panel-light: rgba(14, 27, 43, 0.82);
+
+    --ted-green: #00ff88;
+    --ted-cyan: #00e5ff;
+    --ted-blue: #1677ff;
+    --ted-purple: #8b5cf6;
+    --ted-orange: #ff9f43;
+    --ted-red: #ff4d67;
+
+    --ted-text: #f4f8ff;
+    --ted-muted: #8da2b8;
+    --ted-border: rgba(0, 229, 255, 0.16);
+
+    --ted-radius: 20px;
+}
+
+
+/* =========================================================
+   MAIN ARENA
+========================================================= */
+
+.ted-arena {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    padding: 35px 0 70px;
+
+    background:
+        radial-gradient(
+            circle at 15% 15%,
+            rgba(0, 255, 136, 0.08),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 85% 20%,
+            rgba(0, 229, 255, 0.08),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 50% 90%,
+            rgba(139, 92, 246, 0.08),
+            transparent 35%
+        ),
+        var(--ted-bg);
+
+    color: var(--ted-text);
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+.ted-background {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.ted-pitch-grid {
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(0, 255, 136, 0.035) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(0, 229, 255, 0.035) 1px,
+            transparent 1px
+        );
+
+    background-size: 55px 55px;
+
+    transform: perspective(500px) rotateX(60deg) scale(1.5);
+    transform-origin: center bottom;
+
+    opacity: 0.5;
+}
+
+
+.ted-glow {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.12;
+}
+
+
+.ted-glow-one {
+    top: -120px;
+    left: -100px;
+    background: var(--ted-green);
+}
+
+
+.ted-glow-two {
+    top: 25%;
+    right: -150px;
+    background: var(--ted-cyan);
+}
+
+
+.ted-glow-three {
+    bottom: -160px;
+    left: 40%;
+    background: var(--ted-purple);
+}
+
+
+.ted-scanline {
+    position: absolute;
+    inset: 0;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0px,
+            transparent 5px,
+            rgba(255,255,255,0.012) 6px
+        );
+
+    opacity: 0.6;
+}
+
+
+.ted-particles {
+    position: absolute;
+    inset: 0;
+}
+
+
+.ted-particle {
+    position: absolute;
+    display: block;
+
+    border-radius: 50%;
+
+    background: var(--ted-cyan);
+
+    box-shadow:
+        0 0 8px var(--ted-cyan);
+
+    opacity: 0;
+
+    animation:
+        tedParticleFloat
+        var(--ted-particle-duration)
+        ease-in-out
+        var(--ted-particle-delay)
+        infinite;
+}
+
+
+@keyframes tedParticleFloat {
+
+    0% {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 0.7;
+    }
+
+    80% {
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.ted-container {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =========================================================
+   TOP NAV
+========================================================= */
+
+.ted-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 28px;
+}
+
+
+.ted-back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    padding: 11px 17px;
+
+    border: 1px solid var(--ted-border);
+    border-radius: 12px;
+
+    color: var(--ted-text);
+    background: rgba(8, 17, 29, 0.72);
+
+    text-decoration: none;
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.ted-back-button:hover {
+    color: white;
+
+    border-color: rgba(0, 255, 136, 0.45);
+
+    background: rgba(0, 255, 136, 0.08);
+
+    transform: translateX(-3px);
+}
+
+
+.ted-top-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    padding: 9px 15px;
+
+    border: 1px solid rgba(0, 229, 255, 0.18);
+    border-radius: 999px;
+
+    color: var(--ted-cyan);
+
+    background: rgba(0, 229, 255, 0.05);
+
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+}
+
+
+.ted-top-dot {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: var(--ted-green);
+
+    box-shadow:
+        0 0 8px var(--ted-green);
+
+    animation: tedPulse 1.6s infinite;
+}
+
+
+@keyframes tedPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(0.65);
+        opacity: 0.45;
+    }
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.ted-hero {
+    margin-bottom: 30px;
+}
+
+
+.ted-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    color: var(--ted-green);
+
+    font-size: 12px;
+    font-weight: 900;
+
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+
+.ted-kicker-line {
+    width: 34px;
+    height: 2px;
+
+    background: var(--ted-green);
+
+    box-shadow:
+        0 0 10px rgba(0, 255, 136, 0.7);
+}
+
+
+.ted-title {
+    margin: 10px 0 8px;
+
+    font-size: clamp(34px, 5vw, 62px);
+
+    font-weight: 950;
+    line-height: 0.95;
+
+    letter-spacing: -2px;
+}
+
+
+.ted-title span {
+    color: var(--ted-cyan);
+
+    text-shadow:
+        0 0 25px rgba(0, 229, 255, 0.18);
+}
+
+
+.ted-subtitle {
+    max-width: 720px;
+
+    margin: 0;
+
+    color: var(--ted-muted);
+
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   MAIN GRID
+========================================================= */
+
+.ted-editor-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        330px;
+
+    gap: 24px;
+}
+
+
+/* =========================================================
+   PANELS
+========================================================= */
+
+.ted-panel {
+    position: relative;
+
+    padding: 26px;
+
+    border: 1px solid var(--ted-border);
+    border-radius: var(--ted-radius);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 30, 47, 0.94),
+            rgba(5, 12, 21, 0.94)
+        );
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.32),
+        inset 0 1px 0 rgba(255,255,255,0.025);
+
+    backdrop-filter: blur(18px);
+
+    overflow: hidden;
+}
+
+
+.ted-panel::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 8%;
+
+    width: 84%;
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--ted-cyan),
+            transparent
+        );
+
+    opacity: 0.55;
+}
+
+
+.ted-panel + .ted-panel {
+    margin-top: 22px;
+}
+
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+.ted-section-header {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    margin-bottom: 22px;
+}
+
+
+.ted-section-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 12px;
+
+    color: var(--ted-cyan);
+
+    background:
+        rgba(0, 229, 255, 0.08);
+
+    border: 1px solid rgba(0, 229, 255, 0.18);
+
+    box-shadow:
+        0 0 20px rgba(0, 229, 255, 0.08);
+}
+
+
+.ted-section-heading {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 900;
+}
+
+
+.ted-section-description {
+    margin: 3px 0 0;
+
+    color: var(--ted-muted);
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.ted-label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #dce8f5;
+
+    font-size: 12px;
+    font-weight: 850;
+
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+
+.ted-required {
+    color: var(--ted-red);
+}
+
+
+.ted-input,
+.ted-textarea,
+.ted-select {
+    width: 100%;
+
+    border: 1px solid rgba(141, 162, 184, 0.18);
+    border-radius: 12px;
+
+    padding: 13px 14px;
+
+    color: var(--ted-text);
+
+    background:
+        rgba(2, 9, 17, 0.72);
+
+    outline: none;
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.ted-input:focus,
+.ted-textarea:focus,
+.ted-select:focus {
+    border-color: rgba(0, 229, 255, 0.55);
+
+    background:
+        rgba(0, 229, 255, 0.045);
+
+    box-shadow:
+        0 0 0 3px rgba(0, 229, 255, 0.08),
+        0 0 25px rgba(0, 229, 255, 0.05);
+}
+
+
+.ted-textarea {
+    min-height: 130px;
+
+    resize: vertical;
+}
+
+
+.ted-select option {
+    color: #111;
+
+    background: white;
+}
+
+
+.ted-help {
+    display: block;
+
+    margin-top: 7px;
+
+    color: #71869d;
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+
+.ted-field {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   FORMAT CARDS
+========================================================= */
+
+.ted-format-options {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+
+.ted-format-card {
+    position: relative;
+
+    cursor: pointer;
+
+    padding: 17px;
+
+    border: 1px solid rgba(141, 162, 184, 0.14);
+    border-radius: 14px;
+
+    background:
+        rgba(3, 10, 18, 0.55);
+
+    transition:
+        border-color 0.25s ease,
+        transform 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.ted-format-card:hover {
+    transform: translateY(-3px);
+
+    border-color:
+        rgba(0, 229, 255, 0.35);
+}
+
+
+.ted-format-card.ted-selected {
+    border-color:
+        rgba(0, 255, 136, 0.55);
+
+    background:
+        rgba(0, 255, 136, 0.055);
+
+    box-shadow:
+        0 0 25px rgba(0, 255, 136, 0.06);
+}
+
+
+.ted-format-card input {
+    position: absolute;
+
+    opacity: 0;
+}
+
+
+.ted-format-icon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 10px;
+
+    border-radius: 10px;
+
+    color: var(--ted-cyan);
+
+    background:
+        rgba(0, 229, 255, 0.08);
+}
+
+
+.ted-format-name {
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 14px;
+    font-weight: 900;
+}
+
+
+.ted-format-description {
+    display: block;
+
+    color: var(--ted-muted);
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   STATUS BOX
+========================================================= */
+
+.ted-status-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 15px;
+
+    border: 1px solid rgba(0, 229, 255, 0.12);
+    border-radius: 14px;
+
+    background:
+        rgba(0, 229, 255, 0.035);
+}
+
+
+.ted-status-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.ted-status-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 11px;
+
+    color: var(--ted-green);
+
+    background:
+        rgba(0, 255, 136, 0.08);
+}
+
+
+.ted-status-title {
+    margin: 0 0 3px;
+
+    font-size: 13px;
+    font-weight: 850;
+}
+
+
+.ted-status-text {
+    margin: 0;
+
+    color: var(--ted-muted);
+
+    font-size: 11px;
+}
+
+
+.ted-switch {
+    position: relative;
+
+    width: 52px;
+    height: 28px;
+}
+
+
+.ted-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+
+.ted-slider {
+    position: absolute;
+    inset: 0;
+
+    cursor: pointer;
+
+    border-radius: 30px;
+
+    background:
+        rgba(141, 162, 184, 0.18);
+
+    transition: 0.25s;
+}
+
+
+.ted-slider::before {
+    content: "";
+
+    position: absolute;
+
+    width: 20px;
+    height: 20px;
+
+    left: 4px;
+    top: 4px;
+
+    border-radius: 50%;
+
+    background: #fff;
+
+    transition: 0.25s;
+}
+
+
+.ted-switch input:checked + .ted-slider {
+    background:
+        rgba(0, 255, 136, 0.55);
+}
+
+
+.ted-switch input:checked + .ted-slider::before {
+    transform: translateX(24px);
+}
+
+
+/* =========================================================
+   REGISTRATION SUMMARY
+========================================================= */
+
+.ted-registration {
+    text-align: center;
+}
+
+
+.ted-registration-ring {
+    width: 135px;
+    height: 135px;
+
+    margin: 5px auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    border:
+        7px solid rgba(0, 229, 255, 0.08);
+
+    position: relative;
+}
+
+
+.ted-registration-ring::before {
+    content: "";
+
+    position: absolute;
+    inset: -7px;
+
+    border-radius: 50%;
+
+    border:
+        2px solid rgba(0, 229, 255, 0.45);
+
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+
+    transform: rotate(-35deg);
+}
+
+
+.ted-registration-number {
+    font-size: 34px;
+    font-weight: 950;
+
+    color: var(--ted-cyan);
+}
+
+
+.ted-registration-label {
+    display: block;
+
+    margin-top: -2px;
+
+    color: var(--ted-muted);
+
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   INFO ROWS
+========================================================= */
+
+.ted-info-list {
+    margin-top: 20px;
+}
+
+
+.ted-info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 13px 0;
+
+    border-bottom:
+        1px solid rgba(141, 162, 184, 0.08);
+}
+
+
+.ted-info-row:last-child {
+    border-bottom: 0;
+}
+
+
+.ted-info-label {
+    color: var(--ted-muted);
+
+    font-size: 11px;
+}
+
+
+.ted-info-value {
+    color: var(--ted-text);
+
+    font-size: 12px;
+    font-weight: 800;
+
+    text-align: right;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.ted-actions {
+    display: flex;
+
+    gap: 12px;
+
+    margin-top: 25px;
+}
+
+
+.ted-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    min-height: 48px;
+
+    padding: 12px 20px;
+
+    border-radius: 12px;
+
+    font-size: 12px;
+    font-weight: 900;
+
+    letter-spacing: 0.5px;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.ted-save-button {
+    flex: 1;
+
+    border: 1px solid rgba(0, 255, 136, 0.4);
+
+    color: #001b0e;
+
+    background:
+        linear-gradient(
+            135deg,
+            #00ff88,
+            #00d9a0
+        );
+
+    box-shadow:
+        0 12px 30px rgba(0, 255, 136, 0.14);
+}
+
+
+.ted-save-button:hover {
+    color: #001b0e;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 16px 35px rgba(0, 255, 136, 0.22);
+}
+
+
+.ted-cancel-button {
+    border:
+        1px solid rgba(141, 162, 184, 0.18);
+
+    color: var(--ted-muted);
+
+    background:
+        rgba(141, 162, 184, 0.05);
+}
+
+
+.ted-cancel-button:hover {
+    color: white;
+
+    background:
+        rgba(141, 162, 184, 0.1);
+}
+
+
+/* =========================================================
+   WARNING
+========================================================= */
+
+.ted-warning {
+    display: flex;
+    gap: 12px;
+
+    margin-top: 18px;
+    padding: 14px;
+
+    border:
+        1px solid rgba(255, 159, 67, 0.2);
+
+    border-radius: 13px;
+
+    background:
+        rgba(255, 159, 67, 0.045);
+}
+
+
+.ted-warning-icon {
+    color: var(--ted-orange);
+}
+
+
+.ted-warning-text {
+    margin: 0;
+
+    color: #9db0c2;
+
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+
+.ted-warning-text strong {
+    color: #ffd2a7;
+}
+
+
+/* =========================================================
+   HOST CARD
+========================================================= */
+
+.ted-host-card {
+    text-align: center;
+}
+
+
+.ted-host-avatar {
+    width: 75px;
+    height: 75px;
+
+    margin: 0 auto 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    border:
+        2px solid rgba(0, 229, 255, 0.25);
+
+    background:
+        rgba(0, 229, 255, 0.07);
+
+    overflow: hidden;
+}
+
+
+.ted-host-avatar img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+.ted-host-avatar i {
+    font-size: 28px;
+
+    color: var(--ted-cyan);
+}
+
+
+.ted-host-name {
+    margin: 0;
+
+    font-size: 16px;
+    font-weight: 900;
+}
+
+
+.ted-host-label {
+    margin: 4px 0 0;
+
+    color: var(--ted-muted);
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   GROUP CONFIGURATION
+========================================================= */
+
+.ted-group-fields {
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+.ted-group-fields.ted-hidden {
+    display: none;
+}
+
+
+.ted-hybrid-note {
+    display: flex;
+    gap: 11px;
+
+    margin-top: 15px;
+    padding: 13px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(139, 92, 246, 0.06);
+
+    border:
+        1px solid rgba(139, 92, 246, 0.16);
+
+    color: #b8a8e9;
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   VALIDATION
+========================================================= */
+
+.ted-error {
+    display: none;
+
+    margin-top: 7px;
+
+    color: var(--ted-red);
+
+    font-size: 11px;
+}
+
+
+.ted-field-invalid .ted-input,
+.ted-field-invalid .ted-select {
+    border-color:
+        rgba(255, 77, 103, 0.65);
+
+    box-shadow:
+        0 0 0 3px rgba(255, 77, 103, 0.07);
+}
+
+
+.ted-field-invalid .ted-error {
+    display: block;
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+.ted-animate {
+    opacity: 0;
+
+    transform: translateY(18px);
+
+    animation:
+        tedFadeUp
+        0.65s
+        ease
+        forwards;
+}
+
+
+.ted-delay-1 {
+    animation-delay: 0.08s;
+}
+
+
+.ted-delay-2 {
+    animation-delay: 0.16s;
+}
+
+
+.ted-delay-3 {
+    animation-delay: 0.24s;
+}
+
+
+.ted-delay-4 {
+    animation-delay: 0.32s;
+}
+
+
+@keyframes tedFadeUp {
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .ted-editor-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 767.98px) {
+
+    .ted-arena {
+        padding-top: 22px;
+    }
+
+    .ted-panel {
+        padding: 20px;
+        border-radius: 17px;
+    }
+
+    .ted-format-options {
+        grid-template-columns: 1fr;
+    }
+
+    .ted-topbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .ted-actions {
+        flex-direction: column;
+    }
+
+}
+
+
+@media (max-width: 575.98px) {
+
+    .ted-title {
+        font-size: 38px;
+    }
+
+    .ted-panel {
+        padding: 17px;
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .ted-animate,
+    .ted-particle,
+    .ted-top-dot {
+        animation: none !important;
+    }
+
+    .ted-format-card,
+    .ted-button,
+    .ted-back-button {
+        transition: none !important;
+    }
+
+}
+
+
+/* EDIT SAFETY / LOCKED CONTROLS */
+.ted-edit-status{display:flex;align-items:center;gap:16px;margin:0 auto 24px;padding:18px 20px;border:1px solid rgba(0,229,255,.18);border-radius:18px;background:rgba(8,17,29,.82);box-shadow:0 14px 45px rgba(0,0,0,.18);position:relative;z-index:2}.ted-edit-status-icon{width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border-radius:14px;background:rgba(0,229,255,.10);color:var(--ted-cyan);font-size:19px}.ted-edit-status-content{min-width:0;display:flex;flex-direction:column;gap:4px}.ted-edit-status-content strong{color:var(--ted-text);font-size:15px}.ted-edit-status-content span{color:var(--ted-muted);font-size:13px;line-height:1.55}.ted-lock-badge{display:inline-flex;align-items:center;gap:5px;margin-left:7px;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.4px;color:var(--ted-orange);background:rgba(255,159,67,.10);border:1px solid rgba(255,159,67,.20);vertical-align:middle}.ted-input:disabled,.ted-select:disabled{opacity:.58;cursor:not-allowed;background:rgba(255,255,255,.035);border-color:rgba(141,162,184,.12)}.ted-format-card:has(input:disabled){cursor:not-allowed}.ted-format-card:has(input:disabled) .ted-format-description,.ted-format-card:has(input:disabled) .ted-format-name{opacity:.65}@media(max-width:576px){.ted-edit-status{align-items:flex-start;padding:15px}.ted-lock-badge{display:flex;width:max-content;margin:7px 0 0}}
+
+
+.ted-locked-input {
+    opacity: 0.62 !important;
+    cursor: not-allowed !important;
+    border-color: rgba(255, 159, 67, 0.28) !important;
+    background: rgba(255, 159, 67, 0.045) !important;
+}
+
+.ted-structure-locked .ted-format-card {
+    cursor: not-allowed;
+    opacity: 0.72;
+}
+
+</style>
+
+
+<div class="ted-arena">
+
+
+    <!-- =====================================================
+         BACKGROUND
+    ====================================================== -->
+
+    <div class="ted-background">
+
+        <div class="ted-pitch-grid"></div>
+
+        <div class="ted-glow ted-glow-one"></div>
+
+        <div class="ted-glow ted-glow-two"></div>
+
+        <div class="ted-glow ted-glow-three"></div>
+
+        <div
+            class="ted-particles"
+            id="tedParticles"
+        ></div>
+
+        <div class="ted-scanline"></div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CONTENT
+    ====================================================== -->
+
+    <div class="container-fluid ted-container">
+
+
+        <!-- =================================================
+             TOP BAR
+        ================================================== -->
+
+        <div class="ted-topbar ted-animate">
+
+            <a
+                href="{% url 'view_tournament' tournament.t_id %}"
+                class="ted-back-button"
+            >
+
+                <i class="fas fa-arrow-left"></i>
+
+                <span>Back to Tournament</span>
+
+            </a>
+
+
+            <div class="ted-top-label">
+
+                <span class="ted-top-dot"></span>
+
+                Tournament Control Center
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="ted-hero ted-animate ted-delay-1">
+
+            <div class="ted-kicker">
+
+                <span class="ted-kicker-line"></span>
+
+                Championship Management
+
+            </div>
+
+
+            <h1 class="ted-title">
+
+                Edit
+                <span>Tournament</span>
+
+            </h1>
+
+
+            <p class="ted-subtitle">
+
+                Update tournament information, competition format,
+                team capacity and squad configuration before the
+                first match begins.
+
+            </p>
+
+        </section>
+
+        <!-- EDIT SAFETY STATUS -->
+        <section class="ted-edit-status ted-animate ted-delay-2">
+            <div class="ted-edit-status-icon">
+                <i class="fas {% if has_matches %}fa-lock{% elif has_registrations %}fa-shield-alt{% else %}fa-unlock{% endif %}"></i>
+            </div>
+            <div class="ted-edit-status-content">
+                <strong>
+                    {% if has_matches %}Fixture-safe editing mode{% elif has_registrations %}Registration-safe editing mode{% else %}Full configuration editing mode{% endif %}
+                </strong>
+                <span>
+                    {% if has_matches %}
+                        {{ registered_count }} club{{ registered_count|pluralize }} registered and fixtures already exist. Competition structure and tournament date are locked.
+                    {% elif has_registrations %}
+                        {{ registered_count }} club{{ registered_count|pluralize }} already registered. Competition structure is locked so existing registrations cannot be invalidated.
+                    {% else %}
+                        No clubs are registered yet. Tournament configuration can still be changed safely.
+                    {% endif %}
+                </span>
+            </div>
+        </section>
+
+
+
+        <!-- =================================================
+             EDITOR GRID
+        ================================================== -->
+
+        <form
+            method="POST"
+            action="{% url 'edit_tournament' tournament.t_id %}"
+            id="tedTournamentForm"
+            class="ted-editor-grid"
+            novalidate
+        >
+
+            {% csrf_token %}
+
+
+            <!-- =================================================
+                 LEFT COLUMN
+            ================================================== -->
+
+            <div>
+
+
+                <!-- =============================================
+                     BASIC INFORMATION
+                ============================================== -->
+
+                <section class="ted-panel ted-animate ted-delay-2">
+
+                    <div class="ted-section-header">
+
+                        <div class="ted-section-icon">
+
+                            <i class="fas fa-edit"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h2 class="ted-section-heading">
+                                Tournament Information
+                            </h2>
+
+                            <p class="ted-section-description">
+                                Basic championship details
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-4">
+
+
+                        <!-- TOURNAMENT NAME -->
+
+                        <div class="col-12">
+
+                            <div
+                                class="ted-field"
+                                id="tedNameField"
+                            >
+
+                                <label
+                                    for="tedTournamentName"
+                                    class="ted-label"
+                                >
+                                    Tournament Name
+                                    <span class="ted-required">*</span>
+                                </label>
+
+
+                                <input
+                                    type="text"
+                                    id="tedTournamentName"
+                                    name="tournament_name"
+                                    class="ted-input"
+                                    value="{{ tournament.t_name }}"
+                                    maxlength="200"
+                                    required
+                                >
+
+
+                                <span class="ted-error">
+                                    Please enter a tournament name.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- DATE -->
+
+                        <div class="col-12 col-md-6">
+
+                            <div class="ted-field">
+
+                                <label
+                                    for="tedTournamentDate"
+                                    class="ted-label"
+                                >
+                                    Tournament Date
+                                    <span class="ted-required">*</span>
+                                    {% if date_locked %}<span class="ted-lock-badge"><i class="fas fa-lock"></i> Locked</span>{% endif %}
+                                </label>
+
+
+                                <input
+                                    type="date"
+                                    id="tedTournamentDate"
+                                    name="tournament_date"
+                                    class="ted-input"
+                                    value="{{ tournament.t_date|date:'Y-m-d' }}"
+                                    {% if date_locked %}disabled{% endif %}
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- REGISTRATION DEADLINE -->
+
+                        <div class="col-12 col-md-6">
+
+                            <div class="ted-field">
+
+                                <label
+                                    for="tedRegistrationDeadline"
+                                    class="ted-label"
+                                >
+                                    Registration Deadline
+                                </label>
+
+
+                                <input
+                                    type="date"
+                                    id="tedRegistrationDeadline"
+                                    name="registration_deadline"
+                                    class="ted-input"
+                                    value="{% if tournament.registration_deadline %}{{ tournament.registration_deadline|date:'Y-m-d' }}{% endif %}"
+                                    {% if has_matches %}disabled{% endif %}
+                                >
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- DESCRIPTION -->
+
+                        <div class="col-12">
+
+                            <div class="ted-field">
+
+                                <label
+                                    for="tedDescription"
+                                    class="ted-label"
+                                >
+                                    Description
+                                </label>
+
+
+                                <textarea
+                                    id="tedDescription"
+                                    name="description"
+                                    class="ted-textarea"
+                                    maxlength="2000"
+                                >{{ tournament.description|default:"" }}</textarea>
+
+
+                                <span class="ted-help">
+                                    Give participating clubs useful
+                                    information about this tournament.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     FINANCIAL SETTINGS
+                ============================================== -->
+
+                <section class="ted-panel ted-animate ted-delay-3">
+
+                    <div class="ted-section-header">
+
+                        <div class="ted-section-icon">
+
+                            <i class="fas fa-coins"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h2 class="ted-section-heading">
+                                Financial Settings
+                            </h2>
+
+                            <p class="ted-section-description">
+                                Registration and prize information
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-4">
+
+
+                        <!-- REGISTRATION FEE -->
+
+                        <div class="col-12 col-md-6">
+
+                            <label
+                                for="tedRegistrationFee"
+                                class="ted-label"
+                            >
+                                Registration Fee
+                                {% if fee_locked %}<span class="ted-lock-badge"><i class="fas fa-lock"></i> Paid registrations</span>{% endif %}
+                            </label>
+
+
+                            <input
+                                type="number"
+                                id="tedRegistrationFee"
+                                name="registration_fee"
+                                class="ted-input"
+                                value="{{ tournament.registration_fee|default:0 }}"
+                                {% if fee_locked %}disabled{% endif %}
+                                min="0"
+                                step="0.01"
+                            >
+
+                        </div>
+
+
+
+                        <!-- PRIZE POOL -->
+
+                        <div class="col-12 col-md-6">
+
+                            <label
+                                for="tedPrizePool"
+                                class="ted-label"
+                            >
+                                Prize Pool
+                            </label>
+
+
+                            <input
+                                type="number"
+                                id="tedPrizePool"
+                                name="prize_pool"
+                                class="ted-input"
+                                value="{{ tournament.prize_pool|default:0 }}"
+                                min="0"
+                                step="0.01"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     FORMAT
+                ============================================== -->
+
+                <section class="ted-panel ted-animate ted-delay-3">
+
+                    <div class="ted-section-header">
+
+                        <div class="ted-section-icon">
+
+                            <i class="fas fa-project-diagram"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h2 class="ted-section-heading">
+                                Competition Format
+                            </h2>
+
+                            <p class="ted-section-description">
+                                Choose how tournament fixtures are generated
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ted-format-options {% if structure_locked %}ted-structure-locked{% endif %}">
+                        {% if structure_locked %}<input type="hidden" name="format" value="{{ tournament.format }}">{% endif %}
+
+
+                        <!-- LEAGUE -->
+
+                        <label
+                            class="ted-format-card"
+                            data-format="league"
+                        >
+
+                            <input
+                                type="radio"
+                                name="format"
+                                value="league"
+                                {% if structure_locked %}disabled{% endif %}
+                                {% if tournament.format == "league" %}
+                                    checked
+                                {% endif %}
+                            >
+
+
+                            <div class="ted-format-icon">
+
+                                <i class="fas fa-sync-alt"></i>
+
+                            </div>
+
+
+                            <span class="ted-format-name">
+                                Round Robin
+                            </span>
+
+
+                            <span class="ted-format-description">
+
+                                Every participating club plays
+                                against the other clubs.
+
+                            </span>
+
+                        </label>
+
+
+
+                        <!-- KNOCKOUT -->
+
+                        <label
+                            class="ted-format-card"
+                            data-format="knockout"
+                        >
+
+                            <input
+                                type="radio"
+                                name="format"
+                                value="knockout"
+                                {% if structure_locked %}disabled{% endif %}
+                                {% if tournament.format == "knockout" %}
+                                    checked
+                                {% endif %}
+                            >
+
+
+                            <div class="ted-format-icon">
+
+                                <i class="fas fa-sitemap"></i>
+
+                            </div>
+
+
+                            <span class="ted-format-name">
+                                Knockout
+                            </span>
+
+
+                            <span class="ted-format-description">
+
+                                Single-elimination bracket where
+                                losing clubs are eliminated.
+
+                            </span>
+
+                        </label>
+
+
+
+                        <!-- HYBRID -->
+
+                        <label
+                            class="ted-format-card"
+                            data-format="hybrid"
+                        >
+
+                            <input
+                                type="radio"
+                                name="format"
+                                value="hybrid"
+                                {% if structure_locked %}disabled{% endif %}
+                                {% if tournament.format == "hybrid" %}
+                                    checked
+                                {% endif %}
+                            >
+
+
+                            <div class="ted-format-icon">
+
+                                <i class="fas fa-layer-group"></i>
+
+                            </div>
+
+
+                            <span class="ted-format-name">
+                                Hybrid
+                            </span>
+
+
+                            <span class="ted-format-description">
+
+                                Group stage followed by knockout
+                                rounds.
+
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         HYBRID SETTINGS
+                    ========================================== -->
+
+                    <div
+                        id="tedGroupSettings"
+                        class="ted-group-fields mt-4"
+                    >
+
+                        <div class="row g-4">
+
+
+                            <!-- TEAMS PER GROUP -->
+
+                            <div class="col-12 col-md-6">
+
+                                <label
+                                    for="tedTeamsPerGroup"
+                                    class="ted-label"
+                                >
+                                    Teams Per Group
+                                </label>
+
+
+                                <input
+                                    type="number"
+                                    id="tedTeamsPerGroup"
+                                    name="teams_per_group"
+                                    class="ted-input {% if structure_locked %}ted-locked-input{% endif %}"
+                                    {% if structure_locked %}disabled{% endif %}
+                                    value="{{ tournament.teams_per_group|default:4 }}"
+                                    {% if structure_locked %}disabled{% endif %}
+                                    min="2"
+                                    max="32"
+                                    step="1"
+                                >
+
+
+                                <span class="ted-help">
+                                    Number of clubs placed into each
+                                    group during the group stage.
+                                </span>
+
+                            </div>
+
+
+
+                            <!-- QUALIFYING -->
+
+                            <div class="col-12 col-md-6">
+
+                                <label
+                                    for="tedTeamsQualifying"
+                                    class="ted-label"
+                                >
+                                    Teams Qualifying Per Group
+                                </label>
+
+
+                                <input
+                                    type="number"
+                                    id="tedTeamsQualifying"
+                                    name="teams_qualifying"
+                                    class="ted-input {% if structure_locked %}ted-locked-input{% endif %}"
+                                    {% if structure_locked %}disabled{% endif %}
+                                    value="{{ tournament.teams_qualifying|default:2 }}"
+                                    {% if structure_locked %}disabled{% endif %}
+                                    min="1"
+                                    max="31"
+                                    step="1"
+                                >
+
+
+                                <span class="ted-help">
+                                    Number of clubs advancing from
+                                    each group to the knockout stage.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ted-hybrid-note">
+
+                            <i class="fas fa-info-circle"></i>
+
+                            <span>
+                                Hybrid settings are only used when
+                                the selected format is Hybrid.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     CAPACITY
+                ============================================== -->
+
+                <section class="ted-panel ted-animate ted-delay-4">
+
+                    <div class="ted-section-header">
+
+                        <div class="ted-section-icon">
+
+                            <i class="fas fa-users"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h2 class="ted-section-heading">
+                                Tournament Capacity
+                            </h2>
+
+                            <p class="ted-section-description">
+                                Configure participating clubs
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-4">
+
+
+                        <!-- MAX TEAMS -->
+
+                        <div class="col-12 col-md-6">
+
+                            <label
+                                for="tedMaxTeams"
+                                class="ted-label"
+                            >
+                                Maximum Teams
+                                <span class="ted-required">*</span>
+                                {% if structure_locked %}<span class="ted-lock-badge"><i class="fas fa-lock"></i> Locked</span>{% endif %}
+                            </label>
+
+
+                            <input
+                                type="number"
+                                id="tedMaxTeams"
+                                name="max_teams"
+                                class="ted-input {% if structure_locked %}ted-locked-input{% endif %}"
+                                {% if structure_locked %}disabled{% endif %}
+                                value="{{ tournament.max_teams|default:16 }}"
+                                {% if structure_locked %}disabled{% endif %}
+                                min="{{ registered_count|default:2 }}"
+                                max="128"
+                                step="1"
+                                required
+                            >
+                            {% if structure_locked %}<input type="hidden" name="max_teams" value="{{ tournament.max_teams }}">{% endif %}
+
+
+                            <span class="ted-help">
+
+                                Current registered clubs:
+                                <strong>
+                                    {{ registered_count }}
+                                </strong>
+
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- REGISTRATION -->
+
+                        <div class="col-12 col-md-6">
+
+                            <div class="ted-status-box">
+
+                                <div class="ted-status-left">
+
+                                    <div class="ted-status-icon">
+
+                                        <i class="fas fa-user-friends"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <p class="ted-status-title">
+                                            Registered Clubs
+                                        </p>
+
+                                        <p class="ted-status-text">
+                                            Clubs already registered
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <strong
+                                    style="
+                                        color:var(--ted-cyan);
+                                        font-size:22px;
+                                    "
+                                >
+                                    {{ registered_count }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     SQUAD SIZE
+                ============================================== -->
+
+                <section class="ted-panel ted-animate ted-delay-4">
+
+                    <div class="ted-section-header">
+
+                        <div class="ted-section-icon">
+
+                            <i class="fas fa-running"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h2 class="ted-section-heading">
+                                Match Squad
+                            </h2>
+
+                            <p class="ted-section-description">
+                                Configure the playing format
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-4">
+
+
+                        <div class="col-12 col-md-6">
+
+                            <label
+                                for="tedSquadSize"
+                                class="ted-label"
+                            >
+                                Squad Size
+                                <span class="ted-required">*</span>
+                                {% if structure_locked %}<span class="ted-lock-badge"><i class="fas fa-lock"></i> Locked</span>{% endif %}
+                            </label>
+
+
+                            <select
+                                id="tedSquadSize"
+                                name="squad_size"
+                                class="ted-select"
+                                required
+                            >
+
+                                {% for size, label in squad_sizes %}
+
+                                    <option
+                                        value="{{ size }}"
+                                        {% if tournament.squad_size == size %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ label }}
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+                            {% if structure_locked %}<input type="hidden" name="squad_size" value="{{ tournament.squad_size }}">{% endif %}
+
+                            <span class="ted-help">
+                                This value will be used when
+                                generating tournament matches.
+                            </span>
+
+                        </div>
+
+
+                        <div class="col-12 col-md-6">
+
+                            <div class="ted-status-box">
+
+                                <div class="ted-status-left">
+
+                                    <div class="ted-status-icon">
+
+                                        <i class="fas fa-futbol"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <p class="ted-status-title">
+                                            Current Match Format
+                                        </p>
+
+                                        <p class="ted-status-text">
+                                            Tournament matches will use
+                                            the selected squad size.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     ACTIVE STATUS
+                ============================================== -->
+
+                <section class="ted-panel ted-animate ted-delay-4">
+
+                    <div class="ted-section-header">
+
+                        <div class="ted-section-icon">
+
+                            <i class="fas fa-power-off"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h2 class="ted-section-heading">
+                                Tournament Status
+                            </h2>
+
+                            <p class="ted-section-description">
+                                Control tournament visibility
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ted-status-box">
+
+                        <div class="ted-status-left">
+
+                            <div class="ted-status-icon">
+
+                                <i class="fas fa-broadcast-tower"></i>
+
+                            </div>
+
+                            <div>
+
+                                <p class="ted-status-title">
+                                    Tournament Active
+                                </p>
+
+                                <p class="ted-status-text">
+                                    Active tournaments can be shown
+                                    to participating managers.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <label class="ted-switch">
+
+                            <input
+                                type="checkbox"
+                                name="is_active"
+                                {% if tournament.is_active %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <span class="ted-slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     WARNING
+                ============================================== -->
+
+                <div class="ted-warning ted-animate">
+
+                    <div class="ted-warning-icon">
+
+                        <i class="fas fa-exclamation-triangle"></i>
+
+                    </div>
+
+
+                    <p class="ted-warning-text">
+
+                        <strong>Important:</strong>
+
+                        Tournament configuration should be changed
+                        before the first match starts. Changing the
+                        format or tournament settings may rebuild
+                        unstarted tournament fixtures.
+
+                    </p>
+
+                </div>
+
+
+
+                <!-- =============================================
+                     ACTIONS
+                ============================================== -->
+
+                <div class="ted-actions ted-animate">
+
+                    <a
+                        href="{% url 'view_tournament' tournament.t_id %}"
+                        class="ted-button ted-cancel-button"
+                    >
+
+                        <i class="fas fa-times"></i>
+
+                        Cancel
+
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="ted-button ted-save-button"
+                        id="tedSaveButton"
+                    >
+
+                        <i class="fas fa-save"></i>
+
+                        <span>
+                            Save Tournament
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 RIGHT COLUMN
+            ================================================== -->
+
+            <aside>
+
+
+                <!-- =============================================
+                     REGISTRATION CARD
+                ============================================== -->
+
+                <section class="ted-panel ted-registration ted-animate ted-delay-2">
+
+                    <div class="ted-section-header">
+
+                        <div class="ted-section-icon">
+
+                            <i class="fas fa-chart-pie"></i>
+
+                        </div>
+
+                        <div style="text-align:left;">
+
+                            <h2 class="ted-section-heading">
+                                Registration
+                            </h2>
+
+                            <p class="ted-section-description">
+                                Current participation
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ted-registration-ring">
+
+                        <div>
+
+                            <div class="ted-registration-number">
+                                {{ registered_count }}
+                            </div>
+
+                            <span class="ted-registration-label">
+                                Clubs
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ted-info-list">
+
+                        <div class="ted-info-row">
+
+                            <span class="ted-info-label">
+                                Maximum
+                            </span>
+
+                            <span
+                                class="ted-info-value"
+                                id="tedMaxTeamsDisplay"
+                            >
+                                {{ tournament.max_teams }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="ted-info-row">
+
+                            <span class="ted-info-label">
+                                Available
+                            </span>
+
+                            <span
+                                class="ted-info-value"
+                                id="tedAvailableDisplay"
+                            >
+                                0
+                            </span>
+
+                        </div>
+
+
+                        <div class="ted-info-row">
+
+                            <span class="ted-info-label">
+                                Format
+                            </span>
+
+                            <span
+                                class="ted-info-value"
+                                id="tedFormatDisplay"
+                            >
+                                {{ tournament.get_format_display }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="ted-info-row">
+
+                            <span class="ted-info-label">
+                                Squad
+                            </span>
+
+                            <span
+                                class="ted-info-value"
+                                id="tedSquadDisplay"
+                            >
+                                {{ tournament.squad_size }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     HOST CARD
+                ============================================== -->
+
+                <section class="ted-panel ted-host-card ted-animate ted-delay-3">
+
+                    <div class="ted-section-header">
+
+                        <div class="ted-section-icon">
+
+                            <i class="fas fa-crown"></i>
+
+                        </div>
+
+                        <div style="text-align:left;">
+
+                            <h2 class="ted-section-heading">
+                                Tournament Host
+                            </h2>
+
+                            <p class="ted-section-description">
+                                Championship organizer
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ted-host-avatar">
+
+                        {% if tournament.t_host.club_logo %}
+
+                            <img
+                                src="{{ tournament.t_host.club_logo.url }}"
+                                alt="{{ tournament.t_host.club_name }}"
+                            >
+
+                        {% else %}
+
+                            <i class="fas fa-shield-alt"></i>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <p class="ted-host-name">
+
+                        {{ tournament.t_host.club_name|default:"Unknown" }}
+
+                    </p>
+
+
+                    <p class="ted-host-label">
+
+                        Official Tournament Host
+
+                    </p>
+
+                </section>
+
+
+
+                <!-- =============================================
+                     TOURNAMENT ID
+                ============================================== -->
+
+                <section class="ted-panel ted-animate ted-delay-4">
+
+                    <div class="ted-section-header">
+
+                        <div class="ted-section-icon">
+
+                            <i class="fas fa-fingerprint"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h2 class="ted-section-heading">
+                                Tournament ID
+                            </h2>
+
+                            <p class="ted-section-description">
+                                System identifier
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        style="
+                            padding:14px;
+                            border-radius:12px;
+                            background:rgba(0,0,0,.25);
+                            border:1px solid rgba(141,162,184,.10);
+                            color:var(--ted-cyan);
+                            font-size:18px;
+                            font-weight:900;
+                            text-align:center;
+                            letter-spacing:2px;
+                        "
+                    >
+
+                        #{{ tournament.t_id }}
+
+                    </div>
+
+                </section>
+
+            </aside>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+
+    /* =========================================================
+       PARTICLES
+    ========================================================= */
+
+    const particleContainer =
+        document.getElementById("tedParticles");
+
+
+    if (particleContainer) {
+
+        const particleCount = 35;
+
+
+        for (let i = 0; i < particleCount; i++) {
+
+            const particle =
+                document.createElement("span");
+
+
+            particle.className =
+                "ted-particle";
+
+
+            const size =
+                Math.random() * 3 + 2;
+
+
+            const duration =
+                Math.random() * 7 + 5;
+
+
+            const delay =
+                Math.random() * 6;
+
+
+            particle.style.width =
+                `${size}px`;
+
+
+            particle.style.height =
+                `${size}px`;
+
+
+            particle.style.left =
+                `${Math.random() * 100}%`;
+
+
+            particle.style.top =
+                `${Math.random() * 100}%`;
+
+
+            particle.style.setProperty(
+                "--ted-particle-duration",
+                `${duration}s`
+            );
+
+
+            particle.style.setProperty(
+                "--ted-particle-delay",
+                `${delay}s`
+            );
+
+
+            particleContainer.appendChild(
+                particle
+            );
+
+        }
+
+    }
+
+
+
+    /* =========================================================
+       FORMAT ELEMENTS
+    ========================================================= */
+
+    const formatInputs =
+        document.querySelectorAll(
+            'input[name="format"]'
+        );
+
+
+    const formatCards =
+        document.querySelectorAll(
+            ".ted-format-card"
+        );
+
+
+    const groupSettings =
+        document.getElementById(
+            "tedGroupSettings"
+        );
+
+
+    const teamsPerGroup =
+        document.getElementById(
+            "tedTeamsPerGroup"
+        );
+
+
+    const teamsQualifying =
+        document.getElementById(
+            "tedTeamsQualifying"
+        );
+
+
+    const formatDisplay =
+        document.getElementById(
+            "tedFormatDisplay"
+        );
+
+
+    /* =========================================================
+       FORMAT LABELS
+    ========================================================= */
+
+    const formatLabels = {
+
+        league: "Round Robin",
+
+        knockout: "Knockout",
+
+        hybrid: "Hybrid"
+
+    };
+
+
+    /* =========================================================
+       UPDATE FORMAT UI
+    ========================================================= */
+
+    function updateFormatUI() {
+
+        let selectedFormat = "hybrid";
+
+
+        formatInputs.forEach(function (input) {
+
+            if (input.checked) {
+
+                selectedFormat =
+                    input.value;
+
+            }
+
+        });
+
+
+        /* -----------------------------------------
+           SELECTED CARD
+        ----------------------------------------- */
+
+        formatCards.forEach(function (card) {
+
+            const cardFormat =
+                card.dataset.format;
+
+
+            if (
+                cardFormat === selectedFormat
+            ) {
+
+                card.classList.add(
+                    "ted-selected"
+                );
+
+            } else {
+
+                card.classList.remove(
+                    "ted-selected"
+                );
+
+            }
+
+        });
+
+
+        /* -----------------------------------------
+           GROUP SETTINGS
+        ----------------------------------------- */
+
+        if (selectedFormat === "hybrid") {
+
+            if (groupSettings) {
+
+                groupSettings.classList.remove(
+                    "ted-hidden"
+                );
+
+            }
+
+            if (teamsPerGroup) {
+
+                teamsPerGroup.disabled =
+                    false;
+
+            }
+
+            if (teamsQualifying) {
+
+                teamsQualifying.disabled =
+                    false;
+
+            }
+
+        } else {
+
+            if (groupSettings) {
+
+                groupSettings.classList.add(
+                    "ted-hidden"
+                );
+
+            }
+
+            if (teamsPerGroup) {
+
+                teamsPerGroup.disabled =
+                    true;
+
+            }
+
+            if (teamsQualifying) {
+
+                teamsQualifying.disabled =
+                    true;
+
+            }
+
+        }
+
+
+        /* -----------------------------------------
+           SUMMARY
+        ----------------------------------------- */
+
+        if (formatDisplay) {
+
+            formatDisplay.textContent =
+                formatLabels[selectedFormat]
+                || selectedFormat;
+
+        }
+
+    }
+
+
+    formatInputs.forEach(function (input) {
+
+        input.addEventListener(
+            "change",
+            updateFormatUI
+        );
+
+    });
+
+
+    updateFormatUI();
+
+
+
+    /* =========================================================
+       MAX TEAM SUMMARY
+    ========================================================= */
+
+    const maxTeamsInput =
+        document.getElementById(
+            "tedMaxTeams"
+        );
+
+
+    const maxTeamsDisplay =
+        document.getElementById(
+            "tedMaxTeamsDisplay"
+        );
+
+
+    const availableDisplay =
+        document.getElementById(
+            "tedAvailableDisplay"
+        );
+
+
+    const registeredCount =
+        {{ registered_count|default:0 }};
+
+    const structureLocked =
+        {{ structure_locked|yesno:"true,false" }};
+
+
+    function updateCapacity() {
+
+        if (!maxTeamsInput) {
+            return;
+        }
+
+
+        let maxTeams =
+            parseInt(
+                maxTeamsInput.value,
+                10
+            );
+
+
+        if (isNaN(maxTeams)) {
+
+            maxTeams = 0;
+
+        }
+
+
+        if (maxTeamsDisplay) {
+
+            maxTeamsDisplay.textContent =
+                maxTeams;
+
+        }
+
+
+        if (availableDisplay) {
+
+            const available =
+                Math.max(
+                    0,
+                    maxTeams - registeredCount
+                );
+
+
+            availableDisplay.textContent =
+                available;
+
+        }
+
+    }
+
+
+    if (maxTeamsInput) {
+
+        maxTeamsInput.addEventListener(
+            "input",
+            updateCapacity
+        );
+
+    }
+
+
+    updateCapacity();
+
+
+
+    /* =========================================================
+       SQUAD SUMMARY
+    ========================================================= */
+
+    const squadSelect =
+        document.getElementById(
+            "tedSquadSize"
+        );
+
+
+    const squadDisplay =
+        document.getElementById(
+            "tedSquadDisplay"
+        );
+
+
+    if (squadSelect) {
+
+        squadSelect.addEventListener(
+            "change",
+            function () {
+
+                if (squadDisplay) {
+
+                    squadDisplay.textContent =
+                        squadSelect.value;
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /* =========================================================
+       GROUP VALIDATION
+    ========================================================= */
+
+    function validateHybridSettings() {
+
+        let selectedFormat =
+            document.querySelector(
+                'input[name="format"]:checked'
+            );
+
+
+        if (
+            !selectedFormat ||
+            selectedFormat.value !== "hybrid"
+        ) {
+
+            return true;
+
+        }
+
+
+        const groupSize =
+            parseInt(
+                teamsPerGroup.value,
+                10
+            );
+
+
+        const qualifying =
+            parseInt(
+                teamsQualifying.value,
+                10
+            );
+
+
+        if (
+            isNaN(groupSize) ||
+            groupSize < 2
+        ) {
+
+            teamsPerGroup.setCustomValidity(
+                "Teams per group must be at least 2."
+            );
+
+            return false;
+
+        }
+
+
+        teamsPerGroup.setCustomValidity("");
+
+
+        if (
+            isNaN(qualifying) ||
+            qualifying < 1 ||
+            qualifying >= groupSize
+        ) {
+
+            teamsQualifying.setCustomValidity(
+                "Qualifying teams must be at least 1 and less than teams per group."
+            );
+
+            return false;
+
+        }
+
+
+        teamsQualifying.setCustomValidity("");
+
+
+        return true;
+
+    }
+
+
+    if (teamsPerGroup) {
+
+        teamsPerGroup.addEventListener(
+            "input",
+            function () {
+
+                validateHybridSettings();
+
+            }
+        );
+
+    }
+
+
+    if (teamsQualifying) {
+
+        teamsQualifying.addEventListener(
+            "input",
+            function () {
+
+                validateHybridSettings();
+
+            }
+        );
+
+    }
+
+
+
+    /* =========================================================
+       MAX TEAM VALIDATION
+    ========================================================= */
+
+    if (maxTeamsInput) {
+
+        maxTeamsInput.addEventListener(
+            "input",
+            function () {
+
+                const value =
+                    parseInt(
+                        maxTeamsInput.value,
+                        10
+                    );
+
+
+                if (
+                    !isNaN(value) &&
+                    value < registeredCount
+                ) {
+
+                    maxTeamsInput.setCustomValidity(
+                        "Maximum teams cannot be less than the number of already registered clubs."
+                    );
+
+                } else {
+
+                    maxTeamsInput.setCustomValidity(
+                        ""
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /* =========================================================
+       FORM SUBMISSION
+    ========================================================= */
+
+    const form =
+        document.getElementById(
+            "tedTournamentForm"
+        );
+
+
+    const saveButton =
+        document.getElementById(
+            "tedSaveButton"
+        );
+
+
+    let submitted = false;
+
+
+    if (form) {
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+
+                /* -----------------------------
+                   BASIC HTML VALIDATION
+                ------------------------------ */
+
+                if (!form.checkValidity()) {
+
+                    event.preventDefault();
+
+                    form.reportValidity();
+
+                    return;
+
+                }
+
+
+                /* -----------------------------
+                   HYBRID VALIDATION
+                ------------------------------ */
+
+                if (!validateHybridSettings()) {
+
+                    event.preventDefault();
+
+                    form.reportValidity();
+
+                    return;
+
+                }
+
+
+                /* -----------------------------
+                   CAPACITY + SQUAD VALIDATION
+                ------------------------------ */
+
+                if (!structureLocked && maxTeamsInput) {
+                    const maxTeams = parseInt(maxTeamsInput.value, 10);
+                    if (isNaN(maxTeams) || maxTeams < registeredCount) {
+                        event.preventDefault();
+                        maxTeamsInput.setCustomValidity(
+                            "Maximum teams cannot be less than the current registered clubs."
+                        );
+                        maxTeamsInput.reportValidity();
+                        return;
+                    }
+                    maxTeamsInput.setCustomValidity("");
+                }
+
+                if (!structureLocked && squadSelect) {
+                    const squad = parseInt(squadSelect.value, 10);
+                    if (isNaN(squad) || squad < 1) {
+                        event.preventDefault();
+                        squadSelect.setCustomValidity(
+                            "Please select a valid squad size."
+                        );
+                        squadSelect.reportValidity();
+                        return;
+                    }
+                    squadSelect.setCustomValidity("");
+                }
+
+                /* -----------------------------
+                   PREVENT DOUBLE SUBMIT
+                ------------------------------ */
+
+                if (submitted) {
+
+                    event.preventDefault();
+
+                    return;
+
+                }
+
+
+                submitted = true;
+
+
+                if (saveButton) {
+
+                    saveButton.disabled =
+                        true;
+
+
+                    saveButton.style.opacity =
+                        "0.65";
+
+
+                    saveButton.style.cursor =
+                        "not-allowed";
+
+
+                    const icon =
+                        saveButton.querySelector(
+                            "i"
+                        );
+
+
+                    const text =
+                        saveButton.querySelector(
+                            "span"
+                        );
+
+
+                    if (icon) {
+
+                        icon.className =
+                            "fas fa-spinner fa-spin";
+
+                    }
+
+
+                    if (text) {
+
+                        text.textContent =
+                            "Saving...";
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /* =========================================================
+       UNSAVED CHANGES
+    ========================================================= */
+
+    let formChanged = false;
+
+
+    if (form) {
+
+        form.querySelectorAll(
+            "input, textarea, select"
+        ).forEach(function (element) {
+
+            element.addEventListener(
+                "change",
+                function () {
+
+                    formChanged = true;
+
+                }
+            );
+
+
+            element.addEventListener(
+                "input",
+                function () {
+
+                    formChanged = true;
+
+                }
+            );
+
+        });
+
+    }
+
+
+    window.addEventListener(
+        "beforeunload",
+        function (event) {
+
+            if (
+                formChanged &&
+                !submitted
+            ) {
+
+                event.preventDefault();
+
+                event.returnValue = "";
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       CANCEL BUTTON
+    ========================================================= */
+
+    document.querySelectorAll(
+        ".ted-cancel-button, .ted-back-button"
+    ).forEach(function (button) {
+
+        button.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    formChanged &&
+                    !submitted
+                ) {
+
+                    const confirmed =
+                        window.confirm(
+                            "You have unsaved changes. Leave this page?"
+                        );
+
+
+                    if (!confirmed) {
+
+                        event.preventDefault();
+
+                    }
+
+                }
+
+            }
+        );
+
+    });
+
+});
+
+</script>
+
+{% endblock %}
+

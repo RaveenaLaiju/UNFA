@@ -1,0 +1,381 @@
+{% extends 'admin/admin_base.html' %}
+{% block title %}Notifications - Football Arena Admin{% endblock %}
+
+{% block content %}
+
+<style>
+.fb-sec4-roster,
+.fb-sec4-roster.table,
+.fb-sec4-roster.table-hover,
+.fb-sec4-roster.table-borderless {
+    background: transparent !important;
+    --bs-table-bg: transparent !important;
+    --bs-table-hover-bg: rgba(0, 255, 136, 0.05) !important;
+    border-color: rgba(255,255,255,0.08) !important;
+}
+
+.fb-sec4-roster thead tr,
+.fb-sec4-roster tbody tr {
+    background: transparent !important;
+    --bs-table-bg: transparent !important;
+    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+}
+
+.fb-sec4-roster th,
+.fb-sec4-roster td {
+    background: transparent !important;
+    color: rgba(255,255,255,0.85) !important;
+    border: none !important;
+}
+</style>
+<main class="fb-sec1-admin-arena container-fluid">
+
+    <header class="fb-sec2-scoreboard row g-3 mb-4">
+        <div class="col-12">
+            <div class="fb-glass-card fb-sec2-glass-hero p-3 p-md-4">
+                <div class="row align-items-center">
+                    <!-- Match Title & Live Badge -->
+                    <div class="col-12 col-lg-8 text-center text-lg-start mb-3 mb-lg-0">
+                        <div class="fb-sec2-live-badge mb-2 d-inline-flex align-items-center gap-2">
+                            <span class="fb-sec2-pulse-dot"></span>
+                            <span class="fb-sec2-live-text text-uppercase fw-bold tracking-wider">Live Match Center</span>
+                        </div>
+                        <h1 class="fb-sec2-match-title display-5 fw-bold mb-2">
+                            <span class="fb-sec2-arena-icon">🏟️</span> Notifications
+                        </h1>
+                        <p class="fb-sec2-match-subtitle lead mb-0 opacity-75">
+                            View and manage all user match events in real-time
+                        </p>
+                    </div>
+                    <!-- Live Stats Counter -->
+                    <div class="col-12 col-lg-4">
+                        <div class="fb-sec2-stats-row row g-2 text-center">
+                            <div class="col-4">
+                                <div class="fb-glass-mini fb-sec2-stat-box p-2">
+                                    <span class="fb-sec2-stat-num display-6 fw-bold" id="fb-stat2-total">0</span>
+                                    <span class="fb-sec2-stat-label small text-uppercase d-block mt-1">Total</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="fb-glass-mini fb-sec2-stat-box p-2">
+                                    <span class="fb-sec2-stat-num display-6 fw-bold text-warning" id="fb-stat2-unread">0</span>
+                                    <span class="fb-sec2-stat-label small text-uppercase d-block mt-1">Unread</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="fb-glass-mini fb-sec2-stat-box p-2">
+                                    <span class="fb-sec2-stat-num display-6 fw-bold text-success" id="fb-stat2-read">0</span>
+                                    <span class="fb-sec2-stat-label small text-uppercase d-block mt-1">Read</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="fb-sec3-tactics-bar row g-3 mb-4" aria-label="Notification filters">
+        <div class="col-12">
+            <div class="fb-glass-card fb-sec3-filter-card p-3 p-md-4">
+                <form id="fb-sec3-filterForm" method="get" class="row g-3 align-items-end">
+
+                    <!-- Type Filter Squad -->
+                    <div class="col-12 col-md-6 col-lg-5">
+                        <fieldset class="fb-sec3-filter-squad">
+                            <legend class="fb-sec3-filter-legend fw-bold mb-2 d-flex align-items-center gap-2">
+                                <span>⚡</span> Notification Type
+                            </legend>
+                            <div class="fb-sec3-filter-chips d-flex flex-wrap gap-2">
+                                <a href="?type=all{% if read_filter != 'all' %}&read={{ read_filter }}{% endif %}" 
+                                   class="fb-sec3-chip btn btn-sm {% if type_filter == 'all' or not type_filter %}btn-light active{% else %}btn-outline-light{% endif %}">
+                                    <span>🌐</span> <span class="d-none d-sm-inline">All</span>
+                                </a>
+                                <a href="?type=info{% if read_filter != 'all' %}&read={{ read_filter }}{% endif %}" 
+                                   class="fb-sec3-chip btn btn-sm {% if type_filter == 'info' %}btn-info active{% else %}btn-outline-info{% endif %}">
+                                    <span>ℹ️</span> <span class="d-none d-sm-inline">Info</span>
+                                </a>
+                                <a href="?type=success{% if read_filter != 'all' %}&read={{ read_filter }}{% endif %}" 
+                                   class="fb-sec3-chip btn btn-sm {% if type_filter == 'success' %}btn-success active{% else %}btn-outline-success{% endif %}">
+                                    <span>⚽</span> <span class="d-none d-sm-inline">Success</span>
+                                </a>
+                                <a href="?type=error{% if read_filter != 'all' %}&read={{ read_filter }}{% endif %}" 
+                                   class="fb-sec3-chip btn btn-sm {% if type_filter == 'error' %}btn-danger active{% else %}btn-outline-danger{% endif %}">
+                                    <span>🚫</span> <span class="d-none d-sm-inline">Error</span>
+                                </a>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- Status Filter Squad -->
+                    <div class="col-12 col-md-6 col-lg-5">
+                        <fieldset class="fb-sec3-filter-squad">
+                            <legend class="fb-sec3-filter-legend fw-bold mb-2 d-flex align-items-center gap-2">
+                                <span>📊</span> Match Status
+                            </legend>
+                            <div class="fb-sec3-filter-chips d-flex flex-wrap gap-2">
+                                <a href="?read=all{% if type_filter != 'all' %}&type={{ type_filter }}{% endif %}" 
+                                   class="fb-sec3-chip btn btn-sm {% if read_filter == 'all' or not read_filter %}btn-light active{% else %}btn-outline-light{% endif %}">
+                                    <span>📋</span> <span class="d-none d-sm-inline">All</span>
+                                </a>
+                                <a href="?read=unread{% if type_filter != 'all' %}&type={{ type_filter }}{% endif %}" 
+                                   class="fb-sec3-chip btn btn-sm {% if read_filter == 'unread' %}btn-warning active text-dark{% else %}btn-outline-warning{% endif %}">
+                                    <span>🔴</span> <span class="d-none d-sm-inline">Unread</span>
+                                </a>
+                                <a href="?read=read{% if type_filter != 'all' %}&type={{ type_filter }}{% endif %}" 
+                                   class="fb-sec3-chip btn btn-sm {% if read_filter == 'read' %}btn-success active{% else %}btn-outline-success{% endif %}">
+                                    <span>✓</span> <span class="d-none d-sm-inline">Read</span>
+                                </a>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="col-12 col-lg-2">
+                        <div class="fb-sec3-action-group d-grid">
+                            <a href="{% url 'admin_view_notifications' %}" class="fb-sec3-btn-clear btn btn-outline-danger">
+                                <span>✕</span> <span class="d-none d-md-inline">Clear Filters</span>
+                                <span class="d-md-none">Clear</span>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <section class="fb-sec4-pitch-table row g-3 mb-4 d-none d-lg-block">
+        <div class="col-12">
+            <div class="fb-glass-card fb-sec4-table-card p-0 overflow-hidden">
+                <div class="table-responsive">
+                  
+                    <table class="fb-sec4-roster table table-hover table-borderless mb-0 align-middle" 
+                           id="fb-sec4-notificationsTable" style="table-layout: fixed; width: 100%;">
+                        <thead class="fb-sec4-roster-header">
+                            <tr class="text-uppercase small fw-bold tracking-wider">
+                                <th scope="col" class="fb-sec4-th-id px-3 py-3" style="width: 60px;">#ID</th>
+                                <th scope="col" class="fb-sec4-th-player px-3 py-3" style="width: 13%;">Player</th>
+                                <th scope="col" class="fb-sec4-th-play px-3 py-3" style="width: 32%;">Play Description</th>
+                                <th scope="col" class="fb-sec4-th-tactic px-3 py-3" style="width: 95px;">Tactic</th>
+                                <th scope="col" class="fb-sec4-th-status px-3 py-3" style="width: 105px;">Status</th>
+                                <th scope="col" class="fb-sec4-th-time px-3 py-3" style="width: 135px;">Match Time</th>
+                            </tr>
+                        </thead>
+                        <tbody class="fb-sec4-tbody">
+                            {% for notif in notifications %}
+                            <tr class="fb-sec4-player-row {% if not notif.is_read %}fb-sec4-row-unread{% endif %} transition-all">
+                                <td class="fb-sec4-td-id px-3 py-3" data-label="ID" style="width: 60px;">
+                                    <span class="fb-sec4-jersey-badge badge bg-dark bg-opacity-50 rounded-pill">#{{ notif.id }}</span>
+                                </td>
+                                <td class="fb-sec4-td-player px-3 py-3" data-label="Player" style="width: 13%;">
+                                    <div class="fb-sec4-player-id d-flex align-items-center gap-2">
+                                        <div class="fb-sec4-avatar rounded-circle d-flex align-items-center justify-content-center fw-bold text-white flex-shrink-0"
+                                             style="width:38px;height:38px;background:linear-gradient(135deg,#1e5128,#4e9f3d);font-size:0.9rem;">
+                                            {{ notif.user.user_name|first|upper }}
+                                        </div>
+                                        <span class="fb-sec4-player-name fw-semibold text-truncate">{{ notif.user.user_name }}</span>
+                                    </div>
+                                </td>
+                                <td class="fb-sec4-td-play px-3 py-3" data-label="Play" style="width: 32%;">
+                                    <p class="fb-sec4-play-desc mb-0">{{ notif.message }}</p>
+                                </td>
+                                <td class="fb-sec4-td-tactic px-3 py-3" data-label="Tactic" style="width: 95px;">
+                                    {% if notif.notification_type == "success" %}
+                                    <span class="fb-sec4-badge badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 rounded-pill px-2 py-1 small">
+                                        <span class="me-1">⚽</span> Success
+                                    </span>
+                                    {% elif notif.notification_type == "error" %}
+                                    <span class="fb-sec4-badge badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25 rounded-pill px-2 py-1 small">
+                                        <span class="me-1">🚫</span> Error
+                                    </span>
+                                    {% else %}
+                                    <span class="fb-sec4-badge badge bg-info bg-opacity-25 text-info border border-info border-opacity-25 rounded-pill px-2 py-1 small">
+                                        <span class="me-1">ℹ️</span> Info
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="fb-sec4-td-status px-3 py-3" data-label="Status" style="width: 105px;">
+                                    {% if notif.is_read %}
+                                    <span class="fb-sec4-status badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 rounded-pill px-2 py-1 small">
+                                        <span class="fb-sec4-status-dot bg-success rounded-circle d-inline-block me-1" style="width:7px;height:7px;"></span> Read
+                                    </span>
+                                    {% else %}
+                                    <span class="fb-sec4-status badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25 rounded-pill px-2 py-1 small">
+                                        <span class="fb-sec4-status-dot bg-warning rounded-circle d-inline-block me-1" style="width:7px;height:7px;"></span> Unread
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="fb-sec4-td-time px-3 py-3" data-label="Time" style="width: 135px;">
+                                    <time class="fb-sec4-match-time small opacity-75 text-nowrap">
+                                        <span class="me-1">⏱️</span> {{ notif.created_at|timesince }} ago
+                                    </time>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="fb-sec4-empty-cell text-center py-5">
+                                    <div class="fb-sec4-empty-stadium">
+                                        <div class="fb-sec4-empty-icon display-1 mb-3">🔔</div>
+                                        <h3 class="fb-sec4-empty-title h4 fw-bold">Stadium Empty</h3>
+                                        <p class="fb-sec4-empty-text opacity-75">No match events yet. Notifications will appear when players make their moves.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="fb-sec5-cards-pitch row g-3 d-lg-none">
+        {% for notif in notifications %}
+        <div class="col-12 col-md-6">
+            <div class="fb-glass-card fb-sec5-notification-card {% if not notif.is_read %}fb-sec5-card-unread border-start border-4 border-warning{% endif %} p-3 h-100 transition-all">
+
+                <!--Card Header -->
+                <div class="fb-sec5-card-header d-flex justify-content-between align-items-start mb-3">
+                    <div class="fb-sec5-card-player d-flex align-items-center gap-2">
+                        <div class="fb-sec5-avatar rounded-circle d-flex align-items-center justify-content-center fw-bold text-white flex-shrink-0"
+                             style="width:44px;height:44px;background:linear-gradient(135deg,#1e5128,#4e9f3d);font-size:1.1rem;">
+                            {{ notif.user.user_name|first|upper }}
+                        </div>
+                        <div class="min-w-0">
+                            <span class="fb-sec5-player-name d-block fw-semibold text-truncate">{{ notif.user.user_name }}</span>
+                            <span class="fb-sec5-jersey-small badge bg-dark bg-opacity-50 rounded-pill">#{{ notif.id }}</span>
+                        </div>
+                    </div>
+                    <time class="fb-sec5-match-time small opacity-75 text-nowrap ms-2">
+                        <span class="me-1">⏱️</span> {{ notif.created_at|timesince }}
+                    </time>
+                </div>
+
+                <!-- Card Body -->
+                <div class="fb-sec5-card-body mb-3">
+                    <p class="fb-sec5-play-desc mb-0">{{ notif.message }}</p>
+                </div>
+
+                <!--  Card Footer -->
+                <div class="fb-sec5-card-footer d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div class="fb-sec5-badges-group d-flex gap-2">
+                        {% if notif.notification_type == "success" %}
+                        <span class="fb-sec5-badge badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 rounded-pill px-3 py-2">
+                            <span class="me-1">⚽</span> Success
+                        </span>
+                        {% elif notif.notification_type == "error" %}
+                        <span class="fb-sec5-badge badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2">
+                            <span class="me-1">🚫</span> Error
+                        </span>
+                        {% else %}
+                        <span class="fb-sec5-badge badge bg-info bg-opacity-25 text-info border border-info border-opacity-25 rounded-pill px-3 py-2">
+                            <span class="me-1">ℹ️</span> Info
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="fb-sec5-status-group">
+                        {% if notif.is_read %}
+                        <span class="fb-sec5-status badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 rounded-pill px-3 py-2">
+                            <span class="fb-sec5-status-dot bg-success rounded-circle d-inline-block me-1" style="width:8px;height:8px;"></span> Read
+                        </span>
+                        {% else %}
+                        <span class="fb-sec5-status badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25 rounded-pill px-3 py-2">
+                            <span class="fb-sec5-status-dot bg-warning rounded-circle d-inline-block me-1" style="width:8px;height:8px;"></span> Unread
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="fb-glass-card fb-sec5-empty-card p-4 text-center">
+                <div class="fb-sec5-empty-stadium">
+                    <div class="fb-sec5-empty-icon display-1 mb-3">🔔</div>
+                    <h3 class="fb-sec5-empty-title h4 fw-bold">Stadium Empty</h3>
+                    <p class="fb-sec5-empty-text opacity-75">No match events yet. Notifications will appear when players make their moves.</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+
+    {% if notifications.has_other_pages %}
+    <nav class="fb-sec6-pagination-nav row mt-4" aria-label="Page navigation">
+        <div class="col-12">
+            <div class="fb-glass-card fb-sec6-pagination-card p-3">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if notifications.has_previous %}
+                    <li class="page-item">
+                        <a class="fb-sec6-page-link page-link bg-transparent border-light text-white" href="?page={{ notifications.previous_page_number }}">«</a>
+                    </li>
+                    {% endif %}
+                    {% for num in notifications.paginator.page_range %}
+                    <li class="page-item {% if notifications.number == num %}active{% endif %}">
+                        <a class="fb-sec6-page-link page-link bg-transparent border-light text-white" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+                    {% if notifications.has_next %}
+                    <li class="page-item">
+                        <a class="fb-sec6-page-link page-link bg-transparent border-light text-white" href="?page={{ notifications.next_page_number }}">»</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+</main>
+
+<script>
+(function() {
+    'use strict';
+    function fbCountNotifications() {
+        const rows = document.querySelectorAll('.fb-sec4-player-row, .fb-sec5-notification-card');
+        let unread = 0, read = 0;
+        rows.forEach(row => {
+            if (row.classList.contains('fb-sec4-row-unread') || row.classList.contains('fb-sec5-card-unread')) {
+                unread++;
+            } else {
+                read++;
+            }
+        });
+        return { total: rows.length, unread: unread, read: read };
+    }
+
+    // Animate number counter
+    function fbAnimateCounter(id, end, duration) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const start = parseInt(el.textContent) || 0;
+        if (start === end) return;
+        const range = end - start;
+        const startTime = performance.now();
+        function step(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.floor(start + range * eased);
+            if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+    }
+
+    // Initialize on DOM ready
+    document.addEventListener('DOMContentLoaded', function() {
+        const counts = fbCountNotifications();
+        fbAnimateCounter('fb-stat2-total', counts.total, 1200);
+        fbAnimateCounter('fb-stat2-unread', counts.unread, 1200);
+        fbAnimateCounter('fb-stat2-read', counts.read, 1200);
+
+        // Hover scale effect for table rows
+        document.querySelectorAll('.fb-sec4-player-row').forEach(row => {
+            row.addEventListener('mouseenter', () => row.style.transform = 'scale(1.01)');
+            row.addEventListener('mouseleave', () => row.style.transform = 'scale(1)');
+        });
+    });
+})();
+</script>
+
+{% endblock %}

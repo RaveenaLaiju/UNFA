@@ -1,0 +1,128 @@
+{% extends 'admin/admin_base.html' %}
+{% block title %}{{ tournament.t_name }} - Payments{% endblock %}
+{% block content %}
+
+
+<div class="container-fluid">
+  <div class="div-1-stadium-header glass-panel">
+    <div class="row align-items-center">
+      <div class="col-12 col-md-8">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-2">
+            <li class="breadcrumb-item"><a href="{% url 'admin_view_tournaments' %}">Tournaments</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'admin_view_tournament_detail' tournament.t_id %}">{{ tournament.t_name|default:"Detail" }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Payments</li>
+          </ol>
+        </nav>
+        <h1 class="arena-title">💰 {{ tournament.t_name }} — Payments</h1>
+        <p class="arena-subtitle">Track all tournament registration payments</p>
+      </div>
+      <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0">
+        <a href="{% url 'admin_view_tournament_detail' tournament.t_id %}" class="kickoff-btn">
+          <span>←</span> Back to Arena
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="div-2-scoreboard-arena mt-4">
+    <div class="row g-3">
+
+      <div class="col-6 col-md-3">
+        <div class="stat-card glass-panel neon-green">
+          <div class="stat-inner">
+            <div class="stat-badge">💰</div>
+            <div class="stat-score">₹{{ total_collected|default:"0" }}</div>
+            <div class="stat-name">Collected</div>
+            <div class="stat-form">Revenue</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <div class="stat-card glass-panel neon-orange">
+          <div class="stat-inner">
+            <div class="stat-badge">⏳</div>
+            <div class="stat-score">₹{{ total_pending|default:"0" }}</div>
+            <div class="stat-name">Pending</div>
+            <div class="stat-form">Awaiting</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <div class="stat-card glass-panel neon-blue">
+          <div class="stat-inner">
+            <div class="stat-badge">✅</div>
+            <div class="stat-score">{{ success_count|default:"0" }}</div>
+            <div class="stat-name">Success</div>
+            <div class="stat-form">Transactions</div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="col-6 col-md-3">
+        <div class="stat-card glass-panel neon-red">
+          <div class="stat-inner">
+            <div class="stat-badge">❌</div>
+            <div class="stat-score">{{ failure_count|default:"0" }}</div>
+            <div class="stat-name">Failed</div>
+            <div class="stat-form">Transactions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div-3-payment-records glass-panel mt-4">
+    <h3 class="card-title"><span>🧾</span> Payment Records</h3>
+    <div class="table-responsive">
+      <table class="pitch-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Club</th>
+            <th>Order ID</th>
+            <th>Payment ID</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for payment in payments %}
+          <tr>
+            <td data-label="ID"><span class="badge-pill badge-id">#{{ payment.tp_id }}</span></td>
+            <td data-label="Club"><span class="club-name">{{ payment.tournament_registration.t_c_club.club_name }}</span></td>
+            <td data-label="Order ID"><span class="code-block">{{ payment.provider_order_id|truncatechars:25 }}</span></td>
+            <td data-label="Payment ID"><span class="code-block">{{ payment.razorpay_payment_id|default:"-"|truncatechars:25 }}</span></td>
+            <td data-label="Amount"><span class="amount-highlight">₹{{ payment.amount }}</span></td>
+            <td data-label="Status">
+              {% if payment.payment_status == 'Success' %}
+                <span class="badge-pill badge-success">Success</span>
+              {% elif payment.payment_status == 'Pending' %}
+                <span class="badge-pill badge-pending">Pending</span>
+              {% else %}
+                <span class="badge-pill badge-failed">Failed</span>
+              {% endif %}
+            </td>
+            <td data-label="Date">{{ payment.created_at|date:"M d, Y H:i" }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" style="padding:0;">
+              <div class="empty-arena">
+                <div class="empty-icon">🧾</div>
+                <div class="empty-text">No payment records found.</div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- container-fluid -->
+
+{% endblock %}

@@ -1,0 +1,374 @@
+{% extends 'admin/admin_base.html' %}
+{% block title %}{{ tournament.t_name }} - Matches{% endblock %}
+
+{% block content %}
+
+<div id="div-02-pitch-container" class="container-fluid ">
+
+    <div id="div-03-scoreboard" class="row g-3 mb-4">
+        <div class="col-12 col-md-8">
+            <nav id="div-03a-breadcrumb" aria-label="breadcrumb" class="mb-2">
+                <ol class="breadcrumb breadcrumb-glass">
+                    <li class="breadcrumb-item"><a href="{% url 'admin_view_tournaments' %}" class="text-success">Tournaments</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'admin_view_tournament_detail' tournament.t_id %}" class="text-success">{{ tournament.t_name|default:"Detail" }}</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Matches</li>
+                </ol>
+            </nav>
+            <h1 id="div-03b-matchday-title" class="display-5 fw-bold text-white mb-1">
+                <span class="football-icon">⚽</span> {{ tournament.t_name }}
+            </h1>
+            <p id="div-03c-subtitle" class="lead text-white-50 mb-0">Matchday Control Center</p>
+        </div>
+        <div class="col-12 col-md-4 d-flex align-items-start align-items-md-center justify-content-md-end">
+            <a id="div-03d-back-btn" href="{% url 'admin_view_tournament_detail' tournament.t_id %}" class="btn btn-outline-light btn-lg glass-btn w-100 w-md-auto">
+                <i class="bi bi-arrow-left"></i> Back to Bench
+            </a>
+        </div>
+    </div>
+
+    {% if tournament.format != 'knockout' %}
+    <div id="div-04-group-stage" class="row mb-4">
+        <div class="col-12">
+       
+            <div id="div-04a-group-card" class="card glass-card border-0 overflow-hidden">
+                
+                <div id="div-04b-card-header" class="card-header glass-header border-bottom border-white-10 d-flex align-items-center">
+                    <span class="header-icon me-3 fs-4">📊</span>
+                    <h3 class="card-title mb-0 fw-bold text-white">Group Stage</h3>
+                    <div class="header-glow group-glow ms-auto"></div>
+                </div>
+
+                <div id="div-04c-card-body" class="card-body p-0 p-md-3">
+
+                    <div id="div-04d-desktop-table" class="table-responsive d-none d-lg-block">
+                        <table class="table table-dark table-hover glass-table align-middle mb-0">
+                            <thead>
+                                <tr class="glass-thead">
+                                    <th class="ps-4">Match</th>
+                                    <th>Home</th>
+                                    <th class="text-center score-col">Score</th>
+                                    <th>Away</th>
+                                    <th>Turf</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Squads</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for match in group_matches %}
+                                <tr class="fixture-row">
+                                    <td class="ps-4"><span class="badge bg-dark border border-secondary">#{{ match.match_id }}</span></td>
+                                    <td class="team-cell home-team fw-semibold">{{ match.match_home_team.club_name|default:"TBD" }}</td>
+                                    <td class="text-center score-cell">
+                                        {% if match.result_obj %}
+                                        <span class="badge bg-success bg-opacity-75 score-badge fs-6">
+                                            {{ match.result_obj.result_home_team }} - {{ match.result_obj.result_away_team }}
+                                        </span>
+                                        {% else %}
+                                        <span class="vs-text text-white-50 fw-bold">VS</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="team-cell away-team fw-semibold">{{ match.match_away_team.club_name|default:"TBD" }}</td>
+                                    <td class="venue-cell text-white-50"><i class="bi bi-geo-alt text-success me-1"></i>{{ match.match_turf.turf_name|default:"-" }}</td>
+                                    <td class="date-cell text-white-50">{{ match.match_date|date:"M d, Y" }}</td>
+                                    <td class="time-cell text-white-50">{{ match.match_time|default:"-" }}</td>
+                                    <td>
+                                        {% if match.match_finished %}
+                                        <span class="badge bg-secondary status-badge">FT</span>
+                                        {% elif match.match_started %}
+                                        <span class="badge bg-danger status-badge pulse-live">LIVE</span>
+                                        {% else %}
+                                        <span class="badge bg-warning text-dark status-badge">UPC</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <span class="squad-badge {% if match.home_squad_selected %}bg-success{% else %}bg-danger{% endif %}">H</span>
+                                            <span class="squad-badge {% if match.away_squad_selected %}bg-success{% else %}bg-danger{% endif %}">A</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'admin_tournament_match_detail' match.match_id %}" class="btn btn-sm btn-outline-success glass-btn-sm">View</a>
+                                            {% if not match.match_finished %}
+                                            <form method="post" action="{% url 'admin_force_end_match' match.match_id %}" class="d-inline" onsubmit="return confirm('Blow the final whistle?');">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-warning glass-btn-sm">End</button>
+                                            </form>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="10" class="text-center py-5 text-white-50">
+                                        <i class="bi bi-slash-circle fs-1 d-block mb-2"></i>
+                                        No fixtures scheduled on this pitch.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="div-04e-mobile-cards" class="d-lg-none p-3">
+                        <div class="row g-3">
+                            {% for match in group_matches %}
+                            <div class="col-12">
+                                <div class="card glass-card-inner h-100 border border-white-10">
+                                    
+                                    <!-- Mobile Card Header -->
+                                    <div class="card-header d-flex justify-content-between align-items-center glass-header-sm">
+                                        <div class="d-flex gap-2 align-items-center">
+                                            <span class="badge bg-dark border border-secondary">#{{ match.match_id }}</span>
+                                        </div>
+                                        {% if match.match_finished %}
+                                        <span class="badge bg-secondary status-badge">FT</span>
+                                        {% elif match.match_started %}
+                                        <span class="badge bg-danger status-badge pulse-live">LIVE</span>
+                                        {% else %}
+                                        <span class="badge bg-warning text-dark status-badge">UPC</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Mobile Card Body - VERTICAL -->
+                                    <div class="card-body text-center py-4 px-3">
+                                        
+                                        <!-- Home Team -->
+                                        <div class="mb-3">
+                                            <small class="d-block text-white-50 fw-bold mb-1" style="font-size: 10px; letter-spacing: 2px;">HOME</small>
+                                            <span class="fw-bold text-white fs-5">{{ match.match_home_team.club_name|default:"TBD" }}</span>
+                                        </div>
+
+                                        <!-- Score -->
+                                        <div class="my-3">
+                                            {% if match.result_obj %}
+                                            <span class="score-badge-mobile d-inline-block">
+                                                {{ match.result_obj.result_home_team }} - {{ match.result_obj.result_away_team }}
+                                            </span>
+                                            {% else %}
+                                            <span class="vs-text text-white-50 fw-bold fs-2">VS</span>
+                                            {% endif %}
+                                        </div>
+
+                                        <!-- Away Team -->
+                                        <div class="mt-3">
+                                            <small class="d-block text-white-50 fw-bold mb-1" style="font-size: 10px; letter-spacing: 2px;">AWAY</small>
+                                            <span class="fw-bold text-white fs-5">{{ match.match_away_team.club_name|default:"TBD" }}</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Mobile Card Footer -->
+                                    <div class="card-footer glass-footer border-top border-white-10">
+                                        <div class="d-flex flex-column align-items-center gap-2 text-white-50 small mb-3">
+                                            <div><i class="bi bi-geo-alt text-success me-1"></i>{{ match.match_turf.turf_name|default:"TBD" }}</div>
+                                            <div><i class="bi bi-calendar text-success me-1"></i>{{ match.match_date|date:"M d, Y" }} {{ match.match_time|default:"" }}</div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span>Squads:</span>
+                                                <span class="squad-badge {% if match.home_squad_selected %}bg-success{% else %}bg-danger{% endif %}">H</span>
+                                                <span class="squad-badge {% if match.away_squad_selected %}bg-success{% else %}bg-danger{% endif %}">A</span>
+                                            </div>
+                                        </div>
+                                        <div class="d-grid gap-2">
+                                            <a href="{% url 'admin_tournament_match_detail' match.match_id %}" class="btn btn-outline-success glass-btn">View Match</a>
+                                            {% if not match.match_finished %}
+                                            <form method="post" action="{% url 'admin_force_end_match' match.match_id %}" onsubmit="return confirm('Blow the final whistle?');">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-outline-warning glass-btn w-100">End Match</button>
+                                            </form>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="col-12 text-center py-5 text-white-50">
+                                <i class="bi bi-slash-circle fs-1 d-block mb-2"></i>
+                                No fixtures scheduled.
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div id="div-05-knockout-stage" class="row">
+        <div class="col-12">
+ 
+            <div id="div-05a-knockout-card" class="card glass-card border-0 overflow-hidden">
+  
+                <div id="div-05b-knockout-header" class="card-header glass-header border-bottom border-white-10 d-flex align-items-center">
+                    <span class="header-icon me-3 fs-4">⚔️</span>
+                    <h3 class="card-title mb-0 fw-bold text-white">Knockout Stage</h3>
+                    <div class="header-glow knockout-glow ms-auto"></div>
+                </div>
+
+  
+                <div id="div-05c-knockout-body" class="card-body p-0 p-md-3">
+
+             
+                    <div id="div-05d-knockout-desktop" class="table-responsive d-none d-lg-block">
+                        <table class="table table-dark table-hover glass-table align-middle mb-0">
+                            <thead>
+                                <tr class="glass-thead">
+                                    <th class="ps-4">Match</th>
+                                    <th>Round</th>
+                                    <th>Home</th>
+                                    <th class="text-center score-col">Score</th>
+                                    <th>Away</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Squads</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for match in knockout_matches %}
+                                <tr class="fixture-row">
+                                    <td class="ps-4"><span class="badge bg-dark border border-secondary">#{{ match.match_id }}</span></td>
+                                    <td><span class="badge bg-info text-dark round-badge">R{{ match.round_number }}</span></td>
+                                    <td class="team-cell home-team fw-semibold">{{ match.match_home_team.club_name|default:"TBD" }}</td>
+                                    <td class="text-center score-cell">
+                                        {% if match.result_obj %}
+                                        <span class="badge bg-success bg-opacity-75 score-badge fs-6">
+                                            {{ match.result_obj.result_home_team }} - {{ match.result_obj.result_away_team }}
+                                        </span>
+                                        {% else %}
+                                        <span class="vs-text text-white-50 fw-bold">VS</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="team-cell away-team fw-semibold">{{ match.match_away_team.club_name|default:"TBD" }}</td>
+                                    <td class="date-cell text-white-50">{{ match.match_date|date:"M d, Y" }}</td>
+                                    <td>
+                                        {% if match.match_finished %}
+                                        <span class="badge bg-secondary status-badge">FT</span>
+                                        {% elif match.match_started %}
+                                        <span class="badge bg-danger status-badge pulse-live">LIVE</span>
+                                        {% else %}
+                                        <span class="badge bg-warning text-dark status-badge">UPC</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <span class="squad-badge {% if match.home_squad_selected %}bg-success{% else %}bg-danger{% endif %}">H</span>
+                                            <span class="squad-badge {% if match.away_squad_selected %}bg-success{% else %}bg-danger{% endif %}">A</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'admin_tournament_match_detail' match.match_id %}" class="btn btn-sm btn-outline-success glass-btn-sm">View</a>
+                                            {% if not match.match_finished %}
+                                            <form method="post" action="{% url 'admin_force_end_match' match.match_id %}" class="d-inline" onsubmit="return confirm('Blow the final whistle?');">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-warning glass-btn-sm">End</button>
+                                            </form>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="9" class="text-center py-5 text-white-50">
+                                        <i class="bi bi-slash-circle fs-1 d-block mb-2"></i>
+                                        No knockout fixtures drawn.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="div-05e-knockout-mobile" class="d-lg-none p-3">
+                        <div class="row g-3">
+                            {% for match in knockout_matches %}
+                            <div class="col-12">
+                                <div class="card glass-card-inner h-100 border border-white-10">
+                                    
+                                    <!-- Mobile Card Header -->
+                                    <div class="card-header d-flex justify-content-between align-items-center glass-header-sm flex-wrap gap-2">
+                                        <div class="d-flex gap-2 align-items-center">
+                                            <span class="badge bg-dark border border-secondary">#{{ match.match_id }}</span>
+                                            <span class="badge bg-info text-dark round-badge">Round {{ match.round_number }}</span>
+                                        </div>
+                                        {% if match.match_finished %}
+                                        <span class="badge bg-secondary status-badge">FT</span>
+                                        {% elif match.match_started %}
+                                        <span class="badge bg-danger status-badge pulse-live">LIVE</span>
+                                        {% else %}
+                                        <span class="badge bg-warning text-dark status-badge">UPC</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Mobile Card Body - VERTICAL -->
+                                    <div class="card-body text-center py-4 px-3">
+                                        
+                                        <!-- Home Team -->
+                                        <div class="mb-3">
+                                            <small class="d-block text-white-50 fw-bold mb-1" style="font-size: 10px; letter-spacing: 2px;">HOME</small>
+                                            <span class="fw-bold text-white fs-5">{{ match.match_home_team.club_name|default:"TBD" }}</span>
+                                        </div>
+
+                                        <!-- Score -->
+                                        <div class="my-3">
+                                            {% if match.result_obj %}
+                                            <span class="score-badge-mobile d-inline-block">
+                                                {{ match.result_obj.result_home_team }} - {{ match.result_obj.result_away_team }}
+                                            </span>
+                                            {% else %}
+                                            <span class="vs-text text-white-50 fw-bold fs-2">VS</span>
+                                            {% endif %}
+                                        </div>
+
+                                        <!-- Away Team -->
+                                        <div class="mt-3">
+                                            <small class="d-block text-white-50 fw-bold mb-1" style="font-size: 10px; letter-spacing: 2px;">AWAY</small>
+                                            <span class="fw-bold text-white fs-5">{{ match.match_away_team.club_name|default:"TBD" }}</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Mobile Card Footer -->
+                                    <div class="card-footer glass-footer border-top border-white-10">
+                                        <div class="d-flex flex-column align-items-center gap-2 text-white-50 small mb-3">
+                                            <div><i class="bi bi-calendar text-success me-1"></i>{{ match.match_date|date:"M d, Y" }}</div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span>Squads:</span>
+                                                <span class="squad-badge {% if match.home_squad_selected %}bg-success{% else %}bg-danger{% endif %}">H</span>
+                                                <span class="squad-badge {% if match.away_squad_selected %}bg-success{% else %}bg-danger{% endif %}">A</span>
+                                            </div>
+                                        </div>
+                                        <div class="d-grid gap-2">
+                                            <a href="{% url 'admin_tournament_match_detail' match.match_id %}" class="btn btn-outline-success glass-btn">View Match</a>
+                                            {% if not match.match_finished %}
+                                            <form method="post" action="{% url 'admin_force_end_match' match.match_id %}" onsubmit="return confirm('Blow the final whistle?');">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-outline-warning glass-btn w-100">End Match</button>
+                                            </form>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="col-12 text-center py-5 text-white-50">
+                                <i class="bi bi-slash-circle fs-1 d-block mb-2"></i>
+                                No knockout fixtures drawn.
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+

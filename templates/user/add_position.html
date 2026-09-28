@@ -1,0 +1,268 @@
+{% extends 'user/user_head.html' %}
+{% block content %}
+{% load static %}
+
+<div class="pm-pitch-wrapper">
+  <div class="pm-stadium-lights"></div>
+  <div class="pm-pitch-overlay"></div>
+  <div class="pm-particles-container" id="particles"></div>
+
+  <div class="pm-arena-container">
+    <header class="pm-arena-header pm-glass-arena" data-animate="slide-down">
+      <div class="pm-header-glow"></div>
+      <div class="pm-club-identity" style="flex: 1;">
+        <span class="pm-arena-kicker"><i class="fas fa-chess-knight"></i> SQUAD MANAGEMENT</span>
+        <h1 class="pm-arena-title">Position Manager</h1>
+        <div class="pm-club-badges">
+          <span class="pm-badge-tag pm-neon-purple"><i class="fas fa-map-pin"></i> Define Roles</span>
+          <span class="pm-badge-tag pm-neon-blue"><i class="fas fa-users-cog"></i> {{ positions|length }} Positions</span>
+        </div>
+      </div>
+      <nav class="pm-arena-actions">
+        <a href="{% if request.session.current_club %}{% url 'club_interface' request.session.current_club %}{% else %}{% url 'user_home' %}{% endif %}" class="pm-action-btn pm-ghost-btn">
+          <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+      </nav>
+    </header>
+
+    <div class="pm-matchday-grid">
+      <nav class="pm-tactics-sidebar pm-glass-panel" data-animate="slide-right">
+        <div class="pm-sidebar-header">
+          <i class="fas fa-compass"></i>
+          <h3>Tactics Board</h3>
+        </div>
+        <ul class="pm-nav-menu">
+          <li class="pm-nav-item">
+            <a href="{% if request.session.current_club %}{% url 'club_interface' request.session.current_club %}{% else %}{% url 'user_home' %}{% endif %}" class="pm-nav-link">
+              <span class="pm-link-icon"><i class="fas fa-home"></i></span>
+              <span class="pm-link-text">Dashboard</span>
+              <span class="pm-link-glow"></span>
+            </a>
+          </li>
+          <li class="pm-nav-item">
+            <a href="{% url 'club_matches' %}" class="pm-nav-link">
+              <span class="pm-link-icon"><i class="fas fa-futbol"></i></span>
+              <span class="pm-link-text">Matches</span>
+              <span class="pm-link-glow"></span>
+            </a>
+          </li>
+          <li class="pm-nav-item">
+            <a href="{% url 'search_matches' %}" class="pm-nav-link">
+              <span class="pm-link-icon"><i class="fas fa-search"></i></span>
+              <span class="pm-link-text">Find Match</span>
+              <span class="pm-link-glow"></span>
+            </a>
+          </li>
+          <li class="pm-nav-item">
+            <a href="{% url 'user_players' %}" class="pm-nav-link">
+              <span class="pm-link-icon"><i class="fas fa-users"></i></span>
+              <span class="pm-link-text">Players</span>
+              <span class="pm-link-glow"></span>
+            </a>
+          </li>
+          <li class="pm-nav-item">
+            <a href="{% url 'tournament_list' %}" class="pm-nav-link">
+              <span class="pm-link-icon"><i class="fas fa-medal"></i></span>
+              <span class="pm-link-text">Tournaments</span>
+              <span class="pm-link-glow"></span>
+            </a>
+          </li>
+          <li class="pm-nav-item pm-active">
+            <a href="{% url 'add_position' %}" class="pm-nav-link">
+              <span class="pm-link-icon"><i class="fas fa-map-pin"></i></span>
+              <span class="pm-link-text">Add Position</span>
+              <span class="pm-link-glow"></span>
+            </a>
+          </li>
+          <li class="pm-nav-item">
+            <a href="{% url 'my_clubs' %}" class="pm-nav-link">
+              <span class="pm-link-icon"><i class="fas fa-list"></i></span>
+              <span class="pm-link-text">My Clubs</span>
+              <span class="pm-link-glow"></span>
+            </a>
+          </li>
+        </ul>
+        <div class="pm-sidebar-footer">
+          <div class="pm-live-indicator">
+            <span class="pm-pulse-dot"></span>
+            <span>Live Season</span>
+          </div>
+        </div>
+      </nav>
+
+      <main class="pm-pitch-content">
+        <!-- Messages -->
+        {% if messages %}
+        <div class="pm-flash-messages" data-animate="fade-up">
+          {% for message in messages %}
+          <div class="pm-flash-card {{ message.tags }}">
+            <i class="fas fa-{% if message.tags == 'pm-success' %}check-circle{% elif message.tags == 'pm-error' %}exclamation-circle{% else %}pm-info-circle{% endif %}"></i>
+            <span>{{ message }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Add Position Form -->
+        <section class="pm-form-arena pm-glass-arena" data-animate="fade-up">
+          <div class="pm-zone-header">
+            <div class="pm-zone-title">
+              <i class="fas fa-plus-circle"></i>
+              <h2>Create New Position</h2>
+            </div>
+          </div>
+
+          <form method="POST" action="{% url 'add_position' %}" class="pm-position-form">
+            {% csrf_token %}
+            <div class="pm-form-grid">
+              <div class="pm-input-group" data-animate="pop-in" data-delay="100">
+                <label class="pm-input-label">
+                  <i class="fas fa-tag"></i> Position Name
+                </label>
+                <div class="pm-input-wrap">
+                  <input type="text" name="pos_name" id="pos_name" class="pm-glow-input" placeholder="e.g. Striker" required>
+                  <div class="pm-input-glow"></div>
+                </div>
+              </div>
+
+              <div class="pm-input-group" data-animate="pop-in" data-delay="200">
+                <label class="pm-input-label">
+                  <i class="fas fa-code"></i> Position Code
+                </label>
+                <div class="pm-input-wrap">
+                  <input type="text" name="pos_code" id="pos_code" class="pm-glow-input" placeholder="e.g. ST" maxlength="5" required>
+                  <div class="pm-input-glow"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pm-input-group pm-full-width" data-animate="pop-in" data-delay="300">
+              <label class="pm-input-label">
+                <i class="fas fa-align-left"></i> Description
+              </label>
+              <div class="pm-input-wrap">
+                <textarea name="pos_description" id="pos_description" class="pm-glow-input pm-glow-textarea" rows="3" placeholder="Describe the position responsibilities..."></textarea>
+                <div class="pm-input-glow"></div>
+              </div>
+            </div>
+
+            <div class="pm-form-actions" data-animate="fade-up" data-delay="400">
+              <button type="submit" class="pm-action-btn pm-glow-btn pm-submit-btn">
+                <i class="fas fa-save"></i> Save Position
+              </button>
+              <button type="reset" class="pm-action-btn pm-ghost-btn">
+                <i class="fas fa-undo"></i> Reset
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Positions Roster -->
+        <section class="pm-roster-zone pm-glass-panel" data-animate="fade-up">
+          <div class="pm-zone-header">
+            <div class="pm-zone-title">
+              <i class="fas fa-list-ol"></i>
+              <h2>Position Roster</h2>
+            </div>
+            <span class="pm-zone-badge">{{ positions|length }} Total</span>
+          </div>
+
+          {% if positions %}
+          <div class="pm-positions-grid">
+            {% for position in positions %}
+            <article class="pm-position-card" data-animate="zoom-in" data-delay="{{ forloop.counter|add:50 }}">
+              <div class="pm-position-shine"></div>
+              <div class="pm-position-header">
+                <div class="pm-position-code-badge">{{ position.position_code }}</div>
+                <div class="pm-position-actions">
+                  <span class="pm-position-id">#{{ position.position_id }}</span>
+                </div>
+              </div>
+              <div class="pm-position-body">
+                <h3 class="pm-position-name">{{ position.position_name }}</h3>
+                {% if position.position_description %}
+                <p class="pm-position-desc">{{ position.position_description }}</p>
+                {% else %}
+                <p class="pm-position-desc pm-empty">No description provided</p>
+                {% endif %}
+              </div>
+              <div class="pm-position-footer">
+                <div class="pm-position-meta">
+                  <span class="pm-meta-tag"><i class="fas fa-fingerprint"></i> {{ position.position_id }}</span>
+                  <span class="pm-meta-tag"><i class="fas fa-shield-alt"></i> Active</span>
+                </div>
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="pm-pm-empty-pitch">
+            <div class="pm-pm-empty-icon"><i class="fas fa-map-pin"></i></div>
+            <p>No positions defined yet</p>
+            <span class="pm-pm-empty-hint">Add your first position using the form above</span>
+          </div>
+          {% endif %}
+        </section>
+      </main>
+    </div>
+  </div>
+</div>
+
+<style>
+
+</style>
+
+<script>
+// Particle System
+(function() {
+  const container = document.getElementById('particles');
+  const particleCount = 25;
+
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+    particle.style.animationDelay = Math.random() * 10 + 's';
+    particle.style.opacity = Math.random() * 0.5 + 0.2;
+
+    const colors = ['#ccff00', '#00f0ff', '#ffd700', '#ff3366'];
+    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+    particle.style.boxShadow = `0 0 ${Math.random() * 10 + 5}px ${particle.style.background}`;
+
+    container.appendChild(particle);
+  }
+})();
+
+// Intersection Observer for scroll animations
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const delay = el.getAttribute('data-delay') || '0';
+      el.style.animationDelay = delay + 'ms';
+      el.style.opacity = '1';
+      observer.unobserve(el);
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
+
+// Auto-dismiss flash messages
+setTimeout(() => {
+  document.querySelectorAll('.pm-flash-card').forEach(card => {
+    card.style.transition = 'all 0.5s ease';
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(-20px)';
+    setTimeout(() => card.remove(), 500);
+  });
+}, 5000);
+</script>
+
+{% endblock %}

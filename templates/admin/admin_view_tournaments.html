@@ -1,0 +1,280 @@
+{% extends 'admin/admin_base.html' %}
+{% block title %}Tournaments - Football Arena Admin{% endblock %}
+
+{% block content %}
+
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-12">
+        <div class="fb-glass-panel fb-section-2">
+          <div class="fb-header-2a">
+            <div class="fb-header-2b">🏆</div>
+            <div class="fb-header-2c">
+              <h1>Tournament Management</h1>
+              <p>Manage all tournaments, brackets, and registrations</p>
+            </div>
+          </div>
+          <div class="fb-header-2d">
+            <span>{{ tournaments|length }}</span>
+            <small>Events</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row fb-section-3 g-3">
+      <div class="col-12 col-md-4">
+        <div class="fb-glass-panel fb-card-3a">
+          <div class="fb-icon-3a">🏆</div>
+          <div>
+            <div class="fb-counter-3a goal-counter" data-target="{{ total_count }}">0</div>
+            <div class="fb-label-3a">Total Tournaments</div>
+            <span class="fb-tag-3a">📊 All Time</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="fb-glass-panel fb-card-3b">
+          <div class="fb-icon-3b">⚡</div>
+          <div>
+            <div class="fb-counter-3b goal-counter" data-target="{{ active_count }}">0</div>
+            <div class="fb-label-3b">Active Now</div>
+            <span class="fb-tag-3b">🔥 Running</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="fb-glass-panel fb-card-3c">
+          <div class="fb-icon-3c">✅</div>
+          <div>
+            <div class="fb-counter-3c goal-counter" data-target="{{ completed_count }}">0</div>
+            <div class="fb-label-3c">Completed</div>
+            <span class="fb-tag-3c">🏁 Done</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="fb-glass-panel fb-section-4">
+          <div class="fb-filter-4a">
+            <span>🔍</span> Filter Tournaments
+          </div>
+          <div class="fb-filter-4b">
+            <form method="get" class="d-flex gap-2 flex-wrap w-100">
+              <select name="status" class="fb-select-4c" onchange="this.form.submit()">
+                <option value="all" {% if status_filter == 'all' %}selected{% endif %}>🏆 All</option>
+                <option value="active" {% if status_filter == 'active' %}selected{% endif %}>⚡ Active</option>
+                <option value="upcoming" {% if status_filter == 'upcoming' %}selected{% endif %}>📅 Upcoming</option>
+                <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>✅ Completed</option>
+              </select>
+            </form>
+            <a href="{% url 'admin_view_tournaments' %}" class="fb-reset-4d">
+              <span>🔄</span> Reset
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-12">
+        <div class="fb-glass-panel fb-section-5">
+          <div class="fb-title-5a">
+            <span>🏆</span> All Tournaments
+          </div>
+
+          <!-- Desktop Table -->
+          <div class="fb-table-wrap-5b table-responsive">
+            <table class="fb-table-5b">
+              <thead>
+                <tr>
+                  <th>ID</th><th>Tournament</th><th>Host</th><th>Date</th>
+                  <th>Format</th><th>Teams</th><th>Fee</th><th>Revenue</th>
+                  <th>Status</th><th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for t in tournaments %}
+                <tr>
+                  <td><span class="fb-badge fb-badge-id">#{{ t.t_id }}</span></td>
+                  <td>
+                    <div class="fb-cell-name">{{ t.t_name|default:"Unnamed" }}</div>
+                    <div class="fb-cell-desc">{{ t.description|truncatechars:35 }}</div>
+                  </td>
+                  <td><span class="fb-badge fb-badge-host">{{ t.t_host.club_name }}</span></td>
+                  <td>{{ t.t_date|date:"M d, Y" }}</td>
+                  <td>
+                    <span class="fb-badge {% if t.format == 'knockout' %}fb-badge-knockout{% elif t.format == 'league' %}fb-badge-league{% else %}fb-badge-mixed{% endif %}">
+                      {{ t.get_format_display }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="fb-badge {% if t.is_full %}fb-badge-teams-full{% else %}fb-badge-teams-open{% endif %}">
+                      {{ t.club_count }}/{{ t.max_teams }}
+                    </span>
+                  </td>
+                  <td class="fb-cell-fee">₹{{ t.registration_fee }}</td>
+                  <td class="fb-cell-revenue">₹{{ t.revenue }}</td>
+                  <td>
+                    {% if t.is_completed %}
+                      <span class="fb-badge fb-badge-status-completed">Completed</span>
+                    {% elif t.is_active %}
+                      {% if t.matches.exists %}
+                        <span class="fb-badge fb-badge-status-progress">In Progress</span>
+                      {% else %}
+                        <span class="fb-badge fb-badge-status-open">Open</span>
+                      {% endif %}
+                    {% else %}
+                      <span class="fb-badge fb-badge-status-inactive">Inactive</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div class="fb-actions-5c">
+                      <a href="{% url 'admin_view_tournament_detail' t.t_id %}" class="fb-btn-view" title="View">👁️</a>
+                      <a href="{% url 'admin_edit_tournament' t.t_id %}" class="fb-btn-edit" title="Edit">✏️</a>
+                      <a href="{% url 'admin_tournament_bracket' t.t_id %}" class="fb-btn-bracket" title="Bracket">🌳</a>
+                      <form method="post" action="{% url 'admin_delete_tournament' t.t_id %}" style="display:inline;" onsubmit="return confirm('Delete this tournament? All matches and data will be lost!');">
+                        {% csrf_token %}
+                        <button type="submit" class="fb-btn-delete" title="Delete">🗑️</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="10">
+                    <div class="fb-empty-5d">
+                      <div class="fb-empty-5d-icon">🏆</div>
+                      <div class="fb-empty-5d-text">No tournaments found.</div>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          {% for t in tournaments %}
+          <div class="fb-mobile-card">
+        
+            <div class="fb-mcard-6a">
+              <div class="fb-mcard-6b">
+                <div class="fb-mcard-6c">{{ t.t_name|default:"Unnamed" }}</div>
+                <div class="fb-mcard-6d">{{ t.description|truncatechars:40 }}</div>
+              </div>
+              <div class="fb-mcard-6e">#{{ t.t_id }}</div>
+            </div>
+
+            
+            <div class="fb-mcard-6f">
+             
+              <div class="fb-mcard-row">
+                <div class="fb-mcard-col">
+                  <div class="fb-mcard-label">Host</div>
+                  <div class="fb-mcard-value">{{ t.t_host.club_name }}</div>
+                </div>
+                <div class="fb-mcard-col">
+                  <div class="fb-mcard-label">Date</div>
+                  <div class="fb-mcard-value">{{ t.t_date|date:"M d, Y" }}</div>
+                </div>
+              </div>
+
+            
+              <div class="fb-mcard-row">
+                <div class="fb-mcard-col">
+                  <div class="fb-mcard-label">Format</div>
+                  <span class="fb-mcard-badge text-wrap
+                    {% if t.format == 'knockout' %}fb-badge-knockout
+                    {% elif t.format == 'league' %}fb-badge-league
+                    {% else %}fb-badge-mixed{% endif %}">
+                    {{ t.get_format_display }}
+                  </span>
+                </div>
+                <div class="fb-mcard-col">
+                  <div class="fb-mcard-label">Teams</div>
+                  <span class="fb-mcard-badge {% if t.is_full %}fb-badge-teams-full{% else %}fb-badge-teams-open{% endif %}">
+                    {{ t.club_count }}/{{ t.max_teams }}
+                  </span>
+                </div>
+              </div>
+
+            
+              <div class="fb-mcard-row">
+                <div class="fb-mcard-col">
+                  <div class="fb-mcard-label">Fee</div>
+                  <div class="fb-mcard-value-mono">₹{{ t.registration_fee }}</div>
+                </div>
+                <div class="fb-mcard-col">
+                  <div class="fb-mcard-label">Revenue</div>
+                  <div class="fb-mcard-value-mono">₹{{ t.revenue }}</div>
+                </div>
+              </div>
+
+            
+              <div>
+                <div class="fb-mcard-label">Status</div>
+                {% if t.is_completed %}
+                  <span class="fb-badge fb-badge-status-completed">Completed</span>
+                {% elif t.is_active %}
+                  {% if t.matches.exists %}
+                    <span class="fb-badge fb-badge-status-progress">In Progress</span>
+                  {% else %}
+                    <span class="fb-badge fb-badge-status-open">Open</span>
+                  {% endif %}
+                {% else %}
+                  <span class="fb-badge fb-badge-status-inactive">Inactive</span>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="fb-mcard-6g">
+              <a href="{% url 'admin_view_tournament_detail' t.t_id %}" class="fb-mcard-btn fb-btn-view" title="View">👁️</a>
+              <a href="{% url 'admin_edit_tournament' t.t_id %}" class="fb-mcard-btn fb-btn-edit" title="Edit">✏️</a>
+              <a href="{% url 'admin_tournament_bracket' t.t_id %}" class="fb-mcard-btn fb-btn-bracket" title="Bracket">🌳</a>
+              <form method="post" action="{% url 'admin_delete_tournament' t.t_id %}" style="display:inline;" onsubmit="return confirm('Delete this tournament?');">
+                {% csrf_token %}
+                <button type="submit" class="fb-mcard-btn fb-btn-delete" title="Delete">🗑️</button>
+              </form>
+            </div>
+          </div>
+          {% empty %}
+          <div class="fb-empty-5d">
+            <div class="fb-empty-5d-icon">🏆</div>
+            <div class="fb-empty-5d-text">No tournaments found.</div>
+          </div>
+          {% endfor %}
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const counters = document.querySelectorAll('.goal-counter[data-target]');
+    counters.forEach(counter => {
+      const target = parseInt(counter.getAttribute('data-target')) || 0;
+      if (target === 0) { counter.textContent = '0'; return; }
+      const duration = 1500;
+      const startTime = performance.now();
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        counter.textContent = Math.floor(target * easeOut).toLocaleString();
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    });
+  });
+</script>
+
+{% endblock %}

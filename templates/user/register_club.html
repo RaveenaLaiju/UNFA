@@ -1,0 +1,469 @@
+{% extends 'user/user_head.html' %} 
+{% block content %} 
+{% load static %}
+
+<div class="fc27-page">
+  <div class="fc27-particles" aria-hidden="true">
+    <span class="fc27-particle"></span>
+    <span class="fc27-particle"></span>
+    <span class="fc27-particle"></span>
+    <span class="fc27-particle"></span>
+    <span class="fc27-particle"></span>
+    <span class="fc27-particle"></span>
+    <span class="fc27-particle"></span>
+    <span class="fc27-particle"></span>
+  </div>
+
+  <div class="fc27-scanlines" aria-hidden="true"></div>
+
+  <i class="fas fa-futbol fc27-ball fc27-ball-left" aria-hidden="true"></i>
+  <i class="fas fa-futbol fc27-ball fc27-ball-right" aria-hidden="true"></i>
+
+  <main class="container-fluid px-3 px-md-4">
+
+    <header class="fc27-hero fc27-reveal">
+      <span class="fc27-kicker">
+        <i class="fas fa-shield-alt"></i>
+        Club Registration
+      </span>
+
+      <h1 class="fc27-title">Register New Club</h1>
+
+      <p class="fc27-subtitle">
+        Build your football identity and join the league.
+      </p>
+    </header>
+
+    <div class="container-xl">
+      <div class="row g-4 align-items-start">
+        <div class="col-12 col-lg-7 fc27-reveal fc27-delay-1">
+          <section class="fc27-glass fc27-form-panel">
+            <span class="fc27-corner fc27-corner-tl"></span>
+            <span class="fc27-corner fc27-corner-tr"></span>
+            <span class="fc27-corner fc27-corner-bl"></span>
+            <span class="fc27-corner fc27-corner-br"></span>
+
+            <div class="fc27-section-heading">
+              <span class="fc27-section-icon">
+                <i class="fas fa-futbol"></i>
+              </span>
+
+              <div>
+                <h2>Club Identity</h2>
+                <p>Enter your club information below.</p>
+              </div>
+            </div>
+
+            {% if messages %} {% for message in messages %}
+
+            <div
+              class="fc27-alert {% if message.tags == 'success' %}fc27-alert-success{% else %}fc27-alert-danger{% endif %}"
+            >
+              <i
+                class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-triangle{% endif %}"
+              ></i>
+
+              <span> {{ message }} </span>
+            </div>
+
+            {% endfor %} {% endif %}
+
+            <form
+              method="POST"
+              action="{% url 'register_club' %}"
+              enctype="multipart/form-data"
+              id="fc27Form"
+            >
+              {% csrf_token %}
+
+              <!-- Club Name -->
+
+              <div class="fc27-field">
+                <label class="fc27-label" for="fc27ClubName">
+                  <i class="fas fa-signature"></i>
+                  Club Name
+                </label>
+
+                <input
+                  type="text"
+                  name="club_name"
+                  id="fc27ClubName"
+                  class="fc27-input"
+                  placeholder="e.g. Manchester United"
+                  required
+                />
+              </div>
+
+              <!-- District + Location -->
+
+              <div class="row g-3">
+                <div class="col-12 col-md-6">
+                  <div class="fc27-field">
+                    <label class="fc27-label" for="fc27District">
+                      <i class="fas fa-map-marked-alt"></i>
+                      District
+                    </label>
+
+                    <select
+                      name="club_district"
+                      id="fc27District"
+                      class="fc27-input"
+                      required
+                    >
+                      <option value="">Select District</option>
+                      <option value="Thiruvananthapuram">
+                        Thiruvananthapuram
+                      </option>
+                      <option value="Kollam">Kollam</option>
+                      <option value="Pathanamthitta">Pathanamthitta</option>
+                      <option value="Alappuzha">Alappuzha</option>
+                      <option value="Kottayam">Kottayam</option>
+                      <option value="Idukki">Idukki</option>
+                      <option value="Ernakulam">Ernakulam</option>
+                      <option value="Thrissur">Thrissur</option>
+                      <option value="Palakkad">Palakkad</option>
+                      <option value="Malappuram">Malappuram</option>
+                      <option value="Kozhikode">Kozhikode</option>
+                      <option value="Wayanad">Wayanad</option>
+                      <option value="Kannur">Kannur</option>
+                      <option value="Kasaragod">Kasaragod</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="fc27-field">
+                    <label class="fc27-label" for="fc27Location">
+                      <i class="fas fa-city"></i>
+                      Location
+                    </label>
+
+                    <input
+                      type="text"
+                      name="club_location"
+                      id="fc27Location"
+                      class="fc27-input"
+                      placeholder="City / Town"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Home Ground -->
+
+              <div class="fc27-field">
+                <label class="fc27-label" for="fc27Ground">
+                  <i class="fas fa-home"></i>
+                  Home Ground
+                </label>
+
+                <select
+                  name="home_ground"
+                  id="fc27Ground"
+                  class="fc27-input"
+                  required
+                >
+                  <option value="">Select Turf</option>
+
+                  {% for turf in turfs %}
+
+                  <option
+                    value="{{ turf.turf_id }}"
+                    data-name="{{ turf.turf_name }}"
+                    data-location="{{ turf.turf_location }}"
+                    data-district="{{ turf.turf_district }}"
+                  >
+                    {{ turf.turf_name }} - {{ turf.turf_location }}
+                  </option>
+
+                  {% endfor %}
+                </select>
+              </div>
+
+              <!-- Club Logo -->
+
+              <div class="fc27-field">
+                <label class="fc27-label" for="fc27Logo">
+                  <i class="fas fa-image"></i>
+                  Club Logo
+                </label>
+
+                <input
+                  type="file"
+                  name="club_logo"
+                  id="fc27Logo"
+                  class="fc27-input"
+                  accept="image/*"
+                  required
+                />
+              </div>
+
+              <!-- Submit -->
+
+              <button type="submit" class="fc27-submit" id="fc27Submit">
+                <i class="fas fa-plus-circle"></i>
+                <span>Register Club</span>
+              </button>
+            </form>
+          </section>
+        </div>
+
+        <div class="col-12 col-lg-5 fc27-reveal fc27-delay-2">
+          <aside class="fc27-preview-wrap">
+            <section class="fc27-card" id="fc27Card">
+              <div class="fc27-card-banner">
+                <span class="fc27-live-badge">
+                  <i class="fas fa-eye"></i>
+                  Live Preview
+                </span>
+              </div>
+
+              <div class="fc27-logo-zone">
+                <div class="fc27-logo" id="fc27PreviewLogo">
+                  <i class="fas fa-shield-alt fc27-logo-placeholder"></i>
+                </div>
+              </div>
+
+              <div class="fc27-card-info">
+                <h2 class="fc27-club-name" id="fc27PreviewName"></h2>
+
+                <div class="fc27-meta">
+                  <span class="fc27-chip" id="fc27PreviewDistrict">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span></span>
+                  </span>
+
+                  <span class="fc27-chip" id="fc27PreviewLocation">
+                    <i class="fas fa-city"></i>
+                    <span></span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="fc27-ground">
+                <div class="fc27-ground-label">
+                  <i class="fas fa-home"></i>
+                  Home Ground
+                </div>
+
+                <div class="fc27-ground-value" id="fc27PreviewGround"></div>
+              </div>
+
+              <div class="fc27-stats">
+                <div class="fc27-stat">
+                  <span class="fc27-stat-value" id="fc27StatDistrict">
+                    --
+                  </span>
+
+                  <span class="fc27-stat-label"> District </span>
+                </div>
+
+                <div class="fc27-stat">
+                  <span class="fc27-stat-value" id="fc27StatLocation">
+                    --
+                  </span>
+
+                  <span class="fc27-stat-label"> Location </span>
+                </div>
+
+                <div class="fc27-stat">
+                  <span class="fc27-stat-value" id="fc27StatGround"> -- </span>
+
+                  <span class="fc27-stat-label"> Ground </span>
+                </div>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const fc27Form = document.getElementById("fc27Form");
+    const fc27Submit = document.getElementById("fc27Submit");
+
+    const fc27ClubName = document.getElementById("fc27ClubName");
+    const fc27District = document.getElementById("fc27District");
+    const fc27Location = document.getElementById("fc27Location");
+    const fc27Ground = document.getElementById("fc27Ground");
+    const fc27Logo = document.getElementById("fc27Logo");
+
+    const fc27PreviewName = document.getElementById("fc27PreviewName");
+    const fc27PreviewDistrict = document.getElementById("fc27PreviewDistrict");
+    const fc27PreviewLocation = document.getElementById("fc27PreviewLocation");
+    const fc27PreviewGround = document.getElementById("fc27PreviewGround");
+    const fc27PreviewLogo = document.getElementById("fc27PreviewLogo");
+
+    const fc27StatDistrict = document.getElementById("fc27StatDistrict");
+    const fc27StatLocation = document.getElementById("fc27StatLocation");
+    const fc27StatGround = document.getElementById("fc27StatGround");
+
+
+    const fc27AllTurfs = Array.from(
+      fc27Ground.querySelectorAll('option:not([value=""])'),
+    );
+
+
+    fc27District.addEventListener("change", function () {
+      const selectedDistrict = this.value;
+
+      fc27Ground.innerHTML = '<option value="">Select Turf</option>';
+
+      if (!selectedDistrict) {
+        fc27AllTurfs.forEach(function (option) {
+          fc27Ground.appendChild(option.cloneNode(true));
+        });
+      } else {
+        const matchingTurfs = fc27AllTurfs.filter(function (option) {
+          return option.getAttribute("data-district") === selectedDistrict;
+        });
+
+        if (matchingTurfs.length === 0) {
+          const emptyOption = document.createElement("option");
+
+          emptyOption.value = "";
+          emptyOption.textContent = "No turfs available in this district";
+          emptyOption.disabled = true;
+
+          fc27Ground.appendChild(emptyOption);
+        } else {
+          matchingTurfs.forEach(function (option) {
+            fc27Ground.appendChild(option.cloneNode(true));
+          });
+        }
+      }
+
+      fc27Ground.value = "";
+
+      fc27PreviewGround.textContent = "";
+      fc27StatGround.textContent = "--";
+    });
+
+    fc27ClubName.addEventListener("input", function () {
+      fc27PreviewName.textContent = this.value.trim();
+    });
+
+
+    fc27District.addEventListener("change", function () {
+      const district = this.value.trim();
+
+      fc27PreviewDistrict.querySelector("span").textContent = district;
+
+      fc27StatDistrict.textContent = district
+        ? district.substring(0, 3).toUpperCase()
+        : "--";
+
+      fc27PreviewDistrict.style.display = district ? "inline-flex" : "none";
+    });
+
+
+    fc27Location.addEventListener("input", function () {
+      const location = this.value.trim();
+
+      fc27PreviewLocation.querySelector("span").textContent = location;
+
+      fc27StatLocation.textContent = location
+        ? location.substring(0, 3).toUpperCase()
+        : "--";
+
+      fc27PreviewLocation.style.display = location ? "inline-flex" : "none";
+    });
+
+
+    fc27Ground.addEventListener("change", function () {
+      const selectedOption = this.options[this.selectedIndex];
+
+      const groundName = selectedOption.getAttribute("data-name") || "";
+
+      const groundLocation = selectedOption.getAttribute("data-location") || "";
+
+      if (groundName) {
+        fc27PreviewGround.textContent =
+          groundName + (groundLocation ? " (" + groundLocation + ")" : "");
+
+        fc27StatGround.textContent = groundName.substring(0, 3).toUpperCase();
+      } else {
+        fc27PreviewGround.textContent = "";
+        fc27StatGround.textContent = "--";
+      }
+    });
+
+    fc27Logo.addEventListener("change", function (event) {
+      const file = event.target.files[0];
+
+      if (!file) {
+        return;
+      }
+
+      if (!file.type.startsWith("image/")) {
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = function (readerEvent) {
+        fc27PreviewLogo.innerHTML =
+          '<img src="' + readerEvent.target.result + '" alt="Club Logo">';
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    fc27Form.addEventListener("submit", function () {
+      fc27Submit.classList.add("fc27-loading");
+
+      fc27Submit.innerHTML =
+        '<i class="fas fa-spinner fa-spin"></i>' + "<span>Processing...</span>";
+    });
+
+    fc27PreviewDistrict.style.display = "none";
+    fc27PreviewLocation.style.display = "none";
+
+    const fc27Particles = document.querySelectorAll(".fc27-particle");
+
+    document.addEventListener("mousemove", function (event) {
+      const mouseX = event.clientX / window.innerWidth;
+      const mouseY = event.clientY / window.innerHeight;
+
+      fc27Particles.forEach(function (particle, index) {
+        const movement = (index + 1) * 0.35;
+
+        particle.style.marginLeft = (mouseX - 0.5) * movement + "px";
+
+        particle.style.marginTop = (mouseY - 0.5) * movement + "px";
+      });
+    });
+
+    const fc27RevealItems = document.querySelectorAll(".fc27-reveal");
+
+    if ("IntersectionObserver" in window) {
+      const fc27Observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.style.animationPlayState = "running";
+              fc27Observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.08,
+        },
+      );
+
+      fc27RevealItems.forEach(function (element) {
+        element.style.animationPlayState = "paused";
+
+        fc27Observer.observe(element);
+      });
+    }
+  });
+</script>
+
+{% endblock %}

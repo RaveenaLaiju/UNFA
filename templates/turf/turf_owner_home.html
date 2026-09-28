@@ -1,0 +1,700 @@
+{% extends 'user/user_head.html' %}
+{% load static %}
+
+{% block title %}Turf Owner Stadium{% endblock %}
+
+{% block content %}
+
+
+<div class="turf-01-pitch-bg"></div>
+<div class="turf-01-particles" id="turf01Particles"></div>
+
+<div class="container-fluid turf-01-page py-4">
+
+  <div class="turf-01-header turf-01-glass p-4 mb-4 turf-01-fade-up">
+    <div class="turf-01-header-badge">
+      <span class="turf-01-header-kicker"><i class="fas fa-futbol"></i> Turf Owner Stadium</span>
+      <h1 class="turf-01-header-title">Welcome, <span>{{ user.user_name }}</span></h1>
+    </div>
+    <!-- <div class="d-flex gap-2">
+      <a href="{% url 'register_turf' %}" class="turf-01-btn turf-01-btn-lg">
+        <i class="fas fa-plus-circle"></i> Register New Turf
+      </a>
+    </div> -->
+  </div>
+
+  <!-- Mobile Toggle -->
+  <button class="turf-01-btn turf-01-btn-full d-lg-none mb-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#turf01Offcanvas">
+    <i class="fas fa-bars"></i> Open Navigation
+  </button>
+
+  <div class="row g-4">
+    <!-- Desktop Sidebar -->
+    <div class="col-lg-3 col-xl-3 d-none d-lg-block">
+      <aside class="turf-01-glass p-4 sticky-top" style="top: 1rem; z-index: 5;">
+        <h3 class="turf-01-nav-title"><i class="fas fa-gamepad"></i> Navigation</h3>
+        <ul class="turf-01-nav-list">
+          <li>
+            <a href="#" class="turf-01-nav-link {% if active_tab == 'dashboard' %}turf-01-active{% endif %}" data-turf01-tab="dashboard">
+              <span><i class="fas fa-home"></i> Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="turf-01-nav-link {% if active_tab == 'requests' %}turf-01-active{% endif %}" data-turf01-tab="requests">
+              <span><i class="fas fa-clipboard-list"></i> Requests</span>
+              {% if pending_count > 0 %}<span class="turf-01-nav-badge">{{ pending_count }}</span>{% endif %}
+            </a>
+          </li>
+          <li>
+            <a href="#" class="turf-01-nav-link {% if active_tab == 'myturfs' %}turf-01-active{% endif %}" data-turf01-tab="myturfs">
+              <span><i class="fas fa-map-marked-alt"></i> My Turfs</span>
+              {% if owned_turfs|length > 0 %}<span class="turf-01-nav-badge turf-01-badge-green">{{ owned_turfs|length }}</span>{% endif %}
+            </a>
+          </li>
+          <li>
+            <a href="#" class="turf-01-nav-link {% if active_tab == 'payments' %}turf-01-active{% endif %}" data-turf01-tab="payments">
+              <span><i class="fas fa-credit-card"></i> Payments</span>
+              {% if total_earnings > 0 %}<span class="turf-01-nav-badge turf-01-badge-gold">₹{{ total_earnings }}</span>{% endif %}
+            </a>
+          </li>
+          <li>
+            <a href="#" class="turf-01-nav-link {% if active_tab == 'updateturf' %}turf-01-active{% endif %}" data-turf01-tab="updateturf">
+              <span><i class="fas fa-edit"></i> Update Turf</span>
+            </a>
+          </li>
+        </ul>
+      </aside>
+    </div>
+
+    <!-- Mobile Offcanvas -->
+    <div class="offcanvas offcanvas-start turf-01-offcanvas" tabindex="-1" id="turf01Offcanvas" aria-labelledby="turf01OffcanvasLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title turf-01-nav-title" id="turf01OffcanvasLabel"><i class="fas fa-gamepad"></i> Navigation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="turf-01-nav-list">
+          <li>
+            <a href="#" class="turf-01-nav-link {% if active_tab == 'dashboard' %}turf-01-active{% endif %}" data-turf01-tab="dashboard" data-bs-dismiss="offcanvas">
+              <span><i class="fas fa-home"></i> Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="turf-01-nav-link {% if active_tab == 'requests' %}turf-01-active{% endif %}" data-turf01-tab="requests" data-bs-dismiss="offcanvas">
+              <span><i class="fas fa-clipboard-list"></i> Requests</span>
+              {% if pending_count > 0 %}<span class="turf-01-nav-badge">{{ pending_count }}</span>{% endif %}
+            </a>
+          </li>
+          <li>
+            <a href="#" class="turf-01-nav-link {% if active_tab == 'myturfs' %}turf-01-active{% endif %}" data-turf01-tab="myturfs" data-bs-dismiss="offcanvas">
+              <span><i class="fas fa-map-marked-alt"></i> My Turfs</span>
+              {% if owned_turfs|length > 0 %}<span class="turf-01-nav-badge turf-01-badge-green">{{ owned_turfs|length }}</span>{% endif %}
+            </a>
+          </li>
+          <li>
+            <a href="#" class="turf-01-nav-link {% if active_tab == 'payments' %}turf-01-active{% endif %}" data-turf01-tab="payments" data-bs-dismiss="offcanvas">
+              <span><i class="fas fa-credit-card"></i> Payments</span>
+              {% if total_earnings > 0 %}<span class="turf-01-nav-badge turf-01-badge-gold">₹{{ total_earnings }}</span>{% endif %}
+            </a>
+          </li>
+          <li>
+            <a href="#" class="turf-01-nav-link {% if active_tab == 'updateturf' %}turf-01-active{% endif %}" data-turf01-tab="updateturf" data-bs-dismiss="offcanvas">
+              <span><i class="fas fa-edit"></i> Update Turf</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-12 col-lg-9 col-xl-9">
+
+      <!-- ===== DASHBOARD TAB ===== -->
+      <div id="turf01-dashboard" class="turf-01-tab-content {% if active_tab == 'dashboard' %}turf-01-active{% endif %}">
+        <!-- Stats Row -->
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4 mb-4">
+          <div class="col turf-01-fade-up turf-01-delay-1">
+            <div class="turf-01-stat-card turf-01-glass h-100">
+              <div class="turf-01-stat-icon"><i class="fas fa-futbol"></i></div>
+              <div class="turf-01-stat-value">{{ owned_turfs|length|default:"0" }}</div>
+              <div class="turf-01-stat-label">Total Turfs</div>
+              <div class="turf-01-stat-change turf-01-up"><i class="fas fa-arrow-up"></i> Active</div>
+            </div>
+          </div>
+          <div class="col turf-01-fade-up turf-01-delay-2">
+            <div class="turf-01-stat-card turf-01-glass h-100">
+              <div class="turf-01-stat-icon turf-01-icon-blue"><i class="fas fa-calendar-check"></i></div>
+              <div class="turf-01-stat-value">{{ bookings|length|default:"0" }}</div>
+              <div class="turf-01-stat-label">Total Bookings</div>
+              <div class="turf-01-stat-change turf-01-up"><i class="fas fa-arrow-up"></i> This month</div>
+            </div>
+          </div>
+          <div class="col turf-01-fade-up turf-01-delay-3">
+            <div class="turf-01-stat-card turf-01-glass h-100">
+              <div class="turf-01-stat-icon turf-01-icon-purple"><i class="fas fa-clock"></i></div>
+              <div class="turf-01-stat-value">{{ pending_count|default:"0" }}</div>
+              <div class="turf-01-stat-label">Pending Requests</div>
+              <div class="turf-01-stat-change turf-01-down"><i class="fas fa-exclamation"></i> Needs action</div>
+            </div>
+          </div>
+          <div class="col turf-01-fade-up turf-01-delay-4">
+            <div class="turf-01-stat-card turf-01-glass h-100">
+              <div class="turf-01-stat-icon turf-01-icon-gold"><i class="fas fa-wallet"></i></div>
+              <div class="turf-01-stat-value">₹{{ total_earnings|default:"0" }}</div>
+              <div class="turf-01-stat-label">Total Earnings</div>
+              <div class="turf-01-stat-change turf-01-up"><i class="fas fa-arrow-up"></i> Lifetime</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Bookings -->
+        <div class="turf-01-section-card turf-01-glass turf-01-fade-up turf-01-delay-2">
+          <div class="turf-01-section-header">
+            <h3 class="turf-01-section-title"><i class="fas fa-trophy"></i> Recent Bookings</h3>
+            <a href="#" class="turf-01-btn turf-01-btn-ghost turf-01-btn-sm" data-turf01-tab="requests">
+              View All <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+          {% if bookings %}
+            <div class="table-responsive">
+              <table class="turf-01-table">
+                <thead>
+                  <tr><th>Turf</th><th>Customer</th><th>Date</th><th>Time</th><th>Status</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                  {% for booking in bookings|slice:":5" %}
+                  <tr>
+                    <td><strong>{{ booking.turf.turf_name }}</strong></td>
+                    <td>
+                      <div class="turf-01-customer">
+                        <div class="turf-01-customer-avatar">{{ booking.customer.user_name|first|upper }}</div>
+                        <span class="d-none d-md-inline">{{ booking.customer.user_name }}</span>
+                      </div>
+                    </td>
+                    <td>{{ booking.booking_date }}</td>
+                    <td>{{ booking.time_slot.tt_time.time_range }}</td>
+                    <td><span class="turf-01-pill turf-01-pill-{{ booking.status|lower }}">{{ booking.status }}</span></td>
+                    <td>
+                      {% if booking.status == 'Pending' %}
+                      <div class="turf-01-action-group">
+                        <a href="{% url 'approve_booking' booking.booking_id %}" class="turf-01-btn turf-01-btn-sm" title="Approve"><i class="fas fa-check"></i></a>
+                        <a href="{% url 'reject_booking' booking.booking_id %}" class="turf-01-btn turf-01-btn-red turf-01-btn-sm" title="Reject"><i class="fas fa-times"></i></a>
+                      </div>
+                      {% else %}
+                      <span style="color:var(--turf-01-text-dim);font-size:0.8rem;">—</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="turf-01-empty">
+              <i class="fas fa-clipboard-list"></i>
+              <p>No bookings yet</p>
+              <p class="turf-01-empty-sub">Waiting for the match to begin!</p>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- My Turfs Preview -->
+        <div class="turf-01-section-card turf-01-glass turf-01-fade-up turf-01-delay-3 mt-4">
+          <div class="turf-01-section-header">
+            <h3 class="turf-01-section-title"><i class="fas fa-futbol"></i> My Turfs</h3>
+            <a href="#" class="turf-01-btn turf-01-btn-ghost turf-01-btn-sm" data-turf01-tab="myturfs">
+              View All <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+          {% if owned_turfs %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+              {% for turf in owned_turfs|slice:":3" %}
+              <div class="col">
+                <div class="turf-01-turf-card">
+                  <div class="turf-01-turf-img-wrap">
+                    <img src="{{ turf.turf_image.url }}" class="turf-01-turf-img" alt="{{ turf.turf_name }}">
+                    <span class="turf-01-turf-rate">₹{{ turf.turf_rate }}/hr</span>
+                  </div>
+                  <div class="turf-01-turf-info">
+                    <h4>{{ turf.turf_name }}</h4>
+                    <p class="turf-01-turf-location"><i class="fas fa-map-marker-alt"></i> {{ turf.turf_location }}, {{ turf.turf_district }}</p>
+                    <div class="turf-01-turf-actions">
+                      <a href="{% url 'update_turf' turf.turf_id %}" class="turf-01-btn turf-01-btn-ghost turf-01-btn-full"><i class="fas fa-edit"></i> Edit Field</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="turf-01-empty">
+              <i class="fas fa-futbol"></i>
+              <p>No turfs registered yet</p>
+              <p class="turf-01-empty-sub">Build your arena and start earning!</p>
+              <a href="{% url 'register_turf' %}" class="turf-01-btn mt-3"><i class="fas fa-plus"></i> Register Turf</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- ===== REQUESTS TAB ===== -->
+      <div id="turf01-requests" class="turf-01-tab-content {% if active_tab == 'requests' %}turf-01-active{% endif %}">
+        <div class="turf-01-section-card turf-01-glass">
+          <div class="turf-01-section-header">
+            <h3 class="turf-01-section-title"><i class="fas fa-clipboard-list"></i> Booking Requests</h3>
+            <button class="turf-01-btn turf-01-btn-ghost turf-01-btn-sm"><i class="fas fa-filter"></i> Filter</button>
+          </div>
+          {% if bookings %}
+            <div class="table-responsive">
+              <table class="turf-01-table">
+                <thead>
+                  <tr><th>Turf</th><th>Customer</th><th>Date</th><th>Time</th><th>Amount</th><th>Status</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                  {% for booking in bookings %}
+                  <tr>
+                    <td><strong>{{ booking.turf.turf_name }}</strong></td>
+                    <td>
+                      <div class="turf-01-customer">
+                        <div class="turf-01-customer-avatar">{{ booking.customer.user_name|first|upper }}</div>
+                        <span class="d-none d-md-inline">{{ booking.customer.user_name }}</span>
+                      </div>
+                    </td>
+                    <td>{{ booking.booking_date }}</td>
+                    <td>{{ booking.time_slot.tt_time.time_range }}</td>
+                    <td style="color:var(--turf-01-neon-gold);font-weight:700;">₹{{ booking.turf.turf_rate }}</td>
+                    <td><span class="turf-01-pill turf-01-pill-{{ booking.status|lower }}">{{ booking.status }}</span></td>
+                    <td>
+                      {% if booking.status == 'Pending' %}
+                      <div class="turf-01-action-group">
+                        <a href="{% url 'approve_booking' booking.booking_id %}" class="turf-01-btn turf-01-btn-sm"><i class="fas fa-check"></i> Approve</a>
+                        <a href="{% url 'reject_booking' booking.booking_id %}" class="turf-01-btn turf-01-btn-red turf-01-btn-sm"><i class="fas fa-times"></i></a>
+                      </div>
+                      {% elif booking.status == 'Accepted' %}
+                      <span class="turf-01-pill turf-01-pill-approved" style="cursor:default;"><i class="fas fa-check-double" style="margin-right:0.3rem;"></i> Done</span>
+                      {% else %}
+                      <span class="turf-01-pill turf-01-pill-rejected" style="cursor:default;"><i class="fas fa-ban" style="margin-right:0.3rem;"></i> Rejected</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="turf-01-empty">
+              <i class="fas fa-clipboard-list"></i>
+              <p>No requests yet</p>
+              <p class="turf-01-empty-sub">Your inbox is clean — for now!</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- ===== MY TURFS TAB ===== -->
+      <div id="turf01-myturfs" class="turf-01-tab-content {% if active_tab == 'myturfs' %}turf-01-active{% endif %}">
+        <div class="turf-01-section-card turf-01-glass">
+          <div class="turf-01-section-header">
+            <h3 class="turf-01-section-title"><i class="fas fa-map-marked-alt"></i> My Turfs</h3>
+            {% comment %} <a href="{% url 'register_turf' %}" class="turf-01-btn turf-01-btn-sm"><i class="fas fa-plus"></i> Add New</a> {% endcomment %}
+          </div>
+          {% if owned_turfs %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+              {% for turf in owned_turfs %}
+              <div class="col">
+                <div class="turf-01-turf-card">
+                  <div class="turf-01-turf-img-wrap">
+                    <img src="{{ turf.turf_image.url }}" class="turf-01-turf-img" alt="{{ turf.turf_name }}">
+                    <span class="turf-01-turf-rate">₹{{ turf.turf_rate }}/hr</span>
+                  </div>
+                  <div class="turf-01-turf-info">
+                    <h4>{{ turf.turf_name }}</h4>
+                    <p class="turf-01-turf-location"><i class="fas fa-map-marker-alt"></i> {{ turf.turf_location }}, {{ turf.turf_district }}</p>
+                    <div class="turf-01-turf-meta">
+                      <span class="turf-01-turf-meta-item"><i class="fas fa-ruler-combined"></i> {{ turf.turf_size|default:"Standard" }}</span>
+                      <span class="turf-01-turf-meta-item"><i class="fas fa-users"></i> {{ turf.capacity|default:"10v10" }}</span>
+                      <span class="turf-01-turf-meta-item"><i class="fas fa-star"></i> {{ turf.rating|default:"4.5" }}</span>
+                    </div>
+                    <div class="turf-01-turf-actions">
+                      <a href="{% url 'update_turf' turf.turf_id %}" class="turf-01-btn turf-01-btn-ghost flex-fill"><i class="fas fa-edit"></i> Edit</a>
+                      <a href="{% url 'delete_turf' turf.turf_id %}" class="turf-01-btn turf-01-btn-red" onclick="return confirm('Delete this turf? This action cannot be undone.');"><i class="fas fa-trash"></i></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="turf-01-empty">
+              <i class="fas fa-futbol"></i>
+              <p>No turfs registered yet</p>
+              <p class="turf-01-empty-sub">Build your arena and start earning!</p>
+              {% comment %} <a href="{% url 'register_turf' %}" class="turf-01-btn mt-3"><i class="fas fa-plus"></i> Register Turf</a> {% endcomment %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- ===== PAYMENTS TAB ===== -->
+      <div id="turf01-payments" class="turf-01-tab-content {% if active_tab == 'payments' %}turf-01-active{% endif %}">
+        <div class="turf-01-section-card turf-01-glass">
+          <div class="turf-01-section-header">
+            <h3 class="turf-01-section-title"><i class="fas fa-credit-card"></i> Payments</h3>
+            <button class="turf-01-btn turf-01-btn-ghost turf-01-btn-sm"><i class="fas fa-download"></i> Export</button>
+          </div>
+          <!-- Payment Stats -->
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4 mb-4">
+            <div class="col">
+              <div class="turf-01-stat-card turf-01-glass h-100">
+                <div class="turf-01-stat-icon turf-01-icon-gold"><i class="fas fa-wallet"></i></div>
+                <div class="turf-01-stat-value">₹{{ total_earnings|default:"0" }}</div>
+                <div class="turf-01-stat-label">Total Earnings</div>
+                <div class="turf-01-stat-change turf-01-up"><i class="fas fa-arrow-up"></i> Lifetime</div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="turf-01-stat-card turf-01-glass h-100">
+                <div class="turf-01-stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                <div class="turf-01-stat-value">₹{{ monthly_earnings|default:"0" }}</div>
+                <div class="turf-01-stat-label">This Month</div>
+                <div class="turf-01-stat-change turf-01-up"><i class="fas fa-arrow-up"></i> +12%</div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="turf-01-stat-card turf-01-glass h-100">
+                <div class="turf-01-stat-icon turf-01-icon-blue"><i class="fas fa-hand-holding-usd"></i></div>
+                <div class="turf-01-stat-value">₹{{ pending_payments|default:"0" }}</div>
+                <div class="turf-01-stat-label">Pending</div>
+                <div class="turf-01-stat-change turf-01-down"><i class="fas fa-clock"></i> Awaiting</div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="turf-01-stat-card turf-01-glass h-100">
+                <div class="turf-01-stat-icon turf-01-icon-purple"><i class="fas fa-chart-line"></i></div>
+                <div class="turf-01-stat-value">{{ total_transactions|default:"0" }}</div>
+                <div class="turf-01-stat-label">Transactions</div>
+                <div class="turf-01-stat-change turf-01-up"><i class="fas fa-check"></i> Completed</div>
+              </div>
+            </div>
+          </div>
+          <!-- Payment List -->
+          {% if payments %}
+            {% for payment in payments %}
+            <div class="turf-01-payment-card">
+              <div class="turf-01-payment-left">
+                <div class="turf-01-payment-icon"><i class="fas fa-money-bill-wave"></i></div>
+                <div class="turf-01-payment-info">
+                  <h5>Booking #{{ payment.booking_id }}</h5>
+                  <p>{{ payment.turf.turf_name }} • {{ payment.customer.user_name }}</p>
+                </div>
+              </div>
+              <div class="turf-01-payment-right">
+                <div class="turf-01-payment-amount">+ ₹{{ payment.turf.turf_rate }}</div>
+                <div class="turf-01-payment-date"><i class="fas fa-calendar"></i> {{ payment.booking_date }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="turf-01-empty">
+              <i class="fas fa-credit-card"></i>
+              <p>No payments yet</p>
+              <p class="turf-01-empty-sub">Complete bookings to see earnings here!</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- ===== UPDATE TURF TAB ===== -->
+      <div id="turf01-updateturf" class="turf-01-tab-content {% if active_tab == 'updateturf' %}turf-01-active{% endif %}">
+        {% if turf %}
+        <div class="turf-01-section-card turf-01-glass">
+          <div class="turf-01-section-header">
+            <div>
+              <span class="turf-01-header-kicker"><i class="fas fa-edit"></i> Turf Management</span>
+              <h3 class="turf-01-section-title mt-1">Update Turf</h3>
+            </div>
+          </div>
+          <p class="mb-4" style="color:var(--turf-01-text-dim);">Manage {{ turf.turf_name }} details and time slots</p>
+          <div class="row g-4">
+            <!-- Left: Form -->
+            <div class="col-12 col-lg-6">
+              <div class="turf-01-glass-strong p-4">
+                <h4 class="turf-01-panel-title"><i class="fas fa-futbol"></i> Turf Details</h4>
+                {% if error %}
+                <div class="alert alert-danger" style="background:rgba(255,82,82,0.1);border-color:rgba(255,82,82,0.2);color:var(--turf-01-neon-red);">
+                  <i class="fas fa-exclamation-circle"></i> {{ error }}
+                </div>
+                {% endif %}
+                <form method="POST" action="{% url 'update_turf' turf.turf_id %}" enctype="multipart/form-data" id="turf01UpdateForm">
+                  {% csrf_token %}
+                  <div class="turf-01-form-group">
+                    <label><i class="fas fa-signature"></i> Turf Name</label>
+                    <input type="text" name="turf_name" id="turf01Name" class="turf-01-form-input" value="{{ turf.turf_name }}" required>
+                  </div>
+                  <div class="row g-3">
+                    <div class="col-12 col-sm-6">
+                      <div class="turf-01-form-group">
+                        <label><i class="fas fa-map-marked-alt"></i> District</label>
+                        <select name="turf_district" id="turf01District" class="turf-01-form-input" required>
+                          <option value="{{ turf.turf_district }}" selected>{{ turf.turf_district }}</option>
+                          <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+                          <option value="Kollam">Kollam</option>
+                          <option value="Pathanamthitta">Pathanamthitta</option>
+                          <option value="Alappuzha">Alappuzha</option>
+                          <option value="Kottayam">Kottayam</option>
+                          <option value="Idukki">Idukki</option>
+                          <option value="Ernakulam">Ernakulam</option>
+                          <option value="Thrissur">Thrissur</option>
+                          <option value="Palakkad">Palakkad</option>
+                          <option value="Malappuram">Malappuram</option>
+                          <option value="Kozhikode">Kozhikode</option>
+                          <option value="Wayanad">Wayanad</option>
+                          <option value="Kannur">Kannur</option>
+                          <option value="Kasaragod">Kasaragod</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                      <div class="turf-01-form-group">
+                        <label><i class="fas fa-city"></i> Location</label>
+                        <input type="text" name="turf_location" id="turf01Location" class="turf-01-form-input" value="{{ turf.turf_location }}" required>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="turf-01-form-group">
+                    <label><i class="fas fa-rupee-sign"></i> Hourly Rate (₹)</label>
+                    <input type="number" name="turf_rate" id="turf01Rate" class="turf-01-form-input" value="{{ turf.turf_rate }}" required min="100">
+                  </div>
+                  <div class="turf-01-form-group">
+                    <label><i class="fas fa-image"></i> Update Image</label>
+                    <div class="turf-01-image-preview" id="turf01ImagePreview">
+                      <img id="turf01PreviewImg" src="{{ turf.turf_image.url }}" alt="Preview" style="display:block;">
+                      <div class="turf-01-image-preview-placeholder" id="turf01PreviewPlaceholder" style="display:none;">
+                        <i class="fas fa-image"></i>
+                        <span>Click to select new image</span>
+                      </div>
+                    </div>
+                    <div class="turf-01-file-wrap">
+                      <input type="file" name="turf_image" id="turf01ImageInput" accept="image/*">
+                      <button type="button" class="turf-01-btn turf-01-btn-ghost turf-01-btn-full" onclick="document.getElementById('turf01ImageInput').click()">
+                        <i class="fas fa-upload"></i> Choose New Image
+                      </button>
+                    </div>
+                  </div>
+                  <button type="submit" class="turf-01-btn turf-01-btn-full" style="margin-top:0.5rem;">
+                    <i class="fas fa-save"></i> Update Turf
+                  </button>
+                </form>
+              </div>
+            </div>
+            <!-- Right: Time Slots + Preview -->
+            <div class="col-12 col-lg-6">
+              <div class="turf-01-glass-strong p-4">
+                <h4 class="turf-01-panel-title"><i class="fas fa-clock"></i> Time Slots</h4>
+                {% if turf.is_validated %}
+                  <div class="mb-4">
+                    <h5 style="margin-bottom:1rem;color:var(--turf-01-text-dim);font-size:0.85rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;">
+                      <i class="fas fa-check-circle" style="color:var(--turf-01-neon-green);margin-right:0.4rem;"></i> Available Slots
+                    </h5>
+                    <div class="turf-01-slot-grid">
+                      {% for slot in time_map %}
+                      <div class="turf-01-slot-chip">
+                        <i class="fas fa-clock"></i>
+                        <span>{{ slot.tt_time.time_range }}</span>
+                        <a href="{% url 'remove_time_map' slot.tt_id %}" onclick="return confirm('Remove this slot?');"><i class="fas fa-times"></i></a>
+                      </div>
+                      {% empty %}
+                      <p style="color:var(--turf-01-text-dim);font-size:0.9rem;">No time slots added yet.</p>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:1.5rem;">
+                    <h5 style="margin-bottom:1rem;color:var(--turf-01-text-dim);font-size:0.85rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;">
+                      <i class="fas fa-plus-circle" style="color:var(--turf-01-neon-green);margin-right:0.4rem;"></i> Add New Slot
+                    </h5>
+                    <form method="POST" action="{% url 'add_time_map' turf.turf_id %}">
+                      {% csrf_token %}
+                      <div class="turf-01-slot-add">
+                        <select name="slot_id" class="turf-01-form-input flex-grow-1" required>
+                          <option value="">Select Time Slot</option>
+                          {% for slot in time_slots %}
+                          <option value="{{ slot.time_id }}">{{ slot.time_range }}</option>
+                          {% endfor %}
+                        </select>
+                        <button type="submit" class="turf-01-btn"><i class="fas fa-plus"></i> Add</button>
+                      </div>
+                    </form>
+                  </div>
+                {% else %}
+                  <div class="turf-01-pending">
+                    <i class="fas fa-clock"></i>
+                    <p>Turf pending validation.</p>
+                    <p class="turf-01-pending-sub">Time slots can be added after admin approval.</p>
+                  </div>
+                {% endif %}
+                <!-- Live Preview -->
+                <div class="mt-4 pt-4" style="border-top:1px solid rgba(255,255,255,0.06);">
+                  <h4 class="turf-01-panel-title">
+                    <i class="fas fa-eye"></i> Live Preview
+                    <span class="turf-01-pill turf-01-pill-approved" style="margin-left:auto;font-size:0.65rem;">
+                      <i class="fas fa-circle" style="font-size:0.4rem;margin-right:0.3rem;"></i>Live
+                    </span>
+                  </h4>
+                  <div class="turf-01-preview-card" id="turf01LivePreview">
+                    <div class="turf-01-preview-img-wrap">
+                      <img src="{{ turf.turf_image.url }}" class="turf-01-preview-img" id="turf01LiveImg" alt="{{ turf.turf_name }}">
+                      <span class="turf-01-preview-badge" id="turf01LiveRate">₹{{ turf.turf_rate }}/hr</span>
+                    </div>
+                    <div class="turf-01-preview-info">
+                      <h4 id="turf01LiveName">{{ turf.turf_name }}</h4>
+                      <p style="color:var(--turf-01-text-dim);font-size:0.85rem;margin:0;">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="turf01LiveLocation">{{ turf.turf_location }}, {{ turf.turf_district }}</span>
+                      </p>
+                      <div class="turf-01-preview-meta">
+                        <span><i class="fas fa-ruler-combined"></i> Standard</span>
+                        <span><i class="fas fa-users"></i> 10v10</span>
+                        <span><i class="fas fa-star"></i> 4.5</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="turf-01-section-card turf-01-glass">
+          {% if owned_turfs|length > 1 %}
+          <div class="turf-01-selector">
+            <label><i class="fas fa-list"></i> Select Turf to Edit</label>
+            <select class="turf-01-form-input" onchange="if(this.value) window.location.href='{% url 'update_turf' 0 %}'.replace('0', this.value);">
+              <option value="">Choose a turf...</option>
+              {% for t in owned_turfs %}
+              <option value="{{ t.turf_id }}">{{ t.turf_name }} — {{ t.turf_location }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endif %}
+          <div class="turf-01-empty">
+            <i class="fas fa-edit"></i>
+            <p>Select a turf to edit</p>
+            <p class="turf-01-empty-sub">Go to "My Turfs" and click Edit on any turf to update it here.</p>
+            <a href="#" class="turf-01-btn" data-turf01-tab="myturfs" style="margin-top:1rem;">
+              <i class="fas fa-map-marked-alt"></i> Go to My Turfs
+            </a>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="turf-01-toast" id="turf01Toast">
+  <i class="fas fa-check-circle" style="margin-right:0.5rem;"></i> <span id="turf01ToastMsg">Action completed</span>
+</div>
+
+<script>
+  /*
+   * Bootstrap JS is intentionally NOT loaded here.
+   * user_head.html already loads Bootstrap 5.3.2 once.
+   * Loading it a second time breaks dropdown/modal state handling.
+   */
+
+  // Generate particles
+  (function() {
+    const field = document.getElementById('turf01Particles');
+    if (!field) return;
+    const colors = ['#00e676', '#00b0ff', '#e040fb', '#ffd600'];
+    for (let i = 0; i < 30; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'turf-01-particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 10 + 's';
+      particle.style.animationDuration = (8 + Math.random() * 8) + 's';
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      particle.style.background = color;
+      particle.style.boxShadow = '0 0 10px ' + color + ', 0 0 20px ' + color;
+      field.appendChild(particle);
+    }
+  })();
+
+  // Tab Switching
+  document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('[data-turf01-tab]');
+    const tabContents = document.querySelectorAll('.turf-01-tab-content');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetTab = this.getAttribute('data-turf01-tab');
+
+        navLinks.forEach(l => l.classList.remove('turf-01-active'));
+        this.classList.add('turf-01-active');
+
+        tabContents.forEach(tab => tab.classList.remove('turf-01-active'));
+        const target = document.getElementById('turf01-' + targetTab);
+        if (target) {
+          target.classList.add('turf-01-active');
+        }
+
+        if (window.innerWidth < 992) {
+          document.querySelector('.col-12.col-lg-9').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Live Preview Logic
+    const turfName = document.getElementById('turf01Name');
+    const turfDistrict = document.getElementById('turf01District');
+    const turfLocation = document.getElementById('turf01Location');
+    const turfRate = document.getElementById('turf01Rate');
+    const turfImage = document.getElementById('turf01ImageInput');
+    const livePreviewName = document.getElementById('turf01LiveName');
+    const livePreviewLocation = document.getElementById('turf01LiveLocation');
+    const livePreviewRate = document.getElementById('turf01LiveRate');
+    const livePreviewImage = document.getElementById('turf01LiveImg');
+    const previewImage = document.getElementById('turf01PreviewImg');
+    const imagePreviewBox = document.getElementById('turf01ImagePreview');
+    const previewPlaceholder = document.getElementById('turf01PreviewPlaceholder');
+
+    if (turfName) {
+      turfName.addEventListener('input', function() {
+        if (livePreviewName) livePreviewName.textContent = this.value || 'Turf Name';
+      });
+    }
+    function updateLocation() {
+      const loc = turfLocation ? turfLocation.value : '';
+      const dist = turfDistrict ? turfDistrict.value : '';
+      if (livePreviewLocation) livePreviewLocation.textContent = loc + (dist ? ', ' + dist : '');
+    }
+    if (turfLocation) turfLocation.addEventListener('input', updateLocation);
+    if (turfDistrict) turfDistrict.addEventListener('change', updateLocation);
+    if (turfRate) {
+      turfRate.addEventListener('input', function() {
+        if (livePreviewRate) livePreviewRate.textContent = '₹' + (this.value || '0') + '/hr';
+      });
+    }
+    if (turfImage) {
+      turfImage.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const imageUrl = e.target.result;
+            if (livePreviewImage) livePreviewImage.src = imageUrl;
+            if (previewImage) { previewImage.src = imageUrl; previewImage.style.display = 'block'; }
+            if (previewPlaceholder) previewPlaceholder.style.display = 'none';
+            if (imagePreviewBox) imagePreviewBox.classList.add('has-image');
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  });
+</script>
+
+{% endblock %}

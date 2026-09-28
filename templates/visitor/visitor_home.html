@@ -1,0 +1,514 @@
+{% extends 'visitor/visitor_head.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="bg-mesh"></div>
+<div class="bg-noise"></div>
+
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+<div class="bg-orb orb-3"></div>
+<div class="bg-orb orb-4"></div>
+<div class="bg-orb orb-5"></div>
+
+<div class="particle-field">
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+</div>
+
+<main>
+
+  <!--  HERO  -->
+  <section class="unfa-hero">
+    <video class="hero-video-bg" autoplay muted loop playsinline>
+      <source src="{% static 'visitor_user_main/videos/football-hero.mp4' %}" type="video/mp4">
+    </video>
+
+    <i class="fa fa-futbol-o unfa-ball" aria-hidden="true"></i>
+
+    <div class="hero-scene">
+      <div class="player-shadow left"></div>
+      <div class="player-shadow right"></div>
+      <div class="player-left"><img src="{% static 'visitor_user_main/images/player-blue.png' %}" alt="Blue player"></div>
+      <div class="player-right"><img src="{% static 'visitor_user_main/images/player-red.png' %}" alt="Red player"></div>
+      <div class="match-ball"><div class="ball-body"></div></div>
+      <div class="ball-shadow"></div>
+      <div class="turf-particle left-kick"></div><div class="turf-particle left-kick"></div><div class="turf-particle left-kick"></div><div class="turf-particle left-kick"></div>
+      <div class="turf-particle right-kick"></div><div class="turf-particle right-kick"></div><div class="turf-particle right-kick"></div><div class="turf-particle right-kick"></div>
+    </div>
+
+    <div class="container" style="position:relative; z-index:10;">
+      <div class="text-center py-5">
+        <div class="hero-kicker glass">
+          <span class="pulse-dot"></span>
+          Local football is live
+        </div>
+        <h1 class="hero-title text-gradient animate-gradient">
+          United Neighbour's <br>Football Association
+        </h1>
+        <p class="hero-sub mx-auto text-white fw-bold">
+          Register clubs, manage tournaments, track players, upload match results
+          and build your local football community in one powerful platform.
+        </p>
+        <div class="hero-actions justify-content-center">
+          <a href="{% url 'visitor_sign' %}" class="btn-gradient animate-pulse-glow">
+            <i class="fas fa-bolt"></i> Join the Platform
+          </a>
+         
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!--  STATS  -->
+  <section class="section-space" id="stats">
+    <div class="container">
+      <div class="section-title reveal-up">
+        <div class="section-eyebrow">Live Numbers</div>
+        <h2 class="text-gradient animate-gradient">PLATFORM STATS</h2>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box reveal-up">
+          <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
+          <strong class="counter-value font-display text-gradient" data-count="{{ total_clubs|default:'0' }}">0</strong>
+          <div class="stat-label">Registered Clubs</div>
+          <div class="stat-bar">
+            <div class="stat-bar-fill" data-width="65" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="stat-box reveal-up" style="transition-delay:0.15s">
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <strong class="counter-value font-display neon-text-cyan" data-count="{{ total_players|default:'0' }}">0</strong>
+          <div class="stat-label">Registered Players</div>
+          <div class="stat-bar">
+            <div class="stat-bar-fill" data-width="80" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="stat-box reveal-up" style="transition-delay:0.3s">
+          <div class="stat-icon"><i class="fas fa-futbol"></i></div>
+          <strong class="counter-value font-display neon-text-gold" data-count="{{ total_matches|default:'0' }}">0</strong>
+          <div class="stat-label">Matches This Month</div>
+          <div class="stat-bar">
+            <div class="stat-bar-fill" data-width="45" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!--  FIXTURES  -->
+  <section class="section-space" id="fixtures">
+    <div class="container">
+      <div class="section-title reveal-up">
+        <h2 class="text-gradient animate-gradient">UPCOMING FIXTURES</h2>
+      </div>
+      {% if upcoming_matches %}
+      <div class="swiper fixtureSwiper">
+        <div class="swiper-wrapper">
+          {% for match in upcoming_matches %}
+          <div class="swiper-slide">
+            <div class="fixture-card">
+              <div class="fixture-meta">
+                <span><i class="far fa-calendar"></i> {{ match.match_date }}</span>
+                <span><i class="far fa-clock"></i> {{ match.match_time }}</span>
+              </div>
+              <div class="fixture-teams">
+                <div class="team-home">
+                  <div class="team-logo">
+                    {% if match.match_home_team.club_logo %}
+                      <img src="{{ match.match_home_team.club_logo.url }}" alt="{{ match.match_home_team.club_name }}">
+                    {% endif %}
+                  </div>
+                  <div class="team-name">{{ match.match_home_team.club_name }}</div>
+                </div>
+                <div class="fixture-vs">VS</div>
+                <div class="team-away">
+                  <div class="team-logo away">
+                    {% if match.match_away_team and match.match_away_team.club_logo %}
+                      <img src="{{ match.match_away_team.club_logo.url }}" alt="{{ match.match_away_team.club_name }}">
+                    {% endif %}
+                  </div>
+                  <div class="team-name">{% if match.match_away_team %}{{ match.match_away_team.club_name }}{% else %}TBD{% endif %}</div>
+                </div>
+              </div>
+              <div class="fixture-turf">
+                <i class="fas fa-map-marker-alt"></i> {{ match.match_turf.turf_name }}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+      </div>
+      {% else %}
+      <div class="glass text-center p-8 rounded-2xl reveal-up">
+        <i class="far fa-calendar-times text-4xl mb-4 text-muted-foreground"></i>
+        <p class="text-muted-foreground">No upcoming fixtures available.</p>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!--  HIGHLIGHTS  -->
+  <section class="section-space" id="videos">
+    <div class="container">
+      <div class="section-title reveal-up">
+        <div class="section-eyebrow">Match Replays</div>
+        <h2 class="text-gradient animate-gradient">HIGHLIGHT REEL</h2>
+      </div>
+      <div class="highlight-reel-center mt-12">
+        <div class="swiper highlightSwiper">
+          <div class="swiper-wrapper">
+            {% for i in "123456" %}
+            <div class="swiper-slide">
+              <div class="highlight-card">
+                <img src="{% static 'visitor_user_main/images/img_'|add:i|add:'.jpg' %}" alt="Highlight" onerror="this.src='https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=600&h=800&fit=crop'">
+                <div class="highlight-overlay">
+                  <button class="highlight-play" onclick="alert('Video playback coming soon!')"><i class="fas fa-play"></i></button>
+                  <div class="highlight-duration">0:4{{ forloop.counter }}</div>
+                  <div class="highlight-views"><i class="fas fa-fire"></i> {% cycle "1.2M" "890K" "654K" "2.1M" "742K" "3.4M" %} views</div>
+                  <div class="highlight-title">{% cycle "Bicycle Kick Stunner" "Last-Minute Header" "Goalkeeper Heroics" "Solo Run Madness" "Free Kick Wizardry" "Derby Day Carnage" %}</div>
+                  <div class="highlight-club">{% cycle "Neon Strikers" "Phantom FC" "Aurora United" "Volt City" "Echo Wolves" "Iron Saints" %}</div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--  TOP PLAYERS  -->
+  <section class="section-space" id="players">
+    <div class="container">
+      <div class="section-title reveal-up">
+        <div class="section-eyebrow">Hall of Fame</div>
+        <h2 class="text-gradient animate-gradient">TOP RATED PLAYERS</h2>
+      </div>
+      {% if featured_players %}
+      <div class="swiper playerSwiper">
+        <div class="swiper-wrapper">
+          {% for player in featured_players %}
+          <div class="swiper-slide player-slide">
+            <div class="player-card">
+              <img src="{{ player.player_image.url }}" alt="{{ player.player_card_name }}" class="player-card-img" onerror="this.src='https://images.unsplash.com/photo-1543353071-087f9a7ce535?w=400&h=600&fit=crop'">
+              <div class="player-card-overlay">
+                <div class="player-rating">{{ player.player_rating }}</div>
+                <div class="player-badge">{{ player.player_position.position_code }} · {{ player.player_club.club_name|default:"Free Agent" }}</div>
+                <div class="player-name">{{ player.player_card_name }}</div>
+                <div class="player-stats">
+                  <div class="p-stat glass">
+                    <div class="p-stat-val neon-text-cyan">{{ player.player_pace|default:"85" }}</div>
+                    <div class="p-stat-label">PAC</div>
+                  </div>
+                  <div class="p-stat glass">
+                    <div class="p-stat-val neon-text-pink">{{ player.player_shooting|default:"87" }}</div>
+                    <div class="p-stat-label">SHO</div>
+                  </div>
+                  <div class="p-stat glass">
+                    <div class="p-stat-val neon-text-gold">{{ player.player_dribbling|default:"89" }}</div>
+                    <div class="p-stat-label">DRI</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+      {% else %}
+      <div class="swiper playerSwiper">
+        <div class="swiper-wrapper">
+          {% for i in "12345" %}
+          <div class="swiper-slide player-slide">
+            <div class="player-card">
+              <img src="https://images.unsplash.com/photo-1543353071-087f9a7ce535?w=400&h=600&fit=crop" alt="Player" class="player-card-img">
+              <div class="player-card-overlay">
+                <div class="player-rating">{% cycle "94" "91" "89" "88" "87" %}</div>
+                <div class="player-badge">{% cycle "ST" "MID" "GK" "ST" "MID" %} · {% cycle "Neon Strikers" "Phantom FC" "Aurora United" "Volt City" "Echo Wolves" %}</div>
+                <div class="player-name">{% cycle "Marcus Vega" "Kai Storm" "Leo Ortiz" "Diego Rivera" "Akira Sun" %}</div>
+                <div class="player-stats">
+                  <div class="p-stat glass"><div class="p-stat-val neon-text-cyan">{% cycle "88" "85" "82" "86" "84" %}</div><div class="p-stat-label">PAC</div></div>
+                  <div class="p-stat glass"><div class="p-stat-val neon-text-pink">{% cycle "92" "89" "78" "87" "85" %}</div><div class="p-stat-label">SHO</div></div>
+                  <div class="p-stat glass"><div class="p-stat-val neon-text-gold">{% cycle "90" "93" "76" "88" "89" %}</div><div class="p-stat-label">DRI</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  
+    <!--  FEATURED CLUBS  -->
+  <section class="section-space" id="clubs">
+    <div class="container">
+      <div class="section-title reveal-up">
+        <div class="section-eyebrow">Power Rankings · {{ clubs|length|default:"1" }} Clubs</div>
+        <h2 class="text-gradient animate-gradient">FEATURED CLUBS</h2>
+      </div>
+      <div class="club-reel-center mt-12">
+        <div class="swiper clubSwiper">
+          <div class="swiper-wrapper">
+            {% if featured_clubs %}
+              {% for club in featured_clubs %}
+              <div class="swiper-slide">
+                <div class="club-card">
+                  <div class="club-shield-wrap">
+                    <div class="club-shield">
+                     {% if club.club_logo %}
+      <img src="{{ club.club_logo.url }}" alt="{{ club.club_name }}">
+    {% else %}
+      <i class="fas fa-shield-alt"></i>
+    {% endif %}
+                    </div>
+                    <div class="club-shield-glow"></div>
+                  </div>
+                  <h3 class="club-name">{{ club.club_name }}</h3>
+                  <p class="club-district"><i class="fas fa-map-marker-alt"></i> {{ club.club_district|default:"Pathanamthitta" }}</p>
+                  <div class="club-record">
+                    <div class="record-box">
+                      <div class="record-val neon-text-green">{{ club.wins|default:"20" }}</div>
+                      <div class="record-label">W</div>
+                    </div>
+                    <div class="record-box">
+                      <div class="record-val neon-text-gold">{{ club.draws|default:"5" }}</div>
+                      <div class="record-label">D</div>
+                    </div>
+                    <div class="record-box">
+                      <div class="record-val neon-text-pink">{{ club.losses|default:"3" }}</div>
+                      <div class="record-label">L</div>
+                    </div>
+                  </div>
+                  <div class="club-lvl">⚡ LVL {{ forloop.counter }}</div>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              {% for i in "1234567890" %}
+              <div class="swiper-slide">
+                <div class="club-card">
+                  <div class="club-shield-wrap">
+                    <div class="club-shield" style="background: linear-gradient(135deg, {% cycle 'var(--neon-cyan)' 'var(--neon-pink)' 'var(--neon-gold)' 'var(--neon-green)' 'var(--neon-purple)' 'var(--neon-cyan)' 'var(--neon-pink)' 'var(--neon-gold)' 'var(--neon-green)' 'var(--neon-purple)' %}, {% cycle 'var(--neon-purple)' 'var(--neon-purple)' 'var(--neon-pink)' 'var(--neon-cyan)' 'var(--neon-cyan)' 'var(--neon-pink)' 'var(--neon-gold)' 'var(--neon-cyan)' 'var(--neon-pink)' 'var(--neon-pink)' %});">
+                      <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="club-shield-glow" style="background: {% cycle 'var(--neon-cyan)' 'var(--neon-pink)' 'var(--neon-gold)' 'var(--neon-green)' 'var(--neon-purple)' 'var(--neon-cyan)' 'var(--neon-pink)' 'var(--neon-gold)' 'var(--neon-green)' 'var(--neon-purple)' %};"></div>
+                  </div>
+                  <h3 class="club-name">{% cycle "Argentina" "Paris Saint" "Neon Strikers" "Phantom FC" "Aurora United" "Volt City" "Echo Wolves" "Iron Saints" "Crimson Tide" "Solar Kings" %}</h3>
+                  <p class="club-district"><i class="fas fa-map-marker-alt"></i> Pathanamthitta</p>
+                  <div class="club-record">
+                    <div class="record-box">
+                      <div class="record-val neon-text-green">{% cycle "20" "18" "16" "15" "19" "17" "14" "13" "12" "21" %}</div>
+                      <div class="record-label">W</div>
+                    </div>
+                    <div class="record-box">
+                      <div class="record-val neon-text-gold">5</div>
+                      <div class="record-label">D</div>
+                    </div>
+                    <div class="record-box">
+                      <div class="record-val neon-text-pink">{% cycle "3" "4" "5" "6" "2" "3" "7" "8" "9" "1" %}</div>
+                      <div class="record-label">L</div>
+                    </div>
+                  </div>
+                  <div class="club-lvl">⚡ LVL {% cycle "5" "5" "9" "8" "11" "10" "9" "8" "7" "12" %}</div>
+                </div>
+              </div>
+              {% endfor %}
+            {% endif %}
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!--  TOURNAMENTS  -->
+  <section class="section-space" id="tournaments">
+    <div class="container">
+      <div class="section-title reveal-up">
+        <div class="section-eyebrow">Championship Arena</div>
+        <h2 class="text-gradient animate-gradient">TOURNAMENTS</h2>
+      </div>
+
+      <!-- Stats: real counts -->
+      <div class="stat-grid mb-12">
+        <div class="stat-box reveal-up">
+          <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+          <strong class="counter-value font-display neon-text-gold" data-count="{{ active_tournaments_count|default:'0' }}">0</strong>
+          <div class="stat-label">Active Tournaments</div>
+          <div class="stat-bar"><div class="stat-bar-fill" data-width="{% if active_tournaments_count > 0 %}75{% else %}0{% endif %}" style="width:0%"></div></div>
+        </div>
+        <div class="stat-box reveal-up" style="transition-delay:0.15s">
+          <div class="stat-icon"><i class="fas fa-gem"></i></div>
+          <strong class="counter-value font-display neon-text-pink" data-count="{{ total_prize_pool|default:'0' }}">0</strong>
+          <div class="stat-label">Prize Pool (₹)</div>
+          <div class="stat-bar"><div class="stat-bar-fill" data-width="{% if total_prize_pool > 0 %}60{% else %}0{% endif %}" style="width:0%"></div></div>
+        </div>
+        <div class="stat-box reveal-up" style="transition-delay:0.3s">
+          <div class="stat-icon"><i class="fas fa-history"></i></div>
+          <strong class="counter-value font-display neon-text-cyan" data-count="{{ past_tournaments_count|default:'0' }}">0</strong>
+          <div class="stat-label">Past Tournaments</div>
+          <div class="stat-bar"><div class="stat-bar-fill" data-width="{% if past_tournaments_count > 0 %}50{% else %}0{% endif %}" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      {% if is_manager %}
+      <div class="text-center mb-12 reveal-up">
+        <a href="{% url 'host_tournament' %}" class="btn-gradient animate-pulse-glow" style="background: linear-gradient(90deg, var(--neon-gold), var(--neon-pink)); box-shadow: 0 0 30px oklch(0.85 0.18 85 / 0.5);">
+          <i class="fas fa-trophy"></i> Host Tournament
+        </a>
+      </div>
+      {% endif %}
+
+      {% if upcoming_tournaments %}
+      <div class="swiper tournamentSwiper">
+        <div class="swiper-wrapper">
+          {% for tournament in upcoming_tournaments %}
+          <div class="swiper-slide tournament-slide">
+            <div class="tournament-card">
+              <div class="tournament-header">
+                <span class="tournament-format-badge">{{ tournament.format|default:"League"|upper }}</span>
+                {% if tournament.prize_pool %}
+                <span class="tournament-prize"><i class="fas fa-gem"></i> ₹{{ tournament.prize_pool }}</span>
+                {% endif %}
+              </div>
+
+              <div class="tournament-shield-wrap">
+                <div class="tournament-shield"><i class="fas fa-trophy"></i></div>
+                <div class="tournament-shield-glow"></div>
+              </div>
+
+              <h3 class="tournament-name">{{ tournament.t_name }}</h3>
+              <p class="tournament-host"><i class="fas fa-shield-alt"></i> {{ tournament.t_host.club_name }}</p>
+
+              <div class="tournament-meta">
+                <span><i class="far fa-calendar"></i> {{ tournament.t_date|date:"M d, Y" }}</span>
+                <span><i class="fas fa-user-friends"></i> {{ tournament.registered_teams_count|default:"0" }}/{{ tournament.max_teams }}</span>
+              </div>
+
+              <div class="spots-bar-wrap">
+                <div class="spots-bar-bg">
+                  <div class="spots-bar-fill" data-width="{% widthratio tournament.registered_teams_count tournament.max_teams 100 %}" style="width:0%"></div>
+                </div>
+                <span class="spots-text">
+                  {% if tournament.spots_remaining > 0 %}
+                    {{ tournament.spots_remaining }} spot{{ tournament.spots_remaining|pluralize }} left
+                  {% else %}
+                    <span style="color:var(--neon-pink)">TOURNAMENT FULL</span>
+                  {% endif %}
+                </span>
+              </div>
+
+              <div class="tournament-fee">
+                {% if tournament.registration_fee > 0 %}
+                <span class="fee-amount"><i class="fas fa-ticket-alt"></i> ₹{{ tournament.registration_fee }}</span>
+                {% else %}
+                <span class="fee-free">FREE ENTRY</span>
+                {% endif %}
+              </div>
+
+              <div class="tournament-actions">
+                {% if tournament.t_id in my_registrations %}
+                  <span class="tournament-status"><i class="fas fa-check-circle"></i> Registered</span>
+                {% elif tournament.spots_remaining <= 0 %}
+                  <span class="tournament-status pending"><i class="fas fa-lock"></i> Full</span>
+                {% else %}
+                  <a href="{% url 'join_tournament' tournament.t_id %}" class="tournament-join-btn">
+                    <i class="fas fa-sign-in-alt"></i> Join
+                  </a>
+                {% endif %}
+                <a href="{% url 'view_tournament' tournament.t_id %}" class="tournament-view-btn">
+                  <i class="fas fa-eye"></i> Bracket
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+      {% else %}
+      <!-- Empty state: no tournaments in DB -->
+      <div class="glass text-center p-8 rounded-2xl reveal-up" style="max-width:600px; margin:0 auto;">
+        <i class="fas fa-trophy text-4xl mb-4 text-muted-foreground"></i>
+        <h3 class="font-display text-xl font-bold mb-2">No Active Tournaments</h3>
+        <p class="text-muted-foreground mb-6">
+          There are no upcoming tournaments right now.
+          {% if past_tournaments_count > 0 %}
+            Check back soon, or browse <strong>{{ past_tournaments_count }}</strong> past tournament result{{ past_tournaments_count|pluralize }}.
+          {% endif %}
+        </p>
+        {% if is_manager %}
+        <a href="{% url 'host_tournament' %}" class="btn-gradient animate-pulse-glow" style="background: linear-gradient(90deg, var(--neon-gold), var(--neon-pink));">
+          <i class="fas fa-plus"></i> Host the First Tournament
+        </a>
+        {% else %}
+        <a href="{% url 'tournament_list' %}" class="btn-glass glass-strong">
+          <i class="fas fa-history"></i> View Past Results
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </section>
+  <!--  TOP SCORERS  -->
+  <section class="section-space" id="scorers">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="section-title reveal-up">
+        <div class="section-eyebrow">Golden Boot Race</div>
+        <h2 class="text-gradient animate-gradient">TOP SCORERS</h2>
+      </div>
+      {% if top_scorers %}
+      <div class="mt-12 space-y-4">
+        {% for scorer in top_scorers %}
+        <div class="scorer-row reveal-up" style="transition-delay:{{ forloop.counter0 }}00ms">
+          <div class="scorer-rank">{{ forloop.counter }}</div>
+          <img src="{{ scorer.player__player_image.url }}" alt="{{ scorer.player__player_card_name }}" class="scorer-img" onerror="this.src='https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=100&h=100&fit=crop'">
+          <div class="scorer-info">
+            <div class="scorer-name">{{ scorer.player__player_card_name }}</div>
+            <div class="scorer-club">{{ scorer.player__player_club__club_name|default:"Free Agent" }}</div>
+          </div>
+          <div class="scorer-bar-wrap">
+            <div class="scorer-bar" data-width="{{ scorer.total_goals }}" style="width:0%"></div>
+          </div>
+          <div class="scorer-goals">
+            <div class="scorer-goals-num">{{ scorer.total_goals }}</div>
+            <div class="scorer-goals-label">Goals</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="glass text-center p-8 rounded-2xl mt-12 reveal-up">
+        <i class="fas fa-futbol text-4xl mb-4 text-muted-foreground"></i>
+        <p class="text-muted-foreground">No goals recorded this season yet.</p>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  
+
+</main>
+
+
+
+{% endblock %}

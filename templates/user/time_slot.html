@@ -1,0 +1,63 @@
+{% extends 'user/turfs_head.html' %}
+{% block content %}
+<div class="py-5">
+  <div class="container glass-panel animate-on-scroll">
+{% load static %}
+
+<div class="pitch-container">
+  <!-- Decorative circles -->
+  <div class="deco-circle deco-circle-1"></div>
+  <div class="deco-circle deco-circle-2"></div>
+
+  <div class="floating-slot-card">
+    <div class="card-header-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--neon-green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        <path d="M2 12h20"/>
+      </svg>
+    </div>
+    <h3>Add Time Slot</h3>
+    <p class="card-subtitle">Schedule your match on the pitch</p>
+
+    {% if messages %}
+      <div class="messages-container">
+        <ul class="messages-list" style="list-style: none; padding: 0;">
+          {% for message in messages %}
+            <li><i class="fas fa-info-circle"></i> {{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <form method="POST" action="">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="time_range">Time Range</label>
+        <input type="text" id="time_range" name="time_range" 
+               placeholder="e.g. 9:00 AM - 11:00 AM" required autocomplete="off"
+               class="form-input">
+        <div class="input-hint">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
+          Format: Start Time - End Time (e.g., 9:00 AM - 11:00 AM)
+        </div>
+      </div>
+
+      <div class="time-preview" id="timePreview">
+        Selected: <strong id="previewText">--</strong>
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Add Time Slot
+      </button>
+    </form>
+  </div>
+</div>
+
+  </div>
+</div>
+{% endblock %}

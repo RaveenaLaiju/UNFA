@@ -1,0 +1,1151 @@
+{% extends 'user/user_head.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="ppp27-page">
+
+    <div class="ppp27-ball ppp27-ball-one"></div>
+    <div class="ppp27-ball ppp27-ball-two"></div>
+    <div class="ppp27-ball ppp27-ball-three"></div>
+
+    <div class="container-fluid ppp27-container">
+        <div class="ppp27-topbar ppp27-reveal">
+
+            <div class="ppp27-topbar-left">
+
+                <span class="ppp27-live-dot"></span>
+
+                <span class="ppp27-topbar-title">
+                    Player Profile Center
+                </span>
+
+            </div>
+
+            <div class="ppp27-topbar-id">
+                PLAYER #{{ player.player_id }}
+            </div>
+
+        </div>
+        <section class="ppp27-hero ppp27-reveal ppp27-delay-1">
+
+            <div class="row align-items-center g-4 ppp27-hero-grid">
+
+                <!-- PLAYER IMAGE -->
+
+                <div class="col-12 col-lg-3 text-center">
+
+                    <div class="ppp27-profile-image-wrap">
+
+                        <div class="ppp27-profile-ring"></div>
+
+                        {% if player.player_image %}
+                            <img
+                                src="{{ player.player_image.url }}"
+                                alt="{{ player.player_card_name }}"
+                                class="ppp27-profile-image"
+                            >
+                        {% else %}
+                            <img
+                                src="{% static 'player_card/messi.jpg' %}"
+                                alt="{{ player.player_card_name }}"
+                                class="ppp27-profile-image"
+                            >
+                        {% endif %}
+
+                        <div class="ppp27-rating-box">
+
+                            <span class="ppp27-rating-number">
+                                {{ player.player_rating }}
+                            </span>
+
+                            <span class="ppp27-rating-label">
+                                RATING
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PLAYER DETAILS -->
+
+                <div class="col-12 col-lg-5">
+
+                    <div class="ppp27-player-kicker">
+
+                        <i class="fas fa-futbol"></i>
+
+                        Official Player Profile
+
+                    </div>
+
+                    <h1 class="ppp27-player-name">
+                        {{ player.player_card_name }}
+                    </h1>
+
+                    <div class="ppp27-player-real-name">
+
+                        {{ player.player_user.user_name }}
+
+                    </div>
+
+
+                    <div class="ppp27-meta-row">
+
+                        <span class="ppp27-meta-chip">
+
+                            <i class="fas fa-running"></i>
+
+                            {{ player.player_position.position_code }}
+
+                        </span>
+
+                        <span class="ppp27-meta-chip">
+
+                            <i class="fas fa-shoe-prints"></i>
+
+                            {{ player.player_strong_foot }}
+
+                        </span>
+
+                        <span class="ppp27-meta-chip">
+
+                            <i class="fas fa-birthday-cake"></i>
+
+                            {{ player.player_user.user_age }} Years
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="ppp27-meta-row">
+
+                        <span class="ppp27-meta-chip">
+
+                            <i class="fas fa-map-marker-alt"></i>
+
+                            {{ player.player_location }}
+
+                        </span>
+
+                        <span class="ppp27-meta-chip">
+
+                            <i class="fas fa-map"></i>
+
+                            {{ player.player_district }}
+
+                        </span>
+
+                    </div>
+
+
+                    {% if is_player %}
+
+                        <div class="ppp27-role-badge">
+
+                            <i class="fas fa-user"></i>
+
+                            Your Player Profile
+
+                        </div>
+
+                    {% elif is_current_club_manager %}
+
+                        <div class="ppp27-role-badge">
+
+                            <i class="fas fa-user-shield"></i>
+
+                            Your Club Player
+
+                        </div>
+
+                    {% elif is_club_manager %}
+
+                        <div class="ppp27-role-badge">
+
+                            <i class="fas fa-user-tie"></i>
+
+                            Club Manager View
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="ppp27-role-badge">
+
+                            <i class="fas fa-eye"></i>
+
+                            Public Profile
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- CLUB -->
+
+                <div class="col-12 col-lg-4">
+
+                    <div class="ppp27-club-card">
+
+                        <div class="ppp27-section-mini-title">
+
+                            Current Club
+
+                        </div>
+
+                        {% if club %}
+
+                            <div class="ppp27-club-content">
+
+                                {% if club.club_logo %}
+
+                                    <img
+                                        src="{{ club.club_logo.url }}"
+                                        alt="{{ club.club_name }}"
+                                        class="ppp27-club-logo"
+                                    >
+
+                                {% endif %}
+
+                                <div>
+
+                                    <a
+                                        href="{% url 'club_details' club.club_id %}"
+                                        class="ppp27-club-name"
+                                    >
+                                        {{ club.club_name }}
+                                    </a>
+
+                                    <div class="ppp27-club-location">
+
+                                        <i class="fas fa-map-marker-alt"></i>
+
+                                        {{ club.club_location }},
+                                        {{ club.club_district }}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="ppp27-free-agent">
+
+                                <i class="fas fa-user-slash"></i>
+
+                                <div>
+                                    This player is currently not registered
+                                    with a club.
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="ppp27-reveal ppp27-delay-2">
+
+            <div class="row g-3">
+
+                <div class="col-6 col-md-3">
+
+                    <div class="ppp27-stat-card">
+
+                        <div class="ppp27-stat-icon">
+                            <i class="fas fa-futbol"></i>
+                        </div>
+
+                        <span class="ppp27-stat-number">
+                            {{ total_goals }}
+                        </span>
+
+                        <span class="ppp27-stat-label">
+                            Goals
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-3">
+
+                    <div class="ppp27-stat-card">
+
+                        <div class="ppp27-stat-icon">
+                            <i class="fas fa-hands-helping"></i>
+                        </div>
+
+                        <span class="ppp27-stat-number">
+                            {{ total_assists }}
+                        </span>
+
+                        <span class="ppp27-stat-label">
+                            Assists
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-3">
+
+                    <div class="ppp27-stat-card">
+
+                        <div class="ppp27-stat-icon">
+                            <i class="fas fa-hand-paper"></i>
+                        </div>
+
+                        <span class="ppp27-stat-number">
+                            {{ total_saves }}
+                        </span>
+
+                        <span class="ppp27-stat-label">
+                            Saves
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-3">
+
+                    <div class="ppp27-stat-card">
+
+                        <div class="ppp27-stat-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+
+                        <span class="ppp27-stat-number">
+                            {{ total_matches }}
+                        </span>
+
+                        <span class="ppp27-stat-label">
+                            Matches
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="ppp27-panel ppp27-reveal ppp27-delay-2">
+
+            <div class="ppp27-panel-header">
+
+                <div class="ppp27-panel-title-wrap">
+
+                    <div class="ppp27-panel-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+
+                    <div>
+
+                        <h2 class="ppp27-panel-title">
+                            Player Information
+                        </h2>
+
+                        <p class="ppp27-panel-subtitle">
+                            Physical and football profile
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-3">
+
+                <div class="col-6 col-md-4 col-lg-3">
+
+                    <div class="ppp27-info-item">
+
+                        <span class="ppp27-info-label">
+                            Position
+                        </span>
+
+                        <span class="ppp27-info-value">
+
+                            {{ player.player_position.position_name }}
+
+                            ({{ player.player_position.position_code }})
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-4 col-lg-3">
+
+                    <div class="ppp27-info-item">
+
+                        <span class="ppp27-info-label">
+                            Strong Foot
+                        </span>
+
+                        <span class="ppp27-info-value">
+                            {{ player.player_strong_foot }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-4 col-lg-3">
+
+                    <div class="ppp27-info-item">
+
+                        <span class="ppp27-info-label">
+                            Height
+                        </span>
+
+                        <span class="ppp27-info-value">
+                            {{ player.player_height }} cm
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-4 col-lg-3">
+
+                    <div class="ppp27-info-item">
+
+                        <span class="ppp27-info-label">
+                            Weight
+                        </span>
+
+                        <span class="ppp27-info-value">
+                            {{ player.player_weight }} kg
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-4 col-lg-3">
+
+                    <div class="ppp27-info-item">
+
+                        <span class="ppp27-info-label">
+                            Age
+                        </span>
+
+                        <span class="ppp27-info-value">
+                            {{ player.player_user.user_age }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-4 col-lg-3">
+
+                    <div class="ppp27-info-item">
+
+                        <span class="ppp27-info-label">
+                            Gender
+                        </span>
+
+                        <span class="ppp27-info-value">
+                            {{ player.player_user.user_gender }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-4 col-lg-3">
+
+                    <div class="ppp27-info-item">
+
+                        <span class="ppp27-info-label">
+                            District
+                        </span>
+
+                        <span class="ppp27-info-value">
+                            {{ player.player_district }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-4 col-lg-3">
+
+                    <div class="ppp27-info-item">
+
+                        <span class="ppp27-info-label">
+                            Location
+                        </span>
+
+                        <span class="ppp27-info-value">
+                            {{ player.player_location }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <div class="row g-3">
+
+            <!-- GOALS -->
+
+            <div class="col-12 col-lg-4">
+
+                <section class="ppp27-panel">
+
+                    <div class="ppp27-panel-header">
+
+                        <div class="ppp27-panel-title-wrap">
+
+                            <div class="ppp27-panel-icon">
+                                <i class="fas fa-futbol"></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="ppp27-panel-title">
+                                    Goals
+                                </h2>
+
+                                <p class="ppp27-panel-subtitle">
+                                    Scoring record
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <span class="ppp27-count-badge">
+                            {{ total_goals }}
+                        </span>
+
+                    </div>
+
+
+                    {% if goals %}
+
+                        <div class="ppp27-event-list">
+
+                            {% for goal in goals|slice:":6" %}
+
+                                <div class="ppp27-event">
+
+                                    <div class="ppp27-event-left">
+
+                                        <div class="ppp27-event-icon">
+                                            <i class="fas fa-futbol"></i>
+                                        </div>
+
+                                        <div>
+
+                                            <div class="ppp27-event-title">
+
+                                                Goal
+                                                {% if goal.for_club %}
+                                                    · {{ goal.for_club.club_name }}
+                                                {% endif %}
+
+                                            </div>
+
+                                            <div class="ppp27-event-meta">
+
+                                                Match #{{ goal.result.result_match.match_id }}
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="ppp27-event-time">
+
+                                        {{ goal.time|date:"d M Y" }}
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="ppp27-empty">
+
+                            <i class="fas fa-futbol"></i>
+
+                            <div class="ppp27-empty-title">
+                                No goals recorded
+                            </div>
+
+                            <div class="ppp27-empty-text">
+                                Scoring statistics will appear here.
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                </section>
+
+            </div>
+
+
+            <!-- ASSISTS -->
+
+            <div class="col-12 col-lg-4">
+
+                <section class="ppp27-panel">
+
+                    <div class="ppp27-panel-header">
+
+                        <div class="ppp27-panel-title-wrap">
+
+                            <div class="ppp27-panel-icon">
+                                <i class="fas fa-hands-helping"></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="ppp27-panel-title">
+                                    Assists
+                                </h2>
+
+                                <p class="ppp27-panel-subtitle">
+                                    Creative contribution
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <span class="ppp27-count-badge">
+                            {{ total_assists }}
+                        </span>
+
+                    </div>
+
+
+                    {% if assists %}
+
+                        <div class="ppp27-event-list">
+
+                            {% for assist in assists|slice:":6" %}
+
+                                <div class="ppp27-event">
+
+                                    <div class="ppp27-event-left">
+
+                                        <div class="ppp27-event-icon">
+                                            <i class="fas fa-hands-helping"></i>
+                                        </div>
+
+                                        <div>
+
+                                            <div class="ppp27-event-title">
+
+                                                Assist
+                                                {% if assist.for_club %}
+                                                    · {{ assist.for_club.club_name }}
+                                                {% endif %}
+
+                                            </div>
+
+                                            <div class="ppp27-event-meta">
+
+                                                Match #{{ assist.result.result_match.match_id }}
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="ppp27-event-time">
+
+                                        {{ assist.time|date:"d M Y" }}
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="ppp27-empty">
+
+                            <i class="fas fa-hands-helping"></i>
+
+                            <div class="ppp27-empty-title">
+                                No assists recorded
+                            </div>
+
+                            <div class="ppp27-empty-text">
+                                Creative statistics will appear here.
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                </section>
+
+            </div>
+
+
+            <!-- SAVES -->
+
+            <div class="col-12 col-lg-4">
+
+                <section class="ppp27-panel">
+
+                    <div class="ppp27-panel-header">
+
+                        <div class="ppp27-panel-title-wrap">
+
+                            <div class="ppp27-panel-icon">
+                                <i class="fas fa-hand-paper"></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="ppp27-panel-title">
+                                    Saves
+                                </h2>
+
+                                <p class="ppp27-panel-subtitle">
+                                    Defensive contribution
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <span class="ppp27-count-badge">
+                            {{ total_saves }}
+                        </span>
+
+                    </div>
+
+
+                    {% if saves %}
+
+                        <div class="ppp27-event-list">
+
+                            {% for save in saves|slice:":6" %}
+
+                                <div class="ppp27-event">
+
+                                    <div class="ppp27-event-left">
+
+                                        <div class="ppp27-event-icon">
+                                            <i class="fas fa-hand-paper"></i>
+                                        </div>
+
+                                        <div>
+
+                                            <div class="ppp27-event-title">
+
+                                                Save
+                                                {% if save.for_club %}
+                                                    · {{ save.for_club.club_name }}
+                                                {% endif %}
+
+                                            </div>
+
+                                            <div class="ppp27-event-meta">
+
+                                                Match #{{ save.result.result_match.match_id }}
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="ppp27-event-time">
+
+                                        {{ save.time|date:"d M Y" }}
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="ppp27-empty">
+
+                            <i class="fas fa-hand-paper"></i>
+
+                            <div class="ppp27-empty-title">
+                                No saves recorded
+                            </div>
+
+                            <div class="ppp27-empty-text">
+                                Defensive statistics will appear here.
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                </section>
+
+            </div>
+
+        </div>
+
+        <section class="ppp27-panel">
+
+            <div class="ppp27-panel-header">
+
+                <div class="ppp27-panel-title-wrap">
+
+                    <div class="ppp27-panel-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+
+                    <div>
+
+                        <h2 class="ppp27-panel-title">
+                            Match History
+                        </h2>
+
+                        <p class="ppp27-panel-subtitle">
+                            Recent completed appearances
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <span class="ppp27-count-badge">
+                    {{ finished_matches }} Completed
+                </span>
+
+            </div>
+
+
+            {% if recent_matches %}
+
+                {% for match in recent_matches %}
+
+                    <div class="ppp27-match">
+
+                        <div class="ppp27-match-date">
+
+                            <strong>
+                                {{ match.match_date|date:"d M Y" }}
+                            </strong>
+
+                            {% if match.match_time %}
+                                {{ match.match_time|time:"H:i" }}
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="ppp27-match-teams">
+
+                            <span class="ppp27-team-name">
+
+                                {{ match.match_home_team.club_name }}
+
+                            </span>
+
+                            <span class="ppp27-vs">
+                                VS
+                            </span>
+
+                            <span class="ppp27-team-name">
+
+                                {{ match.match_away_team.club_name }}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="ppp27-match-status">
+
+                            FULL TIME
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="ppp27-empty">
+
+                    <i class="fas fa-history"></i>
+
+                    <div class="ppp27-empty-title">
+                        No completed matches
+                    </div>
+
+                    <div class="ppp27-empty-text">
+                        Player match history will appear here after
+                        participating in matches.
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+        <section class="ppp27-panel">
+
+            <div class="ppp27-panel-header">
+
+                <div class="ppp27-panel-title-wrap">
+
+                    <div class="ppp27-panel-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+
+                    <div>
+
+                        <h2 class="ppp27-panel-title">
+                            Upcoming Matches
+                        </h2>
+
+                        <p class="ppp27-panel-subtitle">
+                            Scheduled appearances
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <span class="ppp27-count-badge">
+                    {{ upcoming_matches }} Upcoming
+                </span>
+
+            </div>
+
+
+            {% if upcoming_player_matches %}
+
+                {% for match in upcoming_player_matches %}
+
+                    <div class="ppp27-match">
+
+                        <div class="ppp27-match-date">
+
+                            <strong>
+                                {{ match.match_date|date:"d M Y" }}
+                            </strong>
+
+                            {% if match.match_time %}
+                                {{ match.match_time|time:"H:i" }}
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="ppp27-match-teams">
+
+                            <span class="ppp27-team-name">
+
+                                {{ match.match_home_team.club_name }}
+
+                            </span>
+
+                            <span class="ppp27-vs">
+                                VS
+                            </span>
+
+                            <span class="ppp27-team-name">
+
+                                {{ match.match_away_team.club_name }}
+
+                            </span>
+
+                        </div>
+
+
+                        {% if match.match_started and not match.match_finished %}
+
+                            <div class="ppp27-match-status ppp27-status-live">
+                                LIVE
+                            </div>
+
+                        {% else %}
+
+                            <div class="ppp27-match-status ppp27-status-upcoming">
+                                UPCOMING
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="ppp27-empty">
+
+                    <i class="fas fa-calendar-times"></i>
+
+                    <div class="ppp27-empty-title">
+                        No upcoming matches
+                    </div>
+
+                    <div class="ppp27-empty-text">
+                        Scheduled player appearances will appear here.
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+        {% if is_club_manager %}
+
+            <div class="ppp27-manager-banner">
+
+                <i class="fas fa-shield-alt"></i>
+
+                <div class="ppp27-manager-banner-text">
+
+                    <strong>Club Manager Access</strong><br>
+
+                    You are viewing this player through a club-manager
+                    account. Player performance, club information and
+                    recorded match statistics are displayed here.
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+
+<script>
+    (function () {
+
+        "use strict";
+        const statCards = document.querySelectorAll(
+            ".ppp27-stat-card"
+        );
+
+        statCards.forEach(function (card, index) {
+
+            card.style.opacity = "0";
+            card.style.transform = "translateY(12px)";
+
+            setTimeout(function () {
+
+                card.style.transition =
+                    "opacity 0.45s ease, transform 0.45s ease";
+
+                card.style.opacity = "1";
+                card.style.transform = "translateY(0)";
+
+            }, 250 + (index * 80));
+
+        });
+
+
+        document.querySelectorAll(
+            ".ppp27-profile-image, .ppp27-club-logo"
+        ).forEach(function (image) {
+
+            image.addEventListener(
+                "dragstart",
+                function (event) {
+                    event.preventDefault();
+                }
+            );
+
+        });
+
+
+        const page = document.querySelector(".ppp27-page");
+
+        if (page) {
+            page.addEventListener("mousemove", function (event) {
+                const x =
+                    (event.clientX / window.innerWidth - 0.5) * 8;
+                const y =
+                    (event.clientY / window.innerHeight - 0.5) * 8;
+                const balls =
+                    document.querySelectorAll(".ppp27-ball");
+                balls.forEach(function (ball, index) {
+                    const strength = (index + 1) * 0.45;
+                    ball.style.transform =
+                        "translate(" +
+                        (x * strength) +
+                        "px, " +
+                        (y * strength) +
+                        "px)";
+
+                });
+
+            });
+
+        }
+
+    })();
+</script>
+
+{% endblock %}
+

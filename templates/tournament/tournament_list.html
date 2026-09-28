@@ -1,0 +1,1115 @@
+{% extends 'user/user_head.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+
+.tnm-card,
+.tnm-stat-card,
+.tnm-section-header {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.65s ease,
+    transform 0.65s ease;
+}
+.tnm-card.tnm-visible,
+.tnm-stat-card.tnm-visible,
+.tnm-section-header.tnm-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.tnm-card:nth-child(1) {
+  transition-delay: 0.05s;
+}
+.tnm-card:nth-child(2) {
+  transition-delay: 0.10s;
+}
+.tnm-card:nth-child(3) {
+  transition-delay: 0.15s;
+}
+.tnm-card:nth-child(4) {
+  transition-delay: 0.20s;
+}
+.tnm-card:nth-child(5) {
+  transition-delay: 0.25s;
+}
+.tnm-card:nth-child(6) {
+  transition-delay: 0.30s;
+}
+</style>
+
+
+<div class="tnm-arena">
+  <div class="tnm-background">
+    <div class="tnm-pitch-grid"></div>
+    <div class="tnm-stadium-glow tnm-glow-one"></div>
+    <div class="tnm-stadium-glow tnm-glow-two"></div>
+    <div class="tnm-stadium-glow tnm-glow-three"></div>
+    <div class="tnm-floating-ball tnm-ball-one">⚽</div>
+    <div class="tnm-floating-ball tnm-ball-two">⚽</div>
+    <div class="tnm-floating-ball tnm-ball-three">⚽</div>
+    <div class="tnm-particles" id="tnmParticles"></div>
+    <div class="tnm-scan-line"></div>
+  </div>
+
+  <div class="container-fluid px-4 py-4">
+
+    <section class="tnm-hero row align-items-center g-4 g-lg-5">
+
+      <div class="col-12 col-lg-8">
+        <div class="tnm-hero-content">
+          <div class="tnm-hero-badge">
+            <span class="tnm-badge-icon">
+              <i class="fas fa-futbol"></i>
+            </span>
+
+            <span>
+              Football Championship Center
+            </span>
+
+          </div>
+
+          <h1 class="tnm-title">
+            <span class="tnm-title-main">
+              Tournament
+            </span>
+
+            <span class="tnm-title-outline">
+              Arena
+            </span>
+
+          </h1>
+
+
+          <p class="tnm-subtitle">
+
+            Compete in organized tournaments, challenge elite clubs,
+            climb the bracket and claim glory on the grandest stage.
+
+          </p>
+
+
+          {% if is_manager %}
+
+          <div class="tnm-hero-actions">
+
+            <a
+              href="{% url 'host_tournament' %}"
+              class="tnm-host-button"
+            >
+
+              <span class="tnm-button-shine"></span>
+
+              <i class="fas fa-plus-circle"></i>
+
+              <span>
+                Host Tournament
+              </span>
+
+            </a>
+
+          </div>
+
+          {% endif %}
+
+        </div>
+
+      </div>
+
+
+      <!-- HERO TROPHY -->
+
+      <div class="col-12 col-lg-4">
+        <div class="tnm-hero-visual">
+          <div class="tnm-trophy-ring tnm-ring-one"></div>
+          <div class="tnm-trophy-ring tnm-ring-two"></div>
+          <div class="tnm-trophy-container">
+            <div class="tnm-trophy-glow"></div>
+            <i class="fas fa-trophy tnm-trophy-icon"></i>
+          </div>
+
+          <div class="tnm-visual-label">
+            <span>PLAY</span>
+            <span>COMPETE</span>
+            <span>WIN</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tnm-stats row g-3 mt-2 mt-lg-4">
+      <!-- TOTAL TOURNAMENTS -->
+
+      <div class="col-12 col-md-4">
+        <div class="tnm-stat-card">
+          <div class="tnm-stat-icon">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <div class="tnm-stat-content">
+            <span class="tnm-stat-value">
+              {{ tournaments|length }}
+            </span>
+            <span class="tnm-stat-label">
+              Total Tournaments
+            </span>
+          </div>
+          <div class="tnm-stat-decoration"></div>
+        </div>
+      </div>
+
+
+      <!-- CLUBS -->
+      <div class="col-12 col-md-4">
+        <div class="tnm-stat-card">
+          <div class="tnm-stat-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+
+
+          <div class="tnm-stat-content">
+            <span class="tnm-stat-value">
+              {% for t in tournaments %}
+                {% if forloop.first %}
+                  {{ t.t_club_map_set.count|default:0 }}+
+                {% endif %}
+
+              {% empty %}
+
+                0+
+
+              {% endfor %}
+
+            </span>
+
+
+            <span class="tnm-stat-label">
+              Clubs Competing
+            </span>
+
+          </div>
+
+
+          <div class="tnm-stat-decoration"></div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- LIVE TOURNAMENTS -->
+
+      <div class="col-12 col-md-4">
+
+        <div class="tnm-stat-card tnm-live-stat">
+
+          <div class="tnm-stat-icon">
+            <i class="fas fa-fire"></i>
+          </div>
+
+
+          <div class="tnm-stat-content">
+
+            <span class="tnm-stat-value">
+              {{ active_tournaments|length }}
+            </span>
+
+            <span class="tnm-stat-label">
+              Live Now
+            </span>
+
+          </div>
+
+
+          <div class="tnm-live-indicator"></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ===================================================
+         SECTION HEADER
+    ==================================================== -->
+
+    <section class="tnm-section-header mt-5">
+
+      <div>
+
+        <div class="tnm-section-kicker">
+
+          <span></span>
+
+          TOURNAMENTS
+
+          <span></span>
+
+        </div>
+
+
+        <h2 class="tnm-section-title">
+
+          Championship
+
+          <span>
+            Fixtures
+          </span>
+
+        </h2>
+
+      </div>
+
+
+      <div class="tnm-section-ball">
+
+        <i class="fas fa-futbol"></i>
+
+      </div>
+
+    </section>
+
+    <section class="tnm-tournament-section">
+
+
+      {% if tournaments|length > 0 %}
+
+      <div class="row g-4">
+
+
+        {% for tournament in tournaments %}
+
+        <div class="col-12 col-md-6 col-xl-4">
+
+
+          <article class="tnm-card">
+
+
+            <!-- CARD TOP GLOW -->
+
+            <div class="tnm-card-top-glow"></div>
+
+            <div class="tnm-card-header">
+
+
+              <div class="tnm-status-wrapper">
+
+
+                <div
+                  class="tnm-status-badge
+                  {% if tournament.is_completed %}
+                    tnm-status-completed
+                  {% elif tournament.t_date > now.date %}
+                    tnm-status-upcoming
+                  {% else %}
+                    tnm-status-live
+                  {% endif %}"
+                >
+
+
+                  <span class="tnm-status-dot"></span>
+
+
+                  {% if tournament.is_completed %}
+
+                    Completed
+
+                  {% elif tournament.t_date > now.date %}
+
+                    Upcoming
+
+                  {% else %}
+
+                    Live
+
+                  {% endif %}
+
+
+                </div>
+
+              </div>
+
+
+
+              <div class="tnm-card-trophy">
+
+                <i class="fas fa-trophy"></i>
+
+              </div>
+
+
+            </div>
+
+            <div class="tnm-card-title-area">
+
+
+              <div class="tnm-card-number">
+
+                {{ forloop.counter|stringformat:"02d" }}
+
+              </div>
+
+
+              <h3 class="tnm-card-title">
+
+                {{ tournament.t_name }}
+
+              </h3>
+
+
+            </div>
+            <div class="tnm-details">
+
+
+              <!-- DATE -->
+
+              <div class="tnm-detail">
+
+
+                <div class="tnm-detail-icon">
+
+                  <i class="fas fa-calendar-alt"></i>
+
+                </div>
+
+
+                <div class="tnm-detail-content">
+
+
+                  <span class="tnm-detail-label">
+
+                    Tournament Date
+
+                  </span>
+
+
+                  <span class="tnm-detail-value">
+
+                    {{ tournament.t_date|date:"d M Y" }}
+
+                  </span>
+
+
+                </div>
+
+
+              </div>
+
+
+
+              <!-- REGISTERED CLUBS -->
+
+              <div class="tnm-detail">
+
+
+                <div class="tnm-detail-icon">
+
+                  <i class="fas fa-users"></i>
+
+                </div>
+
+
+                <div class="tnm-detail-content">
+
+
+                  <span class="tnm-detail-label">
+
+                    Registered Clubs
+
+                  </span>
+
+
+                  <span class="tnm-detail-value">
+
+                    {{ tournament.t_club_map_set.count|default:0 }}
+
+                    <span class="tnm-detail-muted">
+
+                      /
+                      {{ tournament.max_teams|default:16 }}
+
+                    </span>
+
+                  </span>
+
+
+                </div>
+
+
+
+                <div class="tnm-progress">
+
+
+                  <div
+                    class="tnm-progress-bar"
+                    style="width: {% widthratio tournament.t_club_map_set.count tournament.max_teams 100 %}%;"
+                  ></div>
+
+
+                </div>
+
+
+              </div>
+
+
+
+              <!-- HOST -->
+
+              <div class="tnm-detail">
+
+
+                <div class="tnm-host-avatar">
+
+
+                  {% if tournament.t_host.club_logo %}
+
+
+                    <img
+                      src="{{ tournament.t_host.club_logo.url }}"
+                      alt="{{ tournament.t_host.club_name }}"
+                    >
+
+
+                  {% else %}
+
+
+                    <i class="fas fa-shield-alt"></i>
+
+
+                  {% endif %}
+
+
+                </div>
+
+
+
+                <div class="tnm-detail-content">
+
+
+                  <span class="tnm-detail-label">
+
+                    Hosted By
+
+                  </span>
+
+
+                  <span class="tnm-detail-value tnm-host-name">
+
+                    {{ tournament.t_host.club_name|default:"Unknown" }}
+
+                  </span>
+
+
+                </div>
+
+
+              </div>
+
+
+            </div>
+            <div class="tnm-actions">
+
+
+              <!-- VIEW -->
+
+              <a
+                href="{% url 'view_tournament' tournament.t_id %}"
+                class="tnm-action tnm-view-action"
+              >
+
+                <i class="fas fa-eye"></i>
+
+                <span>
+                  View
+                </span>
+
+              </a>
+
+
+
+              <!-- BRACKET -->
+
+              <a
+                href="{% url 'tournament_bracket' tournament.t_id %}"
+                class="tnm-action tnm-bracket-action"
+              >
+
+                <i class="fas fa-sitemap"></i>
+
+                <span>
+                  Bracket
+                </span>
+
+              </a>
+
+
+
+              <!-- MANAGER ACTIONS -->
+
+              {% if is_manager %}
+
+
+                <!-- TOURNAMENT HOST -->
+
+                {% if tournament.t_host.club_manager == user %}
+
+
+                  <button
+                    type="button"
+                    class="tnm-action tnm-host-action"
+                    disabled
+                  >
+
+                    <i class="fas fa-crown"></i>
+
+                    <span>
+                      Host
+                    </span>
+
+                  </button>
+
+
+                <!-- ALREADY JOINED -->
+
+                {% elif tournament.t_id in joined_tournaments %}
+
+
+                  <button
+                    type="button"
+                    class="tnm-action tnm-joined-action"
+                    disabled
+                  >
+
+                    <i class="fas fa-check"></i>
+
+                    <span>
+                      Joined
+                    </span>
+
+                  </button>
+
+
+                <!-- AVAILABLE TO JOIN -->
+
+                {% elif tournament.t_date >= now.date and not tournament.is_completed %}
+
+
+                  <a
+                    href="{% url 'join_tournament' tournament.t_id %}"
+                    class="tnm-action tnm-join-action"
+                  >
+
+                    <span class="tnm-join-shine"></span>
+
+                    <i class="fas fa-sign-in-alt"></i>
+
+                    <span>
+                      Join
+                    </span>
+
+                  </a>
+
+
+                <!-- CLOSED -->
+
+                {% else %}
+
+
+                  <button
+                    type="button"
+                    class="tnm-action tnm-closed-action"
+                    disabled
+                  >
+
+                    <i class="fas fa-lock"></i>
+
+                    <span>
+                      Closed
+                    </span>
+
+                  </button>
+
+
+                {% endif %}
+
+
+              {% endif %}
+
+
+            </div>
+
+            <div class="tnm-card-shine"></div>
+
+
+            <div class="tnm-card-lines">
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+            </div>
+
+
+          </article>
+
+
+        </div>
+
+
+        {% endfor %}
+
+
+      </div>
+
+      {% else %}
+
+
+      <div class="tnm-empty">
+
+
+        <div class="tnm-empty-visual">
+
+
+          <div class="tnm-empty-ring tnm-empty-ring-one"></div>
+
+          <div class="tnm-empty-ring tnm-empty-ring-two"></div>
+
+
+          <div class="tnm-empty-ball">
+
+            <i class="fas fa-futbol"></i>
+
+          </div>
+
+
+        </div>
+
+
+
+        <div class="tnm-empty-content">
+
+
+          <span class="tnm-empty-kicker">
+
+            <i class="fas fa-whistle"></i>
+
+            THE ARENA IS READY
+
+          </span>
+
+
+
+          <h2 class="tnm-empty-title">
+
+            No Tournaments Yet
+
+          </h2>
+
+
+
+          <p class="tnm-empty-text">
+
+            The stadium lights are on and the pitch is ready.
+            Be the first manager to create a championship.
+
+          </p>
+
+
+
+          {% if is_manager %}
+
+
+          <a
+            href="{% url 'host_tournament' %}"
+            class="tnm-host-button tnm-empty-button"
+          >
+
+            <span class="tnm-button-shine"></span>
+
+            <i class="fas fa-plus-circle"></i>
+
+            <span>
+              Host First Tournament
+            </span>
+
+          </a>
+
+
+          {% endif %}
+
+
+        </div>
+
+
+      </div>
+
+
+      {% endif %}
+
+
+    </section>
+
+
+  </div>
+
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+  const particlesContainer =
+    document.getElementById("tnmParticles");
+
+
+  if (particlesContainer) {
+
+
+    const particleCount = 32;
+
+
+    for (let i = 0; i < particleCount; i++) {
+
+
+      const particle =
+        document.createElement("span");
+
+
+      particle.className =
+        "tnm-particle";
+
+
+      const size =
+        Math.random() * 3 + 2;
+
+
+      const duration =
+        Math.random() * 6 + 5;
+
+
+      const delay =
+        Math.random() * 5;
+
+
+      particle.style.width =
+        `${size}px`;
+
+
+      particle.style.height =
+        `${size}px`;
+
+
+      particle.style.left =
+        `${Math.random() * 100}%`;
+
+
+      particle.style.top =
+        `${Math.random() * 100}%`;
+
+
+      particle.style.setProperty(
+        "--tnm-particle-duration",
+        `${duration}s`
+      );
+
+
+      particle.style.setProperty(
+        "--tnm-particle-delay",
+        `${delay}s`
+      );
+
+
+      particlesContainer.appendChild(
+        particle
+      );
+
+    }
+
+  }
+
+  document
+    .querySelectorAll(".tnm-join-action")
+    .forEach(function (button) {
+
+
+      button.addEventListener(
+        "click",
+        function (event) {
+
+
+          const ripple =
+            document.createElement("span");
+
+
+          ripple.style.position =
+            "absolute";
+
+
+          ripple.style.width =
+            "15px";
+
+
+          ripple.style.height =
+            "15px";
+
+
+          ripple.style.borderRadius =
+            "50%";
+
+
+          ripple.style.pointerEvents =
+            "none";
+
+
+          ripple.style.background =
+            "rgba(255, 255, 255, 0.3)";
+
+
+          ripple.style.transform =
+            "translate(-50%, -50%)";
+
+
+          ripple.style.left =
+            `${event.offsetX}px`;
+
+
+          ripple.style.top =
+            `${event.offsetY}px`;
+
+
+          ripple.style.animation =
+            "tnmRipple 0.65s ease-out";
+
+
+          button.appendChild(
+            ripple
+          );
+
+
+          setTimeout(
+            function () {
+
+              ripple.remove();
+
+            },
+            650
+          );
+
+
+        }
+      );
+
+
+    });
+
+
+  const cards =
+    document.querySelectorAll(
+      ".tnm-card"
+    );
+
+
+  cards.forEach(function (card) {
+
+
+    card.addEventListener(
+      "mousemove",
+      function (event) {
+
+
+        if (window.innerWidth < 992) {
+          return;
+        }
+
+
+        const rect =
+          card.getBoundingClientRect();
+
+
+        const x =
+          event.clientX - rect.left;
+
+
+        const y =
+          event.clientY - rect.top;
+
+
+        const centerX =
+          rect.width / 2;
+
+
+        const centerY =
+          rect.height / 2;
+
+
+        const rotateX =
+          ((y - centerY) / centerY) * -2;
+
+
+        const rotateY =
+          ((x - centerX) / centerX) * 2;
+
+
+        card.style.transform =
+          `perspective(900px)
+           translateY(-8px)
+           rotateX(${rotateX}deg)
+           rotateY(${rotateY}deg)`;
+
+
+      }
+    );
+
+
+    card.addEventListener(
+      "mouseleave",
+      function () {
+
+        card.style.transform = "";
+
+      }
+    );
+
+
+  });
+
+  if (!document.getElementById("tnmRippleStyle")) {
+
+
+    const rippleStyle =
+      document.createElement("style");
+
+
+    rippleStyle.id =
+      "tnmRippleStyle";
+
+
+    rippleStyle.textContent = `
+
+      @keyframes tnmRipple {
+
+        0% {
+          width: 15px;
+          height: 15px;
+          opacity: 0.8;
+        }
+
+        100% {
+          width: 220px;
+          height: 220px;
+          opacity: 0;
+        }
+
+      }
+
+    `;
+
+
+    document.head.appendChild(
+      rippleStyle
+    );
+
+  }
+
+
+  const animatedElements =
+    document.querySelectorAll(
+      ".tnm-card, .tnm-stat-card, .tnm-section-header"
+    );
+
+
+  if ("IntersectionObserver" in window) {
+
+
+    const observer =
+      new IntersectionObserver(
+        function (entries) {
+
+
+          entries.forEach(
+            function (entry) {
+
+
+              if (entry.isIntersecting) {
+
+
+                entry.target.classList.add(
+                  "tnm-visible"
+                );
+
+
+                observer.unobserve(
+                  entry.target
+                );
+
+
+              }
+
+            }
+          );
+
+
+        },
+        {
+          threshold: 0.08
+        }
+      );
+
+
+    animatedElements.forEach(
+      function (element) {
+
+        observer.observe(element);
+
+      }
+    );
+
+
+  } else {
+
+
+    /* Fallback for older browsers */
+
+    animatedElements.forEach(
+      function (element) {
+
+        element.classList.add(
+          "tnm-visible"
+        );
+
+      }
+    );
+
+  }
+
+  document
+    .querySelectorAll(
+      ".tnm-join-action, .tnm-host-button"
+    )
+    .forEach(
+      function (element) {
+
+
+        element.style.position =
+          "relative";
+
+
+        element.style.overflow =
+          "hidden";
+
+
+      }
+    );
+
+
+});
+
+</script>
+
+
+{% endblock %}
+
