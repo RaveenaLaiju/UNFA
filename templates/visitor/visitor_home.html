@@ -29,7 +29,7 @@
   <!--  HERO  -->
   <section class="unfa-hero">
     <video class="hero-video-bg" autoplay muted loop playsinline>
-      <source src="{% static 'visitor_user_main/videos/football-hero.mp4' %}" type="video/mp4">
+      <source src="{% static 'visitor_panel/videos/football-hero.mp4' %}" type="video/mp4">
     </video>
 
     <i class="fa fa-futbol-o unfa-ball" aria-hidden="true"></i>
@@ -37,8 +37,8 @@
     <div class="hero-scene">
       <div class="player-shadow left"></div>
       <div class="player-shadow right"></div>
-      <div class="player-left"><img src="{% static 'visitor_user_main/images/player-blue.png' %}" alt="Blue player"></div>
-      <div class="player-right"><img src="{% static 'visitor_user_main/images/player-red.png' %}" alt="Red player"></div>
+      <div class="player-left"><img src="{% static 'visitor_panel/images/player-blue.png' %}" alt="Blue player"></div>
+      <div class="player-right"><img src="{% static 'visitor_panel/images/player-red.png' %}" alt="Red player"></div>
       <div class="match-ball"><div class="ball-body"></div></div>
       <div class="ball-shadow"></div>
       <div class="turf-particle left-kick"></div><div class="turf-particle left-kick"></div><div class="turf-particle left-kick"></div><div class="turf-particle left-kick"></div>
@@ -173,7 +173,7 @@
             {% for i in "123456" %}
             <div class="swiper-slide">
               <div class="highlight-card">
-                <img src="{% static 'visitor_user_main/images/img_'|add:i|add:'.jpg' %}" alt="Highlight" onerror="this.src='https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=600&h=800&fit=crop'">
+                <img src="{% static 'visitor_panel/images/img_'|add:i|add:'.jpg' %}" alt="Highlight" onerror="this.src='https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=600&h=800&fit=crop'">
                 <div class="highlight-overlay">
                   <button class="highlight-play" onclick="alert('Video playback coming soon!')"><i class="fas fa-play"></i></button>
                   <div class="highlight-duration">0:4{{ forloop.counter }}</div>
